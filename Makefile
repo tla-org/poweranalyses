@@ -7,11 +7,18 @@ lib:
 	$(JULIA) --startup-file=no --project=library/build -e 'using Pkg; Pkg.instantiate()'
 	$(JULIA) --startup-file=no --project=library/build library/build/build.jl
 
+INCLUDE_DIR := "_library/include"
+LIB_DIR := "_library/lib"
+
+# You can run the output with, for example, wasmer
 wasm:
-	clang \
-		--target=wasm32 \
+	emcc \
 		-Wall \
-		-o _build/pa.wasm \
+		-I$(INCLUDE_DIR) \
+		-L$(LIB_DIR) \
+		-ljulia \
+		-lmylib \
+		-o poweranalyses.wasm \
 		main.c
 
 all: lib wasm
