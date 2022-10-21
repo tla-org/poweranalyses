@@ -2,3 +2,4 @@ _library
 Manifest.toml
 *.wasm
 *.o
+*.txt
