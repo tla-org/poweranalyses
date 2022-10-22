@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>ll</title>
+        <script>
+        (async () => {
+            let response = await fetch('./plus.wasm');
+            let bytes = await response.arrayBuffer();
+            let { instance } = await WebAssembly.instantiate(bytes, { });
+        })();
+        </script>
+    </head>
+    <body>
+        <input id="txtField" type="text" name="b"></input>
+    </body>
+</html>
+
