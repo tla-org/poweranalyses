@@ -1,4 +1,5 @@
-mod distribution;
+mod dist;
+mod hyptest;
 
 #[no_mangle]
 pub extern "C" fn add_ten(x: i32) -> i32 {
