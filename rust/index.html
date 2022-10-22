@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>PowerAnalyses.org 2</title>
+        <script>
+        (async () => {
+            let response = await fetch('target/wasm32-unknown-unknown/release/pa.wasm');
+            let bytes = await response.arrayBuffer();
+            let { instance } = await WebAssembly.instantiate(bytes, { });
+
+            document.getElementById("txtField").value = instance.exports.add_one(13);
+        })();
+        </script>
+    </head>
+    <body>
+        <input id="txtField" type="text" name="b"></input>
+
+    </body>
+</html>

@@ -1,6 +1,12 @@
-# Compile with `emcc test.ll -o test.wasm`.
+;  Compile with `emcc test.ll -o test.wasm`.
 
 target triple = "wasm32-unknown-emscripten"
+
+;  @ REPL[1]:1 within `f`
+define i64 @julia_f_318(i64 signext %0) #0 {
+top:
+  ret i64 1
+}
 
 define i32 @main() #0 {
   call i32 @putchar(i32 72)
