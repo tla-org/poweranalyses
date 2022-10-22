@@ -1,5 +1,8 @@
+#![allow(dead_code)]
+
 mod dist;
 mod hyptest;
+mod rmath;
 
 #[no_mangle]
 pub extern "C" fn add_ten(x: i32) -> i32 {
