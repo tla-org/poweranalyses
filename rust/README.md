@@ -12,6 +12,8 @@ This build does not use `wasm-pack` meaning that it's only possible to use primi
 
 Not using wasm-pack because SSL doesn't work.
 
+Thanks to https://depth-first.com/articles/2020/06/29/compiling-rust-to-webassembly-a-simple-example/
+
 ## Serve
 
 ```sh
