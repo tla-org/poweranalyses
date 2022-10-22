@@ -14,6 +14,12 @@ Not using wasm-pack because SSL doesn't work.
 
 Thanks to https://depth-first.com/articles/2020/06/29/compiling-rust-to-webassembly-a-simple-example/
 
+## Test
+
+```sh
+$ cargo test
+```
+
 ## Serve
 
 ```sh
