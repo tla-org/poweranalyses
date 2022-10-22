@@ -13,7 +13,7 @@ struct Normal {
 impl Distribution for Normal {
     fn pdf(&self, x: f64) -> f64 {
         let frac: f64 = 1.0 / (self.sigma * (2.0 * PI).sqrt());
-        let expable: f64 = -0.5 * ((x - self.mu) / self.sigma).powf(2.0);
+        let expable = -0.5 * ((x - self.mu) / self.sigma).powf(2.0);
         return frac * expable.exp();
     }
 }
