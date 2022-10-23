@@ -83,7 +83,9 @@ fn pnt(t: f64, df: f64, ncp: f64) -> f64 {
     let errmax: f64 = 1.0e-12;
 
     assert!(0.0 < df);
-    if ncp == 0.0 { return pt(t, df); }
+    if ncp == 0.0 {
+        return pt(t, df);
+    }
     if !isfinite(t) {
         if t < 0.0 { return 0.0 } else { return 1.0 }
     }
@@ -198,6 +200,10 @@ mod rmath_tests {
         // R> pbeta(0.6, 2, 1)
         // [1] 0.36
         assert_ulps_eq!(pbeta(0.6, 2.0, 1.0), 0.36, max_ulps = 80);
+
+        // R> pt(2.0095, 49.0, 0)
+        // [1] 0.9749959
+        assert_eq!(pnt(2.0095, 49.0, 0.0), 0.9749958761700477);
 
         // julia> cdf(NoncentralT(49.0, 3.5355), 2.0095)
         // 0.0660970064371808
