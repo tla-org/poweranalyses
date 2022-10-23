@@ -86,8 +86,13 @@ fn pnt(t: f64, df: f64, ncp: f64) -> f64 {
     if ncp == 0.0 {
         return pt(t, df);
     }
+
     if !isfinite(t) {
-        if t < 0.0 { return 0.0 } else { return 1.0 }
+        if t < 0.0 {
+            return 0.0;
+        } else {
+            return 1.0;
+        }
     }
 
     let negdel: bool;
@@ -121,8 +126,8 @@ fn pnt(t: f64, df: f64, ncp: f64) -> f64 {
     }
 
     let mut x = t * t;
-    x = x / (x + df);
     let mut rxb = df / (x + df);
+    x = x / (x + df);
 
     let lambda: f64;
     let mut p: f64;
@@ -205,6 +210,18 @@ mod rmath_tests {
         // [1] 0.9749959
         assert_eq!(pnt(2.0095, 49.0, 0.0), 0.9749958761700477);
 
+        // R> pt(Inf, 49.0, 2.0)
+        // [1] 1
+        assert_eq!(pnt(f64::INFINITY, 49.0, 2.0), 1.0);
+
+        // R> pt(-Inf, 49.0, 2.0)
+        // [1] 0
+        assert_eq!(pnt(-f64::INFINITY, 49.0, 2.0), 0.0);
+
+        // R> pt(2.0095, 5e5, 2)
+        // [1] 0.5037895
+        assert_eq!(pnt(2.0095, 5e5, 2.0), 0.5037818943498734);
+
         // julia> cdf(NoncentralT(49.0, 3.5355), 2.0095)
         // 0.0660970064371808
         // R> pt(2.0095, 49.0, 3.5355)
@@ -212,6 +229,6 @@ mod rmath_tests {
         let t = 2.0095;
         let df = 49.0;
         let ncp = 3.5355;
-        assert_eq!(pnt(t, df, ncp), 0.0660970064371808);
+        assert_eq!(pnt(t, df, ncp), 0.0660970064372871);
     }
 }
