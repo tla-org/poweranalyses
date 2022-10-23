@@ -47,7 +47,7 @@ fn pt(x: f64, df: f64) -> f64 {
 }
 
 fn isfinite(x: f64) -> bool {
-    x != f64::NAN && x != f64::INFINITY && x != -f64::INFINITY
+    !x.is_nan() && x != f64::INFINITY && x != -f64::INFINITY
 }
 
 const DBL_EPSILON: f64 = 2.220446049250313e-16;
@@ -183,8 +183,15 @@ fn pnt(t: f64, df: f64, ncp: f64) -> f64 {
     }
 }
 
-fn qnt(p: f64, df: f64, ncp: f64) {
+fn qnt(p: f64, df: f64, ncp: f64) -> f64 {
+    let accu: f64 = 1e-13;
+    let eps: f64 = 1e-11;
 
+    if p.is_nan() || df.is_nan() || ncp.is_nan() {
+        return f64::NAN;
+    }
+
+    return f64::INFINITY
 }
 
 #[cfg(test)]
@@ -201,6 +208,7 @@ mod rmath_tests {
         assert_eq!(0.9986501019684255, pnorm(3.0, 0.0, 1.0));
 
         assert!(!isfinite(f64::INFINITY));
+        assert!(!isfinite(f64::NAN));
 
         // cdf(TDist(0.3), 0.2)
         assert_eq!(pt(0.2, 0.3), 0.544619617595772);
@@ -236,5 +244,12 @@ mod rmath_tests {
         let df = 49.0;
         let ncp = 3.5355;
         assert_eq!(pnt(t, df, ncp), 0.0660970064372871);
+    }
+
+    #[test]
+    fn that_qnt_is_correct() {
+        // R> qt(NaN, 1, 2)
+        // [1] NaN
+        assert!(qnt(f64::NAN, 1.0, 2.0).is_nan());
     }
 }
