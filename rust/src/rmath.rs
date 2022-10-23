@@ -46,10 +46,6 @@ fn pt(x: f64, df: f64) -> f64 {
     return dist.cdf(x);
 }
 
-fn isfinite(x: f64) -> bool {
-    !x.is_nan() && x != f64::INFINITY && x != -f64::INFINITY
-}
-
 const DBL_EPSILON: f64 = 2.220446049250313e-16;
 
 // Assuming lower_tail and !log_p.
@@ -87,7 +83,7 @@ fn pnt(t: f64, df: f64, ncp: f64) -> f64 {
         return pt(t, df);
     }
 
-    if !isfinite(t) {
+    if !t.is_finite() {
         if t < 0.0 {
             return 0.0;
         } else {
@@ -206,9 +202,6 @@ mod rmath_tests {
         assert_ulps_eq!(1.8, fmod(9.2, 3.7), max_ulps = 6);
 
         assert_eq!(0.9986501019684255, pnorm(3.0, 0.0, 1.0));
-
-        assert!(!isfinite(f64::INFINITY));
-        assert!(!isfinite(f64::NAN));
 
         // cdf(TDist(0.3), 0.2)
         assert_eq!(pt(0.2, 0.3), 0.544619617595772);
