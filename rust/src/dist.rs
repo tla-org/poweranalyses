@@ -11,14 +11,14 @@ struct NoncentralT {
 }
 
 impl Distribution for NoncentralT {
-    fn cdf(&self, x: f64) -> f64 {
+    fn cdf(&self, _x: f64) -> f64 {
         return 1.0;
     }
 }
 
 #[cfg(test)]
 mod distributions {
-    use super::*;
+    // use super::*;
 
     #[test]
     fn it_gives_cdf() {

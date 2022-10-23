@@ -4,10 +4,15 @@ version = "0.1.0"
 authors = ["Rik Huijzer <rust@huijzer.xyz>"]
 edition = "2018"
 
+[build]
+target = "wasm32-unknown-unknown"
+
 [lib]
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
+getrandom = { version = "0.2", features = ["js"] }
+libm = "0.2.5"
 statrs = "0.16.0"
 
 [dev-dependencies]
