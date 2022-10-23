@@ -3,6 +3,9 @@
 ```sh
 $ rustup toolchain install stable
 
+$ rustc --version
+rustc 1.64.0 (a55dd71d5 2022-09-19)
+
 $ rustup target add wasm32-unknown-unknown
 
 $ cargo build --target wasm32-unknown-unknown --release
@@ -18,6 +21,12 @@ Thanks to https://depth-first.com/articles/2020/06/29/compiling-rust-to-webassem
 
 ```sh
 $ cargo test
+```
+
+Or, to test whenever files change:
+
+```sh
+$ find src | entr -s 'cargo test'
 ```
 
 ## Serve
