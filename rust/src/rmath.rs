@@ -176,9 +176,15 @@ fn pnt(t: f64, df: f64, ncp: f64) -> f64 {
             }
         }
         assert!(false);
+        return f64::NAN;
+    } else {
+        let tnc = 0.0;
+        return pnt_finis(tnc, del, negdel);
     }
+}
 
-    1.
+fn qnt(p: f64, df: f64, ncp: f64) {
+
 }
 
 #[cfg(test)]
@@ -189,7 +195,7 @@ mod rmath_tests {
     use super::*;
 
     #[test]
-    fn equalities() {
+    fn that_pnt_is_correct() {
         assert_ulps_eq!(1.8, fmod(9.2, 3.7), max_ulps = 6);
 
         assert_eq!(0.9986501019684255, pnorm(3.0, 0.0, 1.0));
