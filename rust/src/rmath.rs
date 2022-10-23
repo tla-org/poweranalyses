@@ -13,7 +13,7 @@ use libm::log;
 use statrs::distribution::Normal;
 use statrs::distribution::ContinuousCDF;
 use statrs::function::gamma::ln_gamma;
-use statrs::function::beta::beta_inc;
+use statrs::function::beta::beta_reg;
 use statrs::distribution::StudentsT;
 
 const M_SQRT_2DPI: f64 = 0.7978845608028654; // sqrt(2 / π
@@ -29,8 +29,7 @@ fn lgammafn(x: f64) -> f64 {
 
 /// Incomplete beta function.
 fn pbeta(x: f64, a: f64, b: f64) -> f64 {
-    // Not completely sure, maybe checked_beta_inc or something.
-    return beta_inc(x, a, b);
+    return beta_reg(a, b, x);
 }
 
 /// Normal (cumulative) distribution function.
@@ -192,6 +191,13 @@ mod rmath_tests {
 
         // cdf(TDist(0.3), 0.2)
         assert_eq!(pt(0.2, 0.3), 0.544619617595772);
+
+        // R> pbeta(0.3, 3, 1)
+        // [1] 0.027
+        assert_ulps_eq!(pbeta(0.3, 3.0, 1.0), 0.027);
+        // R> pbeta(0.6, 2, 1)
+        // [1] 0.36
+        assert_ulps_eq!(pbeta(0.6, 2.0, 1.0), 0.36, max_ulps = 80);
 
         // julia> cdf(NoncentralT(49.0, 3.5355), 2.0095)
         // 0.0660970064371808
