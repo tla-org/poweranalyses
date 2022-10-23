@@ -13,6 +13,7 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 getrandom = { version = "0.2", features = ["js"] }
 libm = "0.2.5"
+log = "0.4.17"
 statrs = "0.16.0"
 
 [dev-dependencies]

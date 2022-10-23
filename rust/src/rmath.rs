@@ -10,6 +10,8 @@
 use libm::expm1;
 use libm::log;
 
+use log::warn;
+
 use statrs::distribution::Normal;
 use statrs::distribution::ContinuousCDF;
 use statrs::function::gamma::ln_gamma;
@@ -179,6 +181,31 @@ fn pnt(t: f64, df: f64, ncp: f64) -> f64 {
     }
 }
 
+fn qt(p: f64, df: f64) -> f64 {
+    let dist = StudentsT::new(0.0, 1.0, df).unwrap();
+    return dist.inverse_cdf(p);
+}
+
+// Based on https://github.com/wch/r-source/blob/trunk/src/nmath/dpq.h.
+fn r_q_p01_boundaries(p: f64) -> f64 {
+    if p < 0.0 || p > 1.0 {
+        return f64::NAN;
+    }
+    if p == 0.0 {
+        let left = -f64::INFINITY;
+        return left;
+    }
+    if p == 1.0 {
+        let right = f64::INFINITY;
+        return right;
+    }
+    return p;
+}
+
+fn r_dt_qiv(p: f64) -> f64 {
+    return p; // since r_d_lval(p) == p
+}
+
 fn qnt(p: f64, df: f64, ncp: f64) -> f64 {
     let accu: f64 = 1e-13;
     let eps: f64 = 1e-11;
@@ -187,7 +214,51 @@ fn qnt(p: f64, df: f64, ncp: f64) -> f64 {
         return f64::NAN;
     }
 
-    return f64::INFINITY
+    if df <= 0.0 {
+        warn!("Warning! df <= 0.0");
+        return f64::NAN;
+    }
+
+    if ncp == 0.0 && df >= 1.0 {
+        return qt(p, df);
+    }
+
+    let boundaries_response = r_q_p01_boundaries(p);
+    if boundaries_response.is_infinite() {
+        return boundaries_response;
+    }
+
+    // We can probably skip an approximation for df == Inf here.
+    // Saves implementing the noncentral quantile for the normal distribution.
+
+    let p2 = r_dt_qiv(p);
+
+    if p2 > 1.0 - DBL_EPSILON {
+        return f64::INFINITY;
+    };
+
+    let pp = fmin2(1.0 - DBL_EPSILON, p * (1.0 + eps));
+
+    let mut lx = fmin2(-1.0, -ncp);
+    while lx > -f64::MAX && pnt(lx, df, ncp) > pp {
+        lx *= 2.0;
+    }
+
+    while {
+        // do
+        let nx = 0.5 * (lx + ux);
+        let ux: f64;
+        if pnt(nx, df, ncp) > p {
+            ux = nx;
+        } else {
+            lx = nx;
+        }
+
+        // while
+        (ux - lx) > accu * fmax2(lx.abs(), ux.abs());
+    } {}
+
+    return f64::NAN
 }
 
 #[cfg(test)]
@@ -244,5 +315,17 @@ mod rmath_tests {
         // R> qt(NaN, 1, 2)
         // [1] NaN
         assert!(qnt(f64::NAN, 1.0, 2.0).is_nan());
+
+        assert!(qnt(1.0, -1.0, 2.0).is_nan());
+
+        // R> qt(0.13, 10)
+        // [1] -1.194086
+        assert_eq!(qt(0.13, 10.0), -1.194085555341413);
+
+        // R> qt(0, 10)
+        // [1] -Inf
+        assert_eq!(qt(0.0, 10.0), -f64::INFINITY);
+
+        // TODO: Test the special case where df = Inf.
     }
 }
