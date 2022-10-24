@@ -47,6 +47,7 @@ pub const M_LN2: f64 = 0.693147180559945309417232121458; // ln(2)
 pub const DBL_MIN_EXP: f64 = -1022.0;
 
 // Assuming lower_tail and !log_p.
+// Based on https://github.com/wch/r-source/blob/trunk/src/nmath/dpq.h.
 pub fn r_dt_val(x: f64) -> f64 {
     return x;
 }
@@ -96,6 +97,10 @@ mod rmath_utils_tests {
         assert_ulps_eq!(1.8, fmod(9.2, 3.7), max_ulps = 6);
 
         assert_eq!(0.9986501019684255, pnorm(3.0, 0.0, 1.0));
+
+        // R> lgamma(0.34)
+        // [1] 0.9647621
+        assert_eq!(lgammafn(0.34), 0.9647620857998527);
 
         // cdf(TDist(0.3), 0.2)
         assert_eq!(pt(0.2, 0.3), 0.544619617595772);

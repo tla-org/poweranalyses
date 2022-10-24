@@ -1,13 +1,11 @@
 use libm::expm1;
 use libm::log;
 
-use statrs::function::gamma::ln_gamma;
-
 use crate::rmath::utils::*;
 
 fn pnt_finis(tnc: f64, del: f64, negdel: bool) -> f64 {
     let tnc2 = tnc + pnorm(-del, 0.0, 1.0);
-    let lower_tail = !negdel;
+    let lower_tail = true != negdel;
     assert!(!(tnc2 > 1.0 - 1e-10 && lower_tail));
     return r_dt_val(fmin2(tnc2, 1.0));
 }
@@ -63,6 +61,8 @@ pub fn pnt(t: f64, df: f64, ncp: f64) -> f64 {
         }
     }
 
+    println!("bar for t: {}", t);
+
     let mut x = t * t;
     let mut rxb = df / (x + df);
     x = x / (x + df);
@@ -85,7 +85,7 @@ pub fn pnt(t: f64, df: f64, ncp: f64) -> f64 {
         let mut a = 0.5;
         let b = 0.5 * df;
         rxb = f64::powf(rxb, b);
-        let albeta = M_LN_SQRT_PI + ln_gamma(b) - ln_gamma(0.5 + b);
+        let albeta = M_LN_SQRT_PI + lgammafn(b) - lgammafn(0.5 + b);
         let mut xodd = pbeta(x, a, b);
         let mut godd = 2.0 * rxb * (a * log(x) - albeta).exp();
         let mut tnc = b * x;
@@ -93,7 +93,7 @@ pub fn pnt(t: f64, df: f64, ncp: f64) -> f64 {
         let mut geven = tnc * rxb;
         tnc = p * xodd + q * xeven;
 
-        for it in 1..itrmax {
+        for it in 1..itrmax+1 {
             a += 1.0;
             xodd -= godd;
             xeven -= geven;
