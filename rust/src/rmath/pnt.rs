@@ -20,9 +20,7 @@ pub fn pnt(t: f64, df: f64, ncp: f64) -> f64 {
     let errmax: f64 = 1.0e-12;
 
     assert!(0.0 < df);
-    if ncp == 0.0 {
-        return pt(t, df);
-    }
+    if ncp == 0.0 { return pt(t, df); }
 
     if !t.is_finite() {
         if t < 0.0 {
@@ -31,6 +29,8 @@ pub fn pnt(t: f64, df: f64, ncp: f64) -> f64 {
             return 1.0;
         }
     }
+
+    println!("foo");
 
     let negdel: bool;
     let tt: f64;
@@ -41,6 +41,7 @@ pub fn pnt(t: f64, df: f64, ncp: f64) -> f64 {
         tt = t;
         del = ncp;
     } else {
+        if ncp > 40.0 { return R_DT_0; }
         negdel = true;
         tt = -t;
         del = -ncp;
@@ -53,7 +54,7 @@ pub fn pnt(t: f64, df: f64, ncp: f64) -> f64 {
 
         let x = tt * (1.0 - s);
         let mean = del;
-        let sd = 1.0 + (tt * tt * 2.0 * s).sqrt();
+        let sd = (1.0 + tt * tt * 2.0 * s).sqrt();
         let cumulative_density = pnorm(x, mean, sd);
         if negdel {
             return 1.0 - cumulative_density;
@@ -91,8 +92,6 @@ pub fn pnt(t: f64, df: f64, ncp: f64) -> f64 {
         let mut xeven = if tnc < DBL_EPSILON { tnc } else { 1.0 - rxb };
         let mut geven = tnc * rxb;
         tnc = p * xodd + q * xeven;
-
-        println!("{}", itrmax);
 
         for it in 1..itrmax {
             a += 1.0;
@@ -145,7 +144,7 @@ mod rmath_tests {
 
         // R> pt(2.0095, 5e5, 2)
         // [1] 0.5037895
-        assert_eq!(pnt(2.0095, 5e5, 2.0), 0.5037818943498734);
+        assert_eq!(pnt(2.0095, 5e5, 2.0), 0.5037894861873192);
 
         // julia> cdf(NoncentralT(49.0, 3.5355), 2.0095)
         // 0.0660970064371808
@@ -161,6 +160,6 @@ mod rmath_tests {
         // R> pt(-4.46, 11.0, 2.23)
         // [1] 1.584881e-07
         // This case occurs during qnt(0.54, 11.0, 2.23)
-        // TODO assert_eq!(pnt(-4.46, 11.0, 2.23), 1.5848808498919453e-7);
+        assert_eq!(pnt(-4.46, 11.0, 2.23), 1.5848808498919453e-7);
     }
 }
