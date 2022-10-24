@@ -52,6 +52,9 @@ const DBL_EPSILON: f64 = 2.220446049250313e-16;
 
 // Assuming lower_tail and !log_p.
 // https://github.com/wch/r-source/blob/trunk/src/nmath/dpq.h
+// The lower_tail is probably meant to avoid losing precision caused by 1 - x.
+// For the cdf, this is also called the "survival function" as is also implmented
+// in boost and scipy according to https://github.com/statrs-dev/statrs/pull/172.
 const R_DT_0: f64 = 0.0;
 const R_DT_1: f64 = 1.0;
 const M_LN2: f64 = 0.693147180559945309417232121458; // ln(2)
@@ -64,6 +67,10 @@ fn r_dt_val(x: f64) -> f64 {
 
 fn fmin2(x: f64, y: f64) -> f64 {
     return f64::min(x, y);
+}
+
+fn fmax2(x: f64, y: f64) -> f64 {
+    return f64::max(x, y);
 }
 
 fn pnt_finis(tnc: f64, del: f64, negdel: bool) -> f64 {
@@ -206,6 +213,9 @@ fn r_dt_qiv(p: f64) -> f64 {
     return p; // since r_d_lval(p) == p
 }
 
+/// Quantile for noncentral t-distribution.
+/// Based on https://github.com/wch/r-source/blob/trunk/src/nmath/qnt.c
+/// Staying as close to the original code as possible to avoid bugs.
 fn qnt(p: f64, df: f64, ncp: f64) -> f64 {
     let accu: f64 = 1e-13;
     let eps: f64 = 1e-11;
@@ -228,37 +238,50 @@ fn qnt(p: f64, df: f64, ncp: f64) -> f64 {
         return boundaries_response;
     }
 
-    // We can probably skip an approximation for df == Inf here.
+    // We skip an approximation for df == Inf here.
     // Saves implementing the noncentral quantile for the normal distribution.
 
-    let p2 = r_dt_qiv(p);
+    // p = R_DT_qIv(p) == p.
 
-    if p2 > 1.0 - DBL_EPSILON {
-        return f64::INFINITY;
-    };
-
-    let pp = fmin2(1.0 - DBL_EPSILON, p * (1.0 + eps));
-
+    // Invert pnt(.) :
+    // 1. finding an upper and lower bound
+    if p > 1.0 - DBL_EPSILON { return f64::INFINITY; };
+    let mut pp = fmin2(1.0 - DBL_EPSILON, p * (1.0 + eps));
+    let mut ux = fmax2(1.0, ncp);
+    while ux < f64::MAX && pnt(ux, df, ncp) < pp {
+        ux *= 2.0;
+    }
+    pp = p * (1.0 - eps);
     let mut lx = fmin2(-1.0, -ncp);
     while lx > -f64::MAX && pnt(lx, df, ncp) > pp {
         lx *= 2.0;
+        println!("lx: {:?}, df: {:?}, ncp: {:?}", lx, df, ncp);
+        println!("pnt: {}", pnt(lx, df, ncp));
+        return 0.0;
     }
 
-    while {
-        // do
-        let nx = 0.5 * (lx + ux);
-        let ux: f64;
+    // 2. interval (lx, ux) halving :
+    //
+    // do (1st iteration of do-while.)
+    let mut nx = 0.5 * (lx + ux);
+    if pnt(nx, df, ncp) > p {
+        ux = nx;
+    } else {
+        lx = nx;
+    }
+
+    // while
+    while (ux - lx) > accu * fmax2(lx.abs(), ux.abs()) {
+        // do (2nd iteration of do-while.)
+        nx = 0.5 * (lx + ux);
         if pnt(nx, df, ncp) > p {
             ux = nx;
         } else {
             lx = nx;
         }
+    }
 
-        // while
-        (ux - lx) > accu * fmax2(lx.abs(), ux.abs());
-    } {}
-
-    return f64::NAN
+    return 0.5 * (lx + ux);
 }
 
 #[cfg(test)]
@@ -308,16 +331,14 @@ mod rmath_tests {
         let df = 49.0;
         let ncp = 3.5355;
         assert_eq!(pnt(t, df, ncp), 0.0660970064372871);
+
+        // R> pt(-4.46, 11.0, 2.23)
+        // [1] 1.584881e-07
+        assert_eq!(pnt(-4.46, 11.0, 2.23), 1.584881e-07);
     }
 
     #[test]
     fn that_qnt_is_correct() {
-        // R> qt(NaN, 1, 2)
-        // [1] NaN
-        assert!(qnt(f64::NAN, 1.0, 2.0).is_nan());
-
-        assert!(qnt(1.0, -1.0, 2.0).is_nan());
-
         // R> qt(0.13, 10)
         // [1] -1.194086
         assert_eq!(qt(0.13, 10.0), -1.194085555341413);
@@ -326,6 +347,18 @@ mod rmath_tests {
         // [1] -Inf
         assert_eq!(qt(0.0, 10.0), -f64::INFINITY);
 
-        // TODO: Test the special case where df = Inf.
+        // R> qt(NaN, 1, 2)
+        // [1] NaN
+        assert!(qnt(f64::NAN, 1.0, 2.0).is_nan());
+
+        assert!(qnt(1.0, -1.0, 2.0).is_nan());
+
+        // R> qt(0.54, Inf, 12.0)
+        // [1] 12.10043
+        assert_eq!(qnt(0.54, f64::INFINITY, 12.0), 12.100433720511148);
+
+        // > qt(0.54, 11, 2.23)
+        // [1] 2.40025
+        assert_eq!(qnt(0.54, 11.0, 2.23), 2.40025);
     }
 }
