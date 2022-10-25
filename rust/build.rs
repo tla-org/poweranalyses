@@ -1,0 +1,32 @@
+use cc;
+
+fn main() {
+    cc::Build::new()
+        .file("nmath/bd0.c")
+        .file("nmath/pbeta.c")
+        .file("nmath/dnorm.c")
+        .file("nmath/pnorm.c")
+        .file("nmath/gamma.c")
+        .file("nmath/lgammacor.c")
+        .file("nmath/cospi.c")
+        .file("nmath/pt.c")
+        .file("nmath/log1p.c")
+        .file("nmath/lbeta.c")
+        .file("nmath/chebyshev.c")
+        .file("nmath/toms708.c")
+        .file("nmath/d1mach.c")
+        .file("nmath/i1mach.c")
+        .file("nmath/pgamma.c")
+        .file("nmath/dnt.c")
+        .file("nmath/dt.c")
+        .file("nmath/fmax2.c")
+        .file("nmath/fmin2.c")
+        .file("nmath/lgamma.c")
+        .file("nmath/mlutils.c")
+        .file("nmath/pnt.c")
+        .file("nmath/stirlerr.c")
+        .define("MATHLIB_STANDALONE", "1")
+        .include("nmath")
+        .include("nmath/R_ext")
+        .compile("dnt");
+}

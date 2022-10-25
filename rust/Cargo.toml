@@ -10,6 +10,9 @@ target = "wasm32-unknown-unknown"
 [lib]
 crate-type = ["cdylib", "rlib"]
 
+[build-dependencies]
+cc = "1.0"
+
 [dependencies]
 getrandom = { version = "0.2", features = ["js"] }
 libm = "0.2.5"

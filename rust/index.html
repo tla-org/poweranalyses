@@ -9,7 +9,9 @@
             let bytes = await response.arrayBuffer();
             let { instance } = await WebAssembly.instantiate(bytes, { });
 
-            document.getElementById("txtField").value = instance.exports.add_ten(13);
+            document.getElementById("txtField").value = instance.exports.add_ten(12);
+
+            console.log(instance.exports.foobar());
         })();
         </script>
     </head>
