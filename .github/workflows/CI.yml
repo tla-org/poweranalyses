@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+
+      - uses: mymindstorm/setup-emsdk@v11
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          target: wasm32-unknown-emscripten
+          toolchain: stable
+          override: true
+
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
+
+      - run: ./build.sh
+
+      - uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.event_name != 'pull_request' }}
+        with:
+          cname: poweranalyses.org
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          force_orphan: true
+          publish_branch: gh-pages
+          publish_dir: ./public
