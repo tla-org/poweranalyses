@@ -8,9 +8,7 @@ pub extern fn add_ten(x: i32) -> i32 {
     x + 12
 }
 
-pub fn main() {
-    println!("Loading of the poweranalyses.wasm library succeeded.");
-}
+pub fn main() {}
 
 #[cfg(test)]
 mod lib {
