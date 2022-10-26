@@ -1,6 +1,13 @@
-_library
-Manifest.toml
+/target
+**/*.rs.bk
+Cargo.lock
+bin/
+pkg/
 *.wasm
-*.o
-*.txt
-*.ji
+
+# Rust
+**/target/
+**/debug/
+**/Cargo.lock
+**/*.rs.bk
+**/*.pdb
