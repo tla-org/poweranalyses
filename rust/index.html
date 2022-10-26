@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <script src="target/wasm32-unknown-emscripten/release/pa.js"></script>
+        <!-- document.getElementById("txtField").value = _add_ten(10); -->
+        <!-- console.log(_foobar()); -->
         <meta charset="utf-8">
         <title>PowerAnalyses.org</title>
         <script>
         (async () => {
-            let response = await fetch('target/wasm32-unknown-unknown/release/pa.wasm');
-            let bytes = await response.arrayBuffer();
-            let { instance } = await WebAssembly.instantiate(bytes, { });
-
-            document.getElementById("txtField").value = instance.exports.add_ten(12);
-
-            console.log(instance.exports.foobar());
+                        wait(2);
+            _foobar();
         })();
         </script>
     </head>

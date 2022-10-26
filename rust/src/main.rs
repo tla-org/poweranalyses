@@ -4,8 +4,12 @@ mod dist;
 mod nmath;
 
 #[no_mangle]
-fn add_ten(x: i32) -> i32 {
-    x + 14
+pub extern fn add_ten(x: i32) -> i32 {
+    x + 12
+}
+
+pub fn main() {
+    println!("Loading of the poweranalyses.wasm library succeeded.");
 }
 
 #[cfg(test)]
