@@ -5,7 +5,7 @@ mod nmath;
 
 #[no_mangle]
 pub extern fn add_ten(x: i32) -> i32 {
-    x + 12
+    x + 10
 }
 
 pub fn main() {}
@@ -17,7 +17,5 @@ mod lib {
     #[test]
     fn it_adds_ten() {
         assert_eq!(12, add_ten(2));
-
-        foobar();
     }
 }
