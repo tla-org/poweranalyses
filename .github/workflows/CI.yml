@@ -18,6 +18,8 @@ jobs:
         with:
           persist-credentials: false
 
+      - uses: mymindstorm/setup-emsdk@v11
+
       - uses: actions-rs/toolchain@v1
         with:
           target: wasm32-unknown-emscripten
