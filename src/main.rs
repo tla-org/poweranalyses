@@ -1,5 +1,4 @@
 mod dist;
-mod nmath;
 
 use crate::dist::*;
 
@@ -16,7 +15,7 @@ pub extern fn some_r() -> f64 {
 pub fn main() {}
 
 #[cfg(test)]
-mod lib {
+mod tests {
     use super::*;
 
     #[test]
