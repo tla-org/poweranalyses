@@ -1,17 +1,23 @@
-use crate::dist::Distribution;
+use crate::dist::*;
 
-trait HypothesisTest {
-    fn dist(&self) -> dyn Distribution;
+trait StatisticalTest {
+    fn null_distribution(&self) -> Box<Distribution>;
 }
 
-struct OneSampleTTest {
-    /// 1 for a one sample t-test and 2 for a two sample t-test.
-    tail: i32
+struct IndependentSamplesTTest {
+    tail: i32,
+    v: f64,
+    lambda: f64
 }
 
-impl OneSampleTTest {
-    pub fn new(tail: i32) -> OneSampleTTest {
-        assert!(tail == 1 || tail == 2, "OneSampleTTest::new called with incorrect tail");
-        return Self{ tail };
+impl IndependentSamplesTTest {
+    pub fn new(tail: i32, n: i32, es: f64) -> Self {
+        return Self{ tail, v: (n - 2) as f64, lambda: (n as f64 / 2.0).sqrt() * es};
+    }
+}
+
+impl StatisticalTest for IndependentSamplesTTest {
+    fn null_distribution(&self) -> Box<dyn Distribution> {
+        return Box::new(NoncentralT{ v: self.v, lambda: 0.0 });
     }
 }

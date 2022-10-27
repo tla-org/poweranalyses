@@ -1,4 +1,5 @@
 mod dist;
+mod hyptest;
 
 use crate::dist::*;
 

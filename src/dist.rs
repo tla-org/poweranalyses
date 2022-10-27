@@ -14,8 +14,8 @@ pub trait Distribution {
 /// Implements the noncentral t-distribution with `v` degrees of freedom and
 /// noncentrality parameter `lambda`.
 pub struct NoncentralT {
-    v: f64,
-    lambda: f64
+    pub v: f64,
+    pub lambda: f64
 }
 
 impl NoncentralT {
