@@ -1,12 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <title>PowerAnalyses.org</title>
+        <link rel="stylesheet" href="/style.css">
         <script src="pa.js"></script>
         <script defer src="frontend.js"></script>
         <meta charset="utf-8">
-        <title>PowerAnalyses.org</title>
     </head>
     <body>
+        <div class="content">
+        <div class="title center">PowerAnalyses.org</div>
+        <img class="plot center" src=""></img>
+
+        <div class="dropdowns">
+            <label for="family">
+                Test family<br>
+                <select name="type" id="family">
+                    <option value="1">T tests</option>
+                    <option value="2">F tests</option>
+                    <option value="3">ChiSq tests</option>
+                </select><br>
+            </label>
+            <label for="test">
+                Statistical test<br>
+                <select name="type" id="test">
+                    <option value="1">ANCOVA - Fixed effects, main effects, and interactions</option>
+                </select><br>
+            </label>
+            <label for="analysis">
+                Type of power analysis<br>
+                <select name="type" id="analysis">
+                    <option value="1">A priori: Compute required sample size</option>
+                </select>
+            </label>
+            <br>
+            <br>
+        </div>
         <input id="txtField" type="text" name="b"></input>
+        </div>
     </body>
 </html>

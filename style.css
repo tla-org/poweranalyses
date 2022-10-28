@@ -1,0 +1,61 @@
+:root {
+    --black: #000000;
+    --small: 15px;
+    --medium: 18px;
+}
+
+body {
+    font-family: sans-serif;
+    font-size: var(--small);
+}
+
+@media (min-width: 640px) {
+    body {
+        font-size: var(--medium);
+    }
+    .content {
+        max-width: 640px;
+    }
+}
+
+.content {
+    margin: 6px;
+    padding-top: 20px;
+    width: 95vw;
+    border: 1px solid;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.title {
+    margin-bottom: 1em;
+    font-weight: 900;
+}
+
+.center {
+    display: block;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.plot {
+    width: 95%;
+    height: 40px;
+    margin-bottom: 1em;
+}
+
+label {
+    display: inline-block;
+    margin-top: 1em;
+    margin-left: 0.4em;
+    text-align: left;
+    font-size: 0.8rem;
+}
+
+select {
+    margin-left: 0em;
+    margin-top: 0.1em;
+    font-size: 0.6rem;
+    text-overflow: ellipsis;
+}
