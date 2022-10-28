@@ -23,13 +23,15 @@ trait StatisticalTest {
     }
     fn es(&self, alpha: f64, power: f64, n: f64) -> f64 {
         let f = | es | { self.alpha(es, power, n) - alpha };
-        let mut convergency = SimpleConvergency { eps: 1e-15f64, max_iter: 100 };
+        let mut convergency = SimpleConvergency { eps: 0.00001f64, max_iter: 40 };
         return find_root_brent(0f64, 1000f64, &f, &mut convergency).unwrap();
     }
     fn n(&self, alpha: f64, power: f64, es: f64) -> f64 {
-        let f = | n | { self.alpha(es, power, n) - alpha };
-        let mut convergency = SimpleConvergency { eps: 1e-15f64, max_iter: 100 };
-        return find_root_brent(-1000f64, 1000f64, &f, &mut convergency).unwrap();
+        let f = | n | {
+            self.alpha(es, power, n) - alpha
+        };
+        let mut convergency = SimpleConvergency { eps: 0.00001f64, max_iter: 40 };
+        return find_root_brent(2f64, 100f64, &f, &mut convergency).unwrap();
     }
 }
 
@@ -70,9 +72,10 @@ mod tests {
         assert_eq!(OneSampleTTest::new(2).power(es, alpha, n), 0.9338975528614741);
         assert_eq!(OneSampleTTest::new(1).power(es, alpha, n), 0.9672067458263426);
 
-        assert_eq!(OneSampleTTest::new(2).es(alpha, power, n), 0.5201211596125199);
-        assert_eq!(OneSampleTTest::new(1).es(alpha, power, n), 0.4718256927232961);
-        // assert_eq!(OneSampleTTest::new(2).n(alpha, power, es), 0.5201211596125199);
+        assert_eq!(OneSampleTTest::new(2).es(alpha, power, n), 0.5201250999158732);
+        assert_eq!(OneSampleTTest::new(1).es(alpha, power, n), 0.4718255595737365);
+        assert_eq!(OneSampleTTest::new(2).n(alpha, power, es), 53.94036454024925);
+        assert_eq!(OneSampleTTest::new(1).n(alpha, power, es), 44.68007678189232);
     }
 }
 
