@@ -1,5 +1,5 @@
 mod dist;
-mod hyptest;
+mod power;
 
 use crate::dist::*;
 

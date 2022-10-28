@@ -3,4 +3,4 @@
 set -e
 
 cd public
-live-server
+live-server --no-browser
