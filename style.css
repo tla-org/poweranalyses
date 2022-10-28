@@ -9,7 +9,7 @@ body {
     font-size: var(--small);
 }
 
-@media (min-width: 640px) {
+@media (min-width: 800px) {
     body {
         font-size: var(--medium);
     }
@@ -22,7 +22,6 @@ body {
     margin: 6px;
     padding-top: 20px;
     width: 95vw;
-    border: 1px solid;
     margin-left: auto;
     margin-right: auto;
 }
@@ -58,4 +57,38 @@ select {
     margin-top: 0.1em;
     font-size: 0.6rem;
     text-overflow: ellipsis;
+}
+
+.numbers {
+    font-size: 0.6rem;
+    margin-left: 0.1em;
+    margin-right: 0.1em;
+}
+
+.numbers table {
+    border-spacing: 0 0.6em;
+    text-align: right;
+}
+
+.input {
+    float: left;
+    width: 45%;
+}
+
+input[type="number"] {
+    font-size: 0.6rem;
+    margin-bottom: 0.3rem;
+}
+
+input {
+    width: 90%;
+}
+
+.output {
+    float: right;
+    width: 45%;
+}
+
+.result {
+    font-weight: 800;
 }

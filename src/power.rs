@@ -30,7 +30,7 @@ trait StatisticalTest {
             self.alpha(tail, es, power, n) - alpha
         };
         let mut convergency = SimpleConvergency { eps: 0.00001f64, max_iter: 40 };
-        return find_root_brent(2f64, 100f64, &f, &mut convergency).unwrap();
+        return find_root_brent(2f64, 10000f64, &f, &mut convergency).unwrap();
     }
 }
 
@@ -62,8 +62,8 @@ mod tests {
 
         assert_eq!(OneSampleTTest{}.es(2, alpha, power, n), 0.5201250999158732);
         assert_eq!(OneSampleTTest{}.es(1, alpha, power, n), 0.4718255595737365);
-        assert_eq!(OneSampleTTest{}.n(2, alpha, power, es), 53.94036454024925);
-        assert_eq!(OneSampleTTest{}.n(1, alpha, power, es), 44.68007678189232);
+        assert_eq!(OneSampleTTest{}.n(2, alpha, power, es), 53.94061366252956);
+        assert_eq!(OneSampleTTest{}.n(1, alpha, power, es), 44.68070848218932);
     }
 }
 
