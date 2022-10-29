@@ -2,6 +2,9 @@
 
 set -e
 
+BASEDIR=$(dirname $(dirname $(readlink -f "$0")))
+cd "$BASEDIR"
+
 mkdir -p public
 cp index.html public
 cp style.css public

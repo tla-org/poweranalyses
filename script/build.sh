@@ -2,6 +2,9 @@
 
 set -e
 
+BASEDIR=$(dirname $(dirname $(readlink -f "$0")))
+cd "$BASEDIR"
+
 cargo build --target wasm32-unknown-emscripten --release
 
-./public.sh
+./script/public.sh

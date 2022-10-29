@@ -30,7 +30,7 @@ jobs:
         with:
           command: test
 
-      - run: ./build.sh
+      - run: ./script/build.sh
 
       - uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.event_name != 'pull_request' }}
