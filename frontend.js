@@ -51,10 +51,30 @@ function familyChanged() {
             addSelectOption(testSelector, "Correlation: Point biseral model", true, 1);
             addSelectOption(testSelector, "Linear bivariate regression: One group, size of slope", false, 2);
             addSelectOption(testSelector, "Linear bivariate regression: Two groups, difference between intercepts", false, 3);
+            addSelectOption(testSelector, "Linear bivariate regression: Two groups, difference between slopes", false, 4);
+            addSelectOption(testSelector, "Linear multiple regression: Fixed model, single regression coefficient", false, 5);
+            addSelectOption(testSelector, "Means: Difference between two dependent means (matched pairs)", false, 6);
+            addSelectOption(testSelector, "Means: Difference between two independent means (two groups)", true, 7);
+            addSelectOption(testSelector, "Means: Difference from constant (one sample case)", true, 8);
+            addSelectOption(testSelector, "Means: Wilcoxon signed-rank test (matched pairs)", false, 9);
+            addSelectOption(testSelector, "Means: Wilcoxon signed-rank test (one sample case)", false, 10);
+            addSelectOption(testSelector, "Means: Wilcoxon-Mann-Whitney test (two groups)", false, 11);
+            addSelectOption(testSelector, "Generic t test", false, 12);
             break;
-        case 4: // χ2 tests
+        case 4: // χ² tests
+            addSelectOption(testSelector, "Goodness-of-fit tests: Contingency tables", true, 1);
+            addSelectOption(testSelector, "Variance: Difference from constant (one sample case)", true, 2);
+            addSelectOption(testSelector, "Generic χ² test", false, 3);
             break;
         case 5: // z tests
+            addSelectOption(testSelector, "Correlation: Tetrachoric model", false, 1);
+            addSelectOption(testSelector, "Correlations: Two dependent Pearson r's (common index)", true, 2);
+            addSelectOption(testSelector, "Correlations: Two dependent Pearson r's (no common index)", true, 3);
+            addSelectOption(testSelector, "Correlations: Two independent Pearson r's", true, 4);
+            addSelectOption(testSelector, "Logistic regression", true, 5);
+            addSelectOption(testSelector, "Poisson regression", false, 6);
+            addSelectOption(testSelector, "Proportions: Difference between two independent proportions", false, 7);
+            addSelectOption(testSelector, "Generic z test", false, 8);
             break;
         default:
             console.log("Unexpected familySelector.value");
