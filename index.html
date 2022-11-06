@@ -17,8 +17,8 @@
 
         <div class="dropdowns">
             <label for="analysis">
-                Type of power analysis<br>
-                <select name="type" id="analysis">
+                Type of power analysis:<br>
+                <select onchange="analysisChanged()" name="type" id="analysis">
                     <option value="1">A priori: Compute required sample size</option>
                     <option value="2">Criterion: Compute required α</option>
                     <option value="3">Post hoc: Compute achieved power</option>
@@ -26,8 +26,8 @@
                 </select>
             </label>
             <label for="family">
-                Test family<br>
-                <select onchange="familyChanged()" name="type" id="family">
+                Test family:<br>
+                <select onchange="familyChanged(); analysisChanged();" name="type" id="family">
                     <option value=1>Exact</option>
                     <option value=2>F tests</option>
                     <option value=3>t tests</option>
@@ -36,7 +36,7 @@
                 </select><br>
             </label>
             <label for="test">
-                Statistical test<br>
+                Statistical test:<br>
                 <select name="type" id="test">
                     <option value="1">ANCOVA - Fixed effects, main effects, and interactions</option>
                 </select><br>
@@ -45,8 +45,8 @@
             <br>
         </div>
         <div class="numbers">
-            <div class="input center">
-                <table>
+            <div class="center">
+                <table id="input">
                 <tr>
                     <td>Effect size <i>f</i>:</td><td><input type="number" min="0" value="0.25" step="0.01"></td>
                 </tr>

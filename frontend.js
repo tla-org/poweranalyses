@@ -82,8 +82,48 @@ function familyChanged() {
     return;
 }
 
+function removeAllTableRows(table) {
+    while (table.rows.length > 0) {
+        table.deleteRow(0);
+    }
+}
+function addTableOption(table, description, element) {
+    var row = table.insertRow(table.rows.length);
+    var left = row.insertCell(0);
+    // Using innerHTML over textContent to allow formatting such as italic.
+    left.innerHTML = description.concat(":");
+    var right = row.insertCell(1);
+    right.innerHTML = element;
+}
+
 // Update the input area based on the "Type of power analysis" setting.
-function typeChanged() {
+function analysisChanged() {
+    const analysisSelector = document.getElementById("analysis");
+    const analysisValue = parseInt(analysisSelector.value);
+    const familySelector = document.getElementById("family");
+    const familyValue = parseInt(familySelector.value);
+    var inputTable = document.getElementById("input");
+    removeAllTableRows(inputTable);
+    switch (familyValue) {
+        case 3: // t tests
+            addTableOption(inputTable, "Tail(s)", "<select id='tail'><option value=1>One tail</option><option value=2>Two tails</option></select>");
+            addTableOption(inputTable, "Parent distribution", "<select id='distribution'><option value=1>Normal</option></select>");
+            break;
+        default:
+    }
+    switch (analysisValue) {
+        case 1: // Compute n
+            break;
+        case 2: // Compute α
+            addTableOption(inputTable, "Parent distribution", "<select id='distribution'><option value=1>Normal</option></select>");
+            break;
+        case 3: // Compute power
+            break;
+        case 4: // Compute ES
+            break;
+        default:
+            console.log("Unexpected analysisSelector.value");
+    }
     return;
 }
 
@@ -92,5 +132,5 @@ Module['onRuntimeInitialized'] = function() {
     var x = Module._some_r();
     document.getElementById("n").textContent = 1 + parseFloat(x).toFixed(2);
     familyChanged();
-    typeChanged();
+    analysisChanged();
 }
