@@ -79,8 +79,12 @@ function familyChanged() {
         default:
             console.log("Unexpected familySelector.value");
     }
-    console.log(testSelector);
-    return 1;
+    return;
+}
+
+// Update the input area based on the "Type of power analysis" setting.
+function typeChanged() {
+    return;
 }
 
 Module['onRuntimeInitialized'] = function() {
@@ -88,4 +92,5 @@ Module['onRuntimeInitialized'] = function() {
     var x = Module._some_r();
     document.getElementById("n").textContent = 1 + parseFloat(x).toFixed(2);
     familyChanged();
+    typeChanged();
 }
