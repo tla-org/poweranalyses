@@ -20,11 +20,10 @@ jobs:
 
       - uses: mymindstorm/setup-emsdk@v11
 
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@e645b0cf01249a964ec099494d38d2da0f0b349f
         with:
           target: wasm32-unknown-emscripten
           toolchain: stable
-          override: true
 
       - uses: actions-rs/cargo@v1
         with:
