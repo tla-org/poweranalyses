@@ -70,6 +70,10 @@ select {
     text-align: right;
 }
 
+.numbers td {
+    vertical-align: baseline;
+}
+
 .input {
     float: left;
     width: 45%;

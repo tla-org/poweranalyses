@@ -115,6 +115,8 @@ function analysisChanged() {
         case 3: // t tests
             addTableOption(inputTable, "Tail(s)", "<select id='tail'><option value=1>One tail</option><option value=2>Two tails</option></select>");
             addTableOption(inputTable, "Effect size <i>d</i>", floatInputElement("es", 0.5));
+            addTableOption(inputTable, "α err prob", floatInputElement("alpha", 0.05));
+            addTableOption(inputTable, "Power (1-β err prob)", floatInputElement("alpha", 0.05));
             break;
         default:
     }
