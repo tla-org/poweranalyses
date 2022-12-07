@@ -104,11 +104,17 @@ function floatInputElement(id, defaultValue, step) {
     return `<input id="${id}" type="number" value="${defaultValue}" min="0" max="999999" step="${step}">`;
 }
 
-// Update the input area based on the "Type of power analysis" setting.
+function readInt(id) {
+    const elem = document.getElementById(id);
+    assert(elem != null);
+    return parseInt(elem.value);
+}
+
+/** Update the input area based on the "Type of power analysis" setting. */
 function analysisChanged() {
     const analysisSelector = document.getElementById("analysis");
-    const familySelector = document.getElementById("family");
-    const familyValue = parseInt(familySelector.value);
+    // The number order is the same as the selector.
+    const familyValue = readInt("family");
     var inputTable = document.getElementById("input");
     removeAllTableRows(inputTable);
     switch (familyValue) {
@@ -117,17 +123,19 @@ function analysisChanged() {
             break;
         default:
     }
-    const analysisValue = analysisSelector.value;
-    if (analysisValue != "n") {
+    // Having the number as an integer makes it easy to pass it to WebAssembly.
+    const analysisValue = readInt("analysis");
+    // The numbers match the order of the elements in the "Type of power analysis" box.
+    if (analysisValue != 1) {
         addTableOption(inputTable, "Total sample size", floatInputElement("n", 100, 5));
     }
-    if (analysisValue != "alpha") {
+    if (analysisValue != 2) {
         addTableOption(inputTable, "α err prob", floatInputElement("alpha", 0.05, 0.05));
     }
-    if (analysisValue != "power") {
+    if (analysisValue != 3) {
         addTableOption(inputTable, "Power (1-β err prob)", floatInputElement("alpha", 0.95, 0.05));
     }
-    if (analysisValue != "es") {
+    if (analysisValue != 4) {
         addTableOption(inputTable, "Effect size <i>d</i>", floatInputElement("es", 0.5, 0.1));
     }
 
@@ -137,20 +145,32 @@ function analysisChanged() {
     addTableOption(outputTable, "Critical t", "3");
     addTableOption(outputTable, "Df", "3");
 
-    if (analysisValue == "n") {
+    if (analysisValue == 1) {
         addTableOption(outputTable, "Total sample size", "3");
         addTableOption(outputTable, "Actual power", "3");
     }
-    if (analysisValue == "alpha") {
+    if (analysisValue == 2) {
         addTableOption(outputTable, "α err prob", "3");
     }
-    if (analysisValue == "power") {
+    if (analysisValue == 3) {
         addTableOption(outputTable, "Power (1-β err prob)", "3");
     }
-    if (analysisValue == "es") {
+    if (analysisValue == 4) {
         addTableOption(outputTable, "Effect size <i>dz</i>", "3");
     }
 
+    return null;
+}
+
+function readFloat(id) {
+    const elem = document.getElementById(id);
+    assert(elem != null);
+    return parseFloat(elem.value);
+}
+
+/** Update the output area by calculating the numbers via WebAssembly. */
+function updateOutput() {
+    console.log(readFloat("n"));
     return null;
 }
 
@@ -160,4 +180,5 @@ Module['onRuntimeInitialized'] = function() {
     document.getElementById("n").textContent = 1 + parseFloat(x).toFixed(2);
     familyChanged();
     analysisChanged();
+    updateOutput();
 }
