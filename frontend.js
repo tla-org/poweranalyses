@@ -48,7 +48,7 @@ function familyChanged() {
             addSelectOption(testSelector, "Generic F test", false, 17);
             break;
         case 3: // t tests
-            addSelectOption(testSelector, "Correlation: Point biseral model", true, 1);
+            addSelectOption(testSelector, "Correlation: Point biseral model", false, 1);
             addSelectOption(testSelector, "Linear bivariate regression: One group, size of slope", false, 2);
             addSelectOption(testSelector, "Linear bivariate regression: Two groups, difference between intercepts", false, 3);
             addSelectOption(testSelector, "Linear bivariate regression: Two groups, difference between slopes", false, 4);
@@ -87,6 +87,8 @@ function removeAllTableRows(table) {
         table.deleteRow(0);
     }
 }
+
+/** Add an option on the left side. */
 function addTableOption(table, description, element) {
     var row = table.insertRow(table.rows.length);
     var left = row.insertCell(0);
@@ -94,6 +96,11 @@ function addTableOption(table, description, element) {
     left.innerHTML = description.concat(":");
     var right = row.insertCell(1);
     right.innerHTML = element;
+}
+
+/** Return an input element for floats with element `id`. */
+function floatInputElement(id, defaultValue) {
+    return `<input id="${id}" type="number" value="${defaultValue}" min="0" max="999999" step="0.01">`;
 }
 
 // Update the input area based on the "Type of power analysis" setting.
@@ -107,7 +114,7 @@ function analysisChanged() {
     switch (familyValue) {
         case 3: // t tests
             addTableOption(inputTable, "Tail(s)", "<select id='tail'><option value=1>One tail</option><option value=2>Two tails</option></select>");
-            addTableOption(inputTable, "Parent distribution", "<select id='distribution'><option value=1>Normal</option></select>");
+            addTableOption(inputTable, "Effect size <i>d</i>", floatInputElement("es", 0.5));
             break;
         default:
     }
