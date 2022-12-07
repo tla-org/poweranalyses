@@ -66,17 +66,30 @@ select {
 }
 
 .numbers table {
-    border-spacing: 0 0.6em;
-    text-align: right;
+    border-spacing: 0.6em 0.6em;
 }
 
 .numbers td {
     vertical-align: baseline;
 }
 
-.input {
-    float: left;
-    width: 45%;
+.border {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border: 1px black solid;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+@media (min-width: 400px) {
+    table#input {
+        float: left;
+        width: 49%;
+    }
+    table#output {
+        float: right;
+        width: 49%;
+    }
 }
 
 input[type="number"] {
@@ -85,12 +98,7 @@ input[type="number"] {
 }
 
 input {
-    width: 90%;
-}
-
-.output {
-    float: right;
-    width: 45%;
+    width: 95%;
 }
 
 .result {

@@ -15,16 +15,7 @@
         <div class="center" style="font-size: 14px; margin-bottom: 2em;"><i>Work in progress</i></div>
         <img class="plot center" src=""></img>
 
-        <div class="dropdowns">
-            <label for="analysis">
-                Type of power analysis:<br>
-                <select onchange="analysisChanged()" name="type" id="analysis">
-                    <option value="1">A priori: Compute required sample size</option>
-                    <option value="2">Criterion: Compute required α</option>
-                    <option value="3">Post hoc: Compute achieved power</option>
-                    <option value="4">Sensitivity: Compute required effect size</option>
-                </select>
-            </label>
+        <div class="dropdowns border">
             <label for="family">
                 Test family:<br>
                 <select onchange="familyChanged(); analysisChanged();" name="type" id="family">
@@ -41,12 +32,21 @@
                     <option value="1">ANCOVA - Fixed effects, main effects, and interactions</option>
                 </select><br>
             </label>
+            <label for="analysis">
+                Type of power analysis:<br>
+                <select onchange="analysisChanged()" name="type" id="analysis">
+                    <option value="1">A priori: Compute required sample size</option>
+                    <option value="2">Criterion: Compute required α</option>
+                    <option value="3">Post hoc: Compute achieved power</option>
+                    <option value="4">Sensitivity: Compute required effect size</option>
+                </select>
+            </label>
             <br>
             <br>
         </div>
         <div class="numbers">
-            <div class="center">
-                <table id="input">
+            <div>
+                <table id="input" class="border">
                 <tr>
                     <td>Effect size <i>f</i>:</td><td><input type="number" min="0" value="0.25" step="0.01"></td>
                 </tr>
@@ -66,14 +66,16 @@
                     <td>Number of covariates:</td><td><input type="number" min="1" value="1"></td>
                 </tr>
                 </table>
+                <div class="output">
+                    <table id="output" class="border center">
+                    <tbody class="center">
+                    <tr>
+                        <td>Total sample size:</td><td class="result" id="n">10</td>
+                    </tr>
+                    </tbody>
+                    </table>
+                </div>
 
-            </div>
-            <div class="output center">
-                <table>
-                <tr>
-                    <td>Total sample size:</td><td class="result" id="n">10</td>
-                </tr>
-                </table>
             </div>
         </div>
         <br>

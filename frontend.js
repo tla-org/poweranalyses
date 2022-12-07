@@ -88,7 +88,7 @@ function removeAllTableRows(table) {
     }
 }
 
-/** Add an option on the left side. */
+/** Add an option to a table. */
 function addTableOption(table, description, element) {
     var row = table.insertRow(table.rows.length);
     var left = row.insertCell(0);
@@ -96,11 +96,12 @@ function addTableOption(table, description, element) {
     left.innerHTML = description.concat(":");
     var right = row.insertCell(1);
     right.innerHTML = element;
+    return null;
 }
 
 /** Return an input element for floats with element `id`. */
-function floatInputElement(id, defaultValue) {
-    return `<input id="${id}" type="number" value="${defaultValue}" min="0" max="999999" step="0.01">`;
+function floatInputElement(id, defaultValue, step) {
+    return `<input id="${id}" type="number" value="${defaultValue}" min="0" max="999999" step="${step}">`;
 }
 
 // Update the input area based on the "Type of power analysis" setting.
@@ -114,26 +115,33 @@ function analysisChanged() {
     switch (familyValue) {
         case 3: // t tests
             addTableOption(inputTable, "Tail(s)", "<select id='tail'><option value=1>One tail</option><option value=2>Two tails</option></select>");
-            addTableOption(inputTable, "Effect size <i>d</i>", floatInputElement("es", 0.5));
-            addTableOption(inputTable, "α err prob", floatInputElement("alpha", 0.05));
-            addTableOption(inputTable, "Power (1-β err prob)", floatInputElement("alpha", 0.05));
             break;
         default:
     }
-    switch (analysisValue) {
-        case 1: // Compute n
-            break;
-        case 2: // Compute α
-            addTableOption(inputTable, "Parent distribution", "<select id='distribution'><option value=1>Normal</option></select>");
-            break;
-        case 3: // Compute power
-            break;
-        case 4: // Compute ES
+    if (analysisValue != 1) { // Not compute n.
+        addTableOption(inputTable, "Total sample size", floatInputElement("n", 100, 5));
+    }
+    if (analysisValue != 2) { // Not compute α.
+        addTableOption(inputTable, "α err prob", floatInputElement("alpha", 0.05, 0.05));
+    }
+    if (analysisValue != 3) { // Not compute power.
+        addTableOption(inputTable, "Power (1-β err prob)", floatInputElement("alpha", 0.95, 0.05));
+    }
+    if (analysisValue != 4) { // Not compute ES.
+        addTableOption(inputTable, "Effect size <i>d</i>", floatInputElement("es", 0.5, 0.1));
+    }
+
+    var outputTable = document.getElementById("output");
+    console.log(outputTable);
+    removeAllTableRows(outputTable);
+    switch (familyValue) {
+        case 3: // t tests
+            addTableOption(outputTable, "Noncentrality parameter λ", "3");
             break;
         default:
-            console.log("Unexpected analysisSelector.value");
     }
-    return;
+
+    return null;
 }
 
 Module['onRuntimeInitialized'] = function() {
