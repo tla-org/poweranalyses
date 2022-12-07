@@ -107,7 +107,6 @@ function floatInputElement(id, defaultValue, step) {
 // Update the input area based on the "Type of power analysis" setting.
 function analysisChanged() {
     const analysisSelector = document.getElementById("analysis");
-    const analysisValue = parseInt(analysisSelector.value);
     const familySelector = document.getElementById("family");
     const familyValue = parseInt(familySelector.value);
     var inputTable = document.getElementById("input");
@@ -118,27 +117,38 @@ function analysisChanged() {
             break;
         default:
     }
-    if (analysisValue != 1) { // Not compute n.
+    const analysisValue = analysisSelector.value;
+    if (analysisValue != "n") {
         addTableOption(inputTable, "Total sample size", floatInputElement("n", 100, 5));
     }
-    if (analysisValue != 2) { // Not compute α.
+    if (analysisValue != "alpha") {
         addTableOption(inputTable, "α err prob", floatInputElement("alpha", 0.05, 0.05));
     }
-    if (analysisValue != 3) { // Not compute power.
+    if (analysisValue != "power") {
         addTableOption(inputTable, "Power (1-β err prob)", floatInputElement("alpha", 0.95, 0.05));
     }
-    if (analysisValue != 4) { // Not compute ES.
+    if (analysisValue != "es") {
         addTableOption(inputTable, "Effect size <i>d</i>", floatInputElement("es", 0.5, 0.1));
     }
 
     var outputTable = document.getElementById("output");
-    console.log(outputTable);
     removeAllTableRows(outputTable);
-    switch (familyValue) {
-        case 3: // t tests
-            addTableOption(outputTable, "Noncentrality parameter λ", "3");
-            break;
-        default:
+    addTableOption(outputTable, "Noncentrality parameter λ", "3");
+    addTableOption(outputTable, "Critical t", "3");
+    addTableOption(outputTable, "Df", "3");
+
+    if (analysisValue == "n") {
+        addTableOption(outputTable, "Total sample size", "3");
+        addTableOption(outputTable, "Actual power", "3");
+    }
+    if (analysisValue == "alpha") {
+        addTableOption(outputTable, "α err prob", "3");
+    }
+    if (analysisValue == "power") {
+        addTableOption(outputTable, "Power (1-β err prob)", "3");
+    }
+    if (analysisValue == "es") {
+        addTableOption(outputTable, "Effect size <i>dz</i>", "3");
     }
 
     return null;
