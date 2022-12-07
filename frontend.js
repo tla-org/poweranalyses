@@ -110,6 +110,10 @@ function readInt(id) {
     return parseInt(elem.value);
 }
 
+function floatOutputElement(id, value) {
+    return `<span id="${id}">${value}</span>`;
+}
+
 /** Update the input area based on the "Type of power analysis" setting. */
 function analysisChanged() {
     const analysisSelector = document.getElementById("analysis");
@@ -141,9 +145,9 @@ function analysisChanged() {
 
     var outputTable = document.getElementById("output");
     removeAllTableRows(outputTable);
-    addTableOption(outputTable, "Noncentrality parameter λ", "3");
-    addTableOption(outputTable, "Critical t", "3");
-    addTableOption(outputTable, "Df", "3");
+    addTableOption(outputTable, "Noncentrality parameter λ", floatOutputElement("lambda", 3));
+    addTableOption(outputTable, "Critical t", floatOutputElement("t", 3));
+    addTableOption(outputTable, "Df", floatOutputElement("df", 3));
 
     if (analysisValue == 1) {
         addTableOption(outputTable, "Total sample size", "3");
@@ -168,9 +172,18 @@ function readFloat(id) {
     return parseFloat(elem.value);
 }
 
+function setFloat(id, value) {
+    const elem = document.getElementById(id);
+    assert(elem != null);
+    elem.innerText = value;
+    return null;
+}
+
 /** Update the output area by calculating the numbers via WebAssembly. */
 function updateOutput() {
     console.log(readFloat("n"));
+    var out = Module._add_ten(readFloat("n"));
+    setFloat("df", out);
     return null;
 }
 
