@@ -54,7 +54,7 @@ function familyChanged() {
             addSelectOption(testSelector, "Linear bivariate regression: Two groups, difference between slopes", false, 4);
             addSelectOption(testSelector, "Linear multiple regression: Fixed model, single regression coefficient", false, 5);
             addSelectOption(testSelector, "Means: Difference between two dependent means (matched pairs)", false, 6);
-            addSelectOption(testSelector, "Means: Difference between two independent means (two groups)", true, 7);
+            addSelectOption(testSelector, "Means: Difference between two independent means (two groups)", false, 7);
             addSelectOption(testSelector, "Means: Difference from constant (one sample case)", true, 8);
             addSelectOption(testSelector, "Means: Wilcoxon signed-rank test (matched pairs)", false, 9);
             addSelectOption(testSelector, "Means: Wilcoxon signed-rank test (one sample case)", false, 10);
@@ -101,7 +101,7 @@ function addTableOption(table, description, element) {
 
 /** Return an input element for floats with element `id`. */
 function floatInputElement(id, defaultValue, step) {
-    return `<input id="${id}" type="number" value="${defaultValue}" min="0" max="999999" step="${step}">`;
+    return `<input id="${id}" type="number" value="${defaultValue}" onchange="updateOutput()" min="0" max="999999" step="${step}">`;
 }
 
 function readInt(id) {
@@ -137,7 +137,7 @@ function analysisChanged() {
         addTableOption(inputTable, "α err prob", floatInputElement("alpha", 0.05, 0.05));
     }
     if (analysisValue != 3) {
-        addTableOption(inputTable, "Power (1-β err prob)", floatInputElement("alpha", 0.95, 0.05));
+        addTableOption(inputTable, "Power (1-β err prob)", floatInputElement("power", 0.95, 0.05));
     }
     if (analysisValue != 4) {
         addTableOption(inputTable, "Effect size <i>d</i>", floatInputElement("es", 0.5, 0.1));
@@ -179,12 +179,46 @@ function setFloat(id, value) {
     return null;
 }
 
+function tail() {
+    return 1; // TODO
+}
+
+function alpha() {
+    return readFloat("alpha");
+}
+
+function power() {
+    return readFloat("power");
+}
+
+function es() {
+    return readFloat("es");
+}
+
+function n() {
+    return readFloat("n");
+}
+
 /** Update the output area by calculating the numbers via WebAssembly. */
 function updateOutput() {
-    console.log(readFloat("n"));
-    var out = Module._add_ten(readFloat("n"));
-    setFloat("df", out);
-    return null;
+    // The number order is the same as the selector.
+    const familyValue = readInt("family");
+    if (familyValue == 1) {
+    } else if (familyValue == 2) {
+
+    } else if (familyValue == 3) { // t tests
+        console.log(es());
+        console.log(tail());
+        // console.log(Module._oneSampleTTestN(tail(), alpha(), power(), es()));
+        console.log(Module._oneSampleTTestN(1.0, 2.0, 3.0, 4.0));
+    }
+    //
+    // TODO: Get rid of the right table. Just have the numbers on the left and update automatically.
+    //
+    // console.log(readFloat("n"));
+    // var out = Module._add_ten(readFloat("n"));
+    // setFloat("df", out);
+    // return null;
 }
 
 Module['onRuntimeInitialized'] = function() {
