@@ -10,13 +10,10 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
-    permissions: write-all
     timeout-minutes: 30
 
     steps:
-      - uses: actions/checkout@v2
-        with:
-          persist-credentials: false
+      - uses: actions/checkout@v3
 
       - uses: mymindstorm/setup-emsdk@v11
 
@@ -32,11 +29,9 @@ jobs:
 
       - run: ./script/build.sh
 
-      - uses: peaceiris/actions-gh-pages@v3
+      - uses: cloudflare/wrangler-action@2.0.0
         if: ${{ github.event_name != 'pull_request' }}
         with:
-          cname: poweranalyses.org
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          force_orphan: true
-          publish_branch: gh-pages
-          publish_dir: ./public
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: pages publish public --project-name=poweranalyses --branch=main
