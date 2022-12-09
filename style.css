@@ -1,12 +1,21 @@
 :root {
     --black: #000000;
     --small: 15px;
-    --medium: 18px;
+    --medium: 19px;
+    --favicon-blue: #7fb3fa;
+    --favicon-green: #64d465;
+    --favicon-yellow: #f4dd45;
+    --favicon-red: #f87c68;
 }
 
 body {
     font-family: sans-serif;
     font-size: var(--small);
+}
+
+.favicon {
+    vertical-align: bottom;
+    height: 1.7rem;
 }
 
 @media (min-width: 800px) {
@@ -54,9 +63,13 @@ label {
 
 select {
     margin-left: 0em;
-    margin-top: 0.1em;
+    margin-top: 0.4em;
     font-size: 0.6rem;
     text-overflow: ellipsis;
+    background-color: transparent;
+    border: 1px gray solid;
+    border-radius: 4px;
+    padding: 4px;
 }
 
 .numbers {
@@ -76,7 +89,7 @@ select {
 .border {
     margin-top: 5px;
     margin-bottom: 5px;
-    border: 1px black solid;
+    border: 1px var(--favicon-blue) solid;
     border-radius: 5px;
     padding: 5px;
 }
@@ -84,11 +97,11 @@ select {
 @media (min-width: 400px) {
     table#input {
         float: left;
-        width: 49%;
+        width: 48%;
     }
-    table#output {
+    .output {
         float: right;
-        width: 49%;
+        width: 48%;
     }
 }
 
@@ -99,8 +112,20 @@ input[type="number"] {
 
 input {
     width: 95%;
+    border: 1px gray solid;
+    border-radius: 4px;
+    padding: 3px 4px;
 }
 
 .result {
     font-weight: 800;
+}
+
+.calculateBtn {
+    background-color: var(--favicon-green);
+    color: white;
+    border: 0px;
+    text-align: center;
+    padding: 4px 10px;
+    border-radius: 4px;
 }

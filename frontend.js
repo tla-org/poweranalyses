@@ -144,23 +144,14 @@ function analysisChanged() {
     }
 
     var outputTable = document.getElementById("output");
-    removeAllTableRows(outputTable);
-    addTableOption(outputTable, "Noncentrality parameter λ", floatOutputElement("lambda", 3));
-    addTableOption(outputTable, "Critical t", floatOutputElement("t", 3));
-    addTableOption(outputTable, "Df", floatOutputElement("df", 3));
 
     if (analysisValue == 1) {
-        addTableOption(outputTable, "Total sample size", "3");
-        addTableOption(outputTable, "Actual power", "3");
     }
     if (analysisValue == 2) {
-        addTableOption(outputTable, "α err prob", "3");
     }
     if (analysisValue == 3) {
-        addTableOption(outputTable, "Power (1-β err prob)", "3");
     }
     if (analysisValue == 4) {
-        addTableOption(outputTable, "Effect size <i>dz</i>", "3");
     }
 
     return null;
