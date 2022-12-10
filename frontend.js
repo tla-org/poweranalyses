@@ -138,8 +138,6 @@ function enableOutputElement(id) {
 
 /** Update the input and output area based on the "Type of power analysis" setting. */
 function analysisChanged() {
-    updateOutput();
-
     // The number order is the same as the selector.
     const familyValue = readInt("family");
     var inputTable = document.getElementById("input");
@@ -182,6 +180,8 @@ function analysisChanged() {
     } else if (analysis == "es") {
         disableOutputElement("es");
     }
+
+    updateOutput();
 
     return null;
 }
