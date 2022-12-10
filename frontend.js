@@ -10,10 +10,20 @@ function addSelectOption(selector, text, enabled, value) {
     selector.add(option, undefined);
 }
 
+function getElementById(id) {
+    const elem = document.getElementById(id);
+    assert(elem != null);
+    return elem;
+}
+
+function readInt(id) {
+    const elem = getElementById(id);
+    return parseInt(elem.value);
+}
+
 // Update the "Statistical test" options based on the "Test family" setting.
 function familyChanged() {
-    const familySelector = document.getElementById("family");
-    const familyValue = parseInt(familySelector.value);
+    const familyValue = readInt("family");
     const testSelector = document.getElementById("test");
     removeAllSelectOptions(testSelector);
     switch (familyValue) {
@@ -79,6 +89,7 @@ function familyChanged() {
         default:
             console.log("Unexpected familySelector.value");
     }
+    updateOutput();
     return;
 }
 
@@ -104,26 +115,18 @@ function floatInputElement(id, defaultValue, step) {
     return `<input id="${id}" type="number" value="${defaultValue}" onchange="updateOutput()" min="0" max="999999" step="${step}">`;
 }
 
-function readInt(id) {
-    const elem = document.getElementById(id);
-    assert(elem != null);
-    return parseInt(elem.value);
-}
-
 function floatOutputElement(id, value) {
     return `<span id="${id}">${value}</span>`;
 }
 
 function disableOutputElement(id) {
-    const elem = document.getElementById(id);
-    assert(elem != null);
+    const elem = getElementById(id);
     elem.disabled = true;
     return null;
 }
 
 function enableOutputElement(id) {
-    const elem = document.getElementById(id);
-    assert(elem != null);
+    const elem = getElementById(id);
     elem.disabled = false;
     return null;
 }
@@ -137,7 +140,7 @@ function analysisChanged() {
     removeAllTableRows(inputTable);
     switch (familyValue) {
         case 3: // t tests
-            addTableOption(inputTable, "Tail(s)", "<select id='tail'><option value=1>One tail</option><option value=2>Two tails</option></select>");
+            addTableOption(inputTable, "Tail(s)", "<select onchange='updateOutput()' id='tail'><option value=1>One tail</option><option value=2>Two tails</option></select>");
             break;
         default:
     }
@@ -178,20 +181,18 @@ function analysisChanged() {
 }
 
 function readFloat(id) {
-    const elem = document.getElementById(id);
-    assert(elem != null);
+    const elem = getElementById(id);
     return parseFloat(elem.value);
 }
 
 function setFloat(id, value) {
-    const elem = document.getElementById(id);
-    assert(elem != null);
+    const elem = getElementById(id);
     elem.value = value;
     return null;
 }
 
 function tail() {
-    return 1; // TODO
+    return readInt("tail");
 }
 
 function alpha() {
@@ -210,20 +211,46 @@ function n() {
     return readFloat("n");
 }
 
+function restrictFloat(id) {
+    const elem = getElementById(id);
+    const value = elem.value;
+    if (elem.max < elem.value) {
+        elem.value = elem.max;
+    }
+}
+
+/** Enforce that input numbers are within the HTML specified values. */
+function restrictInput() {
+    restrictFloat("alpha");
+}
+
+function setError(text) {
+    const elem = getElementById("error");
+    elem.innerText = text;
+    return null;
+}
+
+function handleReturned(value) {
+    if (value == -111 || value == -111.0) {
+        return setError("Unable to find a solution for given input.");
+    } else {
+        return value.toString();
+    }
+}
+
 /** Update the output area by calculating the numbers via WebAssembly. */
 function updateOutput() {
+    setError("");
+    restrictInput();
+
     // The number order is the same as the selector.
     const familyValue = readInt("family");
     if (familyValue == 1) {
     } else if (familyValue == 2) {
 
     } else if (familyValue == 3) { // t tests
-        console.log(n());
-        console.log(es());
-        console.log(tail());
         const out = Module._oneSampleTTestN(tail(), alpha(), power(), es());
-        console.log(out);
-        setFloat("n", out);
+        setFloat("n", handleReturned(out));
     }
     //
     // TODO: Get rid of the right table. Just have the numbers on the left and update automatically.

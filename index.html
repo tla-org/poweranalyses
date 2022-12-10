@@ -72,13 +72,13 @@
                     <tr>
                         <td>α err prob:</td>
                         <td class="result">
-                            <input id="alpha" type="number" value="0.05" min="0" max="999999" step="0.05" onchange="updateOutput()">
+                            <input id="alpha" type="number" value="0.05" min="0.01" max="0.99" step="0.01" onchange="updateOutput()">
                         </td>
                     </tr>
                     <tr>
                         <td>Power (1-β err prob):</td>
                         <td class="result">
-                            <input id="power" type="number" value="0.95" min="0" max="999999" step="0.05" onchange="updateOutput()">
+                            <input id="power" type="number" value="0.95" min="0" max="0.99" step="0.01" onchange="updateOutput()">
                         </td>
                     </tr>
                     <tr>
@@ -89,6 +89,8 @@
                     </tr>
                     </tbody>
                     </table>
+                    <div id="error" class="center error">
+                    </div>
                     <button onclick="updateOutput()" class="center calculateBtn">Calculate</button>
                 </div>
 

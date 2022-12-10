@@ -22,12 +22,18 @@ trait StatisticalTest {
     fn es(&self, tail: i32, alpha: f64, power: f64, n: f64) -> f64 {
         let f = | es | { self.alpha(tail, es, power, n) - alpha };
         let mut convergency = SimpleConvergency { eps: 0.00001f64, max_iter: 40 };
-        return find_root_brent(0f64, 1000f64, &f, &mut convergency).unwrap();
+        return match find_root_brent(0f64, 1000f64, &f, &mut convergency) {
+            Ok(number) => number,
+            Err(_) => -111.0
+        };
     }
-    fn n(&self, tail: i32, alpha: f64, power: f64, es: f64) -> f64 {
+    fn n(&self, tail: i32, alpha: f64, power: f64, es: f64) -> i64 {
         let f = | n | { self.alpha(tail, es, power, n) - alpha };
         let mut convergency = SimpleConvergency { eps: 0.00001f64, max_iter: 40 };
-        return find_root_brent(2f64, 10000f64, &f, &mut convergency).unwrap();
+        return match find_root_brent(2f64, 10000f64, &f, &mut convergency) {
+            Ok(number) => number.round() as i64,
+            Err(_) => -111
+        };
     }
 }
 
@@ -43,8 +49,7 @@ impl StatisticalTest for OneSampleTTest {
 }
 
 #[no_mangle]
-pub extern fn oneSampleTTestN(tail: i32, alpha: f64, power: f64, es: f64) -> f64 {
-    println!("tail: {}, alpha: {}, power: {}, es: {}", tail, alpha, power, es);
+pub extern fn oneSampleTTestN(tail: i32, alpha: f64, power: f64, es: f64) -> i64 {
     return OneSampleTTest{}.n(tail, alpha, power, es);
 }
 
@@ -66,8 +71,10 @@ mod tests {
 
         assert_eq!(OneSampleTTest{}.es(2, alpha, power, n), 0.5201250999158732);
         assert_eq!(OneSampleTTest{}.es(1, alpha, power, n), 0.4718255595737365);
-        assert_eq!(OneSampleTTest{}.n(2, alpha, power, es), 53.94061366252956);
-        assert_eq!(OneSampleTTest{}.n(1, alpha, power, es), 44.68070848218932);
+        assert_eq!(OneSampleTTest{}.es(1, 0.99, power, es), -111.0);
+        assert_eq!(OneSampleTTest{}.n(2, alpha, power, es), 54);
+        assert_eq!(OneSampleTTest{}.n(1, alpha, power, es), 45);
+        assert_eq!(OneSampleTTest{}.n(1, 0.99, power, es), -111);
     }
 }
 
