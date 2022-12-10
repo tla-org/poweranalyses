@@ -76,10 +76,13 @@ select {
     font-size: 0.6rem;
     margin-left: 0.1em;
     margin-right: 0.1em;
+    display: table;
+    width: 100%;
 }
 
 .numbers table {
     border-spacing: 0.6em 0.6em;
+    height: 100%;
 }
 
 .numbers td {
@@ -135,4 +138,10 @@ input {
     color: var(--favicon-red);
     font-size: 0.8rem;
     margin: 0.6rem 0;
+}
+
+.footer {
+    display: block;
+    margin-top: auto;
+    font-size: 0.8rem;
 }
