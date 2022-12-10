@@ -230,12 +230,17 @@ function setError(text) {
     return null;
 }
 
-function handleReturned(value) {
+function handleError(value) {
     if (value == -111 || value == -111.0) {
-        return setError("Unable to find a solution for given input.");
-    } else {
-        return value.toString();
+        setError("Unable to find a solution for given input.");
     }
+    return null;
+}
+
+function setOutput(id, out) {
+    handleError(out);
+    setFloat(id, out);
+    return null;
 }
 
 /** Update the output area by calculating the numbers via WebAssembly. */
@@ -249,8 +254,7 @@ function updateOutput() {
     } else if (familyValue == 2) {
 
     } else if (familyValue == 3) { // t tests
-        const out = Module._oneSampleTTestN(tail(), alpha(), power(), es());
-        setFloat("n", handleReturned(out));
+        setOutput("n", Module._oneSampleTTestN(tail(), alpha(), power(), es()));
     }
     //
     // TODO: Get rid of the right table. Just have the numbers on the left and update automatically.
