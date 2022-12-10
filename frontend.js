@@ -21,6 +21,11 @@ function readInt(id) {
     return parseInt(elem.value);
 }
 
+function readString(id) {
+    const elem = getElementById(id);
+    return elem.value;
+}
+
 // Update the "Statistical test" options based on the "Test family" setting.
 function familyChanged() {
     const familyValue = readInt("family");
@@ -133,7 +138,8 @@ function enableOutputElement(id) {
 
 /** Update the input and output area based on the "Type of power analysis" setting. */
 function analysisChanged() {
-    const analysisSelector = document.getElementById("analysis");
+    updateOutput();
+
     // The number order is the same as the selector.
     const familyValue = readInt("family");
     var inputTable = document.getElementById("input");
@@ -145,18 +151,18 @@ function analysisChanged() {
         default:
     }
     // Having the number as an integer makes it easy to pass it to WebAssembly.
-    const analysisValue = readInt("analysis");
+    const analysis = readString("analysis");
     // The numbers match the order of the elements in the "Type of power analysis" box.
-    if (analysisValue != 1) {
+    if (analysis != "n") {
         // addTableOption(inputTable, "Total sample size", floatInputElement("n", 100, 5));
     }
-    if (analysisValue != 2) {
+    if (analysis != "alpha") {
         // addTableOption(inputTable, "α err prob", floatInputElement("alpha", 0.05, 0.05));
     }
-    if (analysisValue != 3) {
+    if (analysis != "power") {
         // addTableOption(inputTable, "Power (1-β err prob)", floatInputElement("power", 0.95, 0.05));
     }
-    if (analysisValue != 4) {
+    if (analysis != "es") {
         // addTableOption(inputTable, "Effect size <i>d</i>", floatInputElement("es", 0.5, 0.1));
     }
 
@@ -167,13 +173,13 @@ function analysisChanged() {
     enableOutputElement("power");
     enableOutputElement("es");
 
-    if (analysisValue == 1) {
+    if (analysis == "n") {
         disableOutputElement("n");
-    } else if (analysisValue == 2) {
+    } else if (analysis == "alpha") {
         disableOutputElement("alpha");
-    } else if (analysisValue == 3) {
+    } else if (analysis == "power") {
         disableOutputElement("power");
-    } else if (analysisValue == 4) {
+    } else if (analysis == "es") {
         disableOutputElement("es");
     }
 
@@ -254,7 +260,15 @@ function updateOutput() {
     } else if (familyValue == 2) {
 
     } else if (familyValue == 3) { // t tests
-        setOutput("n", Module._oneSampleTTestN(tail(), alpha(), power(), es()));
+        const analysis = readString("analysis");
+        if (analysis == "n") {
+            setOutput("n", Module._oneSampleTTestN(tail(), alpha(), power(), es()));
+        } else if (analysis == "alpha") {
+            setOutput("alpha", Module._oneSampleTTestAlpha(tail(), n(), power(), es()));
+        } else if (analysis == "power") {
+            setOutput("power", Module._oneSampleTTestAlpha(tail(), n(), alpha(), es()));
+        } else if (analysis == "es") {
+        }
     }
     //
     // TODO: Get rid of the right table. Just have the numbers on the left and update automatically.

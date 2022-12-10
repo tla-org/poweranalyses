@@ -38,10 +38,10 @@
             <label for="analysis">
                 Type of power analysis:<br>
                 <select onchange="analysisChanged()" name="type" id="analysis">
-                    <option value="1">Compute required sample size (a priori)</option>
-                    <option value="2">Compute required α (criterion)</option>
-                    <option value="3">Compute achieved power (post hoc)</option>
-                    <option value="4">Compute required effect size (sensitivity)</option>
+                    <option value="n">Compute required sample size (a priori)</option>
+                    <option value="alpha">Compute required α (criterion)</option>
+                    <option value="power">Compute achieved power (post hoc)</option>
+                    <option value="es">Compute required effect size (sensitivity)</option>
                 </select>
             </label>
             <br>
@@ -98,10 +98,11 @@
         <br>
         <br>
         <div class="center footer">
-            This site was inspired by
-            <a href="https://www.psychologie.hhu.de/arbeitsgruppen/allgemeine-psychologie-und-arbeitspsychologie/gpower.html">G*Power</a>,
-            <a href="https://github.com/heliosdrm/pwr">pwr</a>,
-            and <a href="https://github.com/rikhuijzer/PowerAnalyses.jl">PowerAnalyses.jl</a>.
+            The source code for this site can be found on <a href="https://github.com/rikhuijzer/poweranalyses.org">GitHub</a>.
+            This site was made possible thanks to the
+            <a href="https://www.psychologie.hhu.de/arbeitsgruppen/allgemeine-psychologie-und-arbeitspsychologie/gpower.html">G*Power</a>
+            and
+            <a href="https://github.com/heliosdrm/pwr">pwr</a> projects.
         </div>
         </div>
     </body>

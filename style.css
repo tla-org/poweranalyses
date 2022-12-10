@@ -143,5 +143,6 @@ input {
 .footer {
     display: block;
     margin-top: auto;
+    font-style: italic;
     font-size: 0.8rem;
 }
