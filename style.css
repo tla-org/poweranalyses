@@ -124,7 +124,7 @@ input {
     font-weight: 800;
 }
 
-.calculateBtn {
+button {
     background-color: var(--favicon-green);
     color: white;
     border: 0px;
@@ -132,6 +132,11 @@ input {
     padding: 4px 10px;
     border-radius: 4px;
     margin-top: 1rem;
+}
+
+.resetBtn {
+    background-color: gray;
+    margin-right: 0.2rem;
 }
 
 .error {
@@ -145,4 +150,8 @@ input {
     margin-top: auto;
     font-style: italic;
     font-size: 0.8rem;
+}
+
+.changed {
+    border: 1px var(--favicon-red) solid;
 }

@@ -161,8 +161,18 @@ function readFloat(id) {
     return parseFloat(elem.value);
 }
 
+const highlightBorder = [
+  { border: '1px var(--favicon-red) solid' }
+];
+
+const highlightTiming = {
+  duration: 400,
+  iterations: 1,
+}
+
 function setFloat(id, value) {
     const elem = getElementById(id);
+    elem.animate(highlightBorder, highlightTiming);
     elem.value = value;
     return null;
 }
