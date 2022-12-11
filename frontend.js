@@ -94,7 +94,7 @@ function familyChanged() {
         default:
             console.log("Unexpected familySelector.value");
     }
-    updateOutput();
+    analysisChanged();
     return;
 }
 
