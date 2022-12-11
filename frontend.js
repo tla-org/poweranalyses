@@ -16,11 +16,6 @@ function getElementById(id) {
     return elem;
 }
 
-function readInt(id) {
-    const elem = getElementById(id);
-    return parseInt(elem.value);
-}
-
 function readString(id) {
     const elem = getElementById(id);
     return elem.value;
@@ -28,71 +23,62 @@ function readString(id) {
 
 // Update the "Statistical test" options based on the "Test family" setting.
 function familyChanged() {
-    const familyValue = readInt("family");
+    const family = readString("family");
     const testSelector = document.getElementById("test");
     removeAllSelectOptions(testSelector);
-    switch (familyValue) {
-        // Using integers since those are easier to pass to WebAssembly.
-        case 1: // Exact
-            addSelectOption(testSelector, "Correlation: Bivariate normal model", true, 1);
-            addSelectOption(testSelector, "Linear multiple regression: Random model", false, 2);
-            addSelectOption(testSelector, "Proportion: Difference from constant (binomial test, one sample case)", false, 3);
-            addSelectOption(testSelector, "Proportions: Inequality, two dependent groups (McNemar)", false, 4);
-            addSelectOption(testSelector, "Proportions: Inequality, two independent groups (Fisher's exact test)", false, 5);
-            addSelectOption(testSelector, "Proportions: Inequality, two independent groups (unconditional)", false, 6);
-            addSelectOption(testSelector, "Proportions: Inequality (offset), two independent groups (unconditional)", false, 7);
-            addSelectOption(testSelector, "Proportions: Sign test (binomial test)", false, 8);
-            break;
-        case 2: // F tests
-            addSelectOption(testSelector, "ANCOVA: Fixed effects, main effects, and interactions", true, 1);
-            addSelectOption(testSelector, "ANOVA: Fixed effects, omnibus, one-way", false, 2);
-            addSelectOption(testSelector, "ANOVA: Fixed effects, special, main effects, and interactions", false, 3);
-            addSelectOption(testSelector, "ANOVA: Repeated measures, between factors", false, 4);
-            addSelectOption(testSelector, "ANOVA: Repeated measures, within factors", false, 5);
-            addSelectOption(testSelector, "ANOVA: Repeated measures, within-between interaction", false, 6);
-            addSelectOption(testSelector, "Hotellings T²: One group mean vector", false, 7);
-            addSelectOption(testSelector, "Hotellings T²: Two group mean vector", false, 8);
-            addSelectOption(testSelector, "MANOVA: Global effects", false, 9);
-            addSelectOption(testSelector, "MANOVA: Special effects and interactions", false, 10);
-            addSelectOption(testSelector, "MANOVA: Repeated measures, between factors", false, 11);
-            addSelectOption(testSelector, "MANOVA: Repeated measures, within factors", false, 12);
-            addSelectOption(testSelector, "MANOVA: Repeated measures, within-between interaction", false, 13);
-            addSelectOption(testSelector, "Linear multiple regression: Fixed model, R² deviation from zero", false, 14);
-            addSelectOption(testSelector, "Linear multiple regression: Fixed model, R² increase", false, 15);
-            addSelectOption(testSelector, "Variance: Test of equality (two sample case)", false, 16);
-            addSelectOption(testSelector, "Generic F test", false, 17);
-            break;
-        case 3: // t tests
-            addSelectOption(testSelector, "Correlation: Point biseral model", false, 1);
-            addSelectOption(testSelector, "Linear bivariate regression: One group, size of slope", false, 2);
-            addSelectOption(testSelector, "Linear bivariate regression: Two groups, difference between intercepts", false, 3);
-            addSelectOption(testSelector, "Linear bivariate regression: Two groups, difference between slopes", false, 4);
-            addSelectOption(testSelector, "Linear multiple regression: Fixed model, single regression coefficient", false, 5);
-            addSelectOption(testSelector, "Means: Difference between two dependent means (matched pairs)", false, 6);
-            addSelectOption(testSelector, "Means: Difference between two independent means (two groups)", false, 7);
-            addSelectOption(testSelector, "Means: Difference from constant (one sample case)", true, 8);
-            addSelectOption(testSelector, "Means: Wilcoxon signed-rank test (matched pairs)", false, 9);
-            addSelectOption(testSelector, "Means: Wilcoxon signed-rank test (one sample case)", false, 10);
-            addSelectOption(testSelector, "Means: Wilcoxon-Mann-Whitney test (two groups)", false, 11);
-            addSelectOption(testSelector, "Generic t test", false, 12);
-            break;
-        case 4: // χ² tests
-            addSelectOption(testSelector, "Goodness-of-fit tests: Contingency tables", true, 1);
-            addSelectOption(testSelector, "Variance: Difference from constant (one sample case)", true, 2);
-            addSelectOption(testSelector, "Generic χ² test", false, 3);
-            break;
-        case 5: // z tests
-            addSelectOption(testSelector, "Correlation: Tetrachoric model", false, 1);
-            addSelectOption(testSelector, "Correlations: Two dependent Pearson r's (common index)", true, 2);
-            addSelectOption(testSelector, "Correlations: Two dependent Pearson r's (no common index)", true, 3);
-            addSelectOption(testSelector, "Correlations: Two independent Pearson r's", true, 4);
-            addSelectOption(testSelector, "Logistic regression", true, 5);
-            addSelectOption(testSelector, "Poisson regression", false, 6);
-            addSelectOption(testSelector, "Proportions: Difference between two independent proportions", false, 7);
-            addSelectOption(testSelector, "Generic z test", false, 8);
-            break;
-        default:
-            console.log("Unexpected familySelector.value");
+    if (family == "exact") {
+        addSelectOption(testSelector, "Correlation: Bivariate normal model", true, 1);
+        addSelectOption(testSelector, "Linear multiple regression: Random model", false, 2);
+        addSelectOption(testSelector, "Proportion: Difference from constant (binomial test, one sample case)", false, 3);
+        addSelectOption(testSelector, "Proportions: Inequality, two dependent groups (McNemar)", false, 4);
+        addSelectOption(testSelector, "Proportions: Inequality, two independent groups (Fisher's exact test)", false, 5);
+        addSelectOption(testSelector, "Proportions: Inequality, two independent groups (unconditional)", false, 6);
+        addSelectOption(testSelector, "Proportions: Inequality (offset), two independent groups (unconditional)", false, 7);
+        addSelectOption(testSelector, "Proportions: Sign test (binomial test)", false, 8);
+    } else if (family == "f") {
+        addSelectOption(testSelector, "ANCOVA: Fixed effects, main effects, and interactions", true, 1);
+        addSelectOption(testSelector, "ANOVA: Fixed effects, omnibus, one-way", false, 2);
+        addSelectOption(testSelector, "ANOVA: Fixed effects, special, main effects, and interactions", false, 3);
+        addSelectOption(testSelector, "ANOVA: Repeated measures, between factors", false, 4);
+        addSelectOption(testSelector, "ANOVA: Repeated measures, within factors", false, 5);
+        addSelectOption(testSelector, "ANOVA: Repeated measures, within-between interaction", false, 6);
+        addSelectOption(testSelector, "Hotellings T²: One group mean vector", false, 7);
+        addSelectOption(testSelector, "Hotellings T²: Two group mean vector", false, 8);
+        addSelectOption(testSelector, "MANOVA: Global effects", false, 9);
+        addSelectOption(testSelector, "MANOVA: Special effects and interactions", false, 10);
+        addSelectOption(testSelector, "MANOVA: Repeated measures, between factors", false, 11);
+        addSelectOption(testSelector, "MANOVA: Repeated measures, within factors", false, 12);
+        addSelectOption(testSelector, "MANOVA: Repeated measures, within-between interaction", false, 13);
+        addSelectOption(testSelector, "Linear multiple regression: Fixed model, R² deviation from zero", false, 14);
+        addSelectOption(testSelector, "Linear multiple regression: Fixed model, R² increase", false, 15);
+        addSelectOption(testSelector, "Variance: Test of equality (two sample case)", false, 16);
+        addSelectOption(testSelector, "Generic F test", false, 17);
+    } else if (family == "t") {
+        addSelectOption(testSelector, "Correlation: Point biseral model", false, 1);
+        addSelectOption(testSelector, "Linear bivariate regression: One group, size of slope", false, 2);
+        addSelectOption(testSelector, "Linear bivariate regression: Two groups, difference between intercepts", false, 3);
+        addSelectOption(testSelector, "Linear bivariate regression: Two groups, difference between slopes", false, 4);
+        addSelectOption(testSelector, "Linear multiple regression: Fixed model, single regression coefficient", false, 5);
+        addSelectOption(testSelector, "Means: Difference between two dependent means (matched pairs)", false, 6);
+        addSelectOption(testSelector, "Means: Difference between two independent means (two groups)", false, 7);
+        addSelectOption(testSelector, "Means: Difference from constant (one sample case)", true, 8);
+        addSelectOption(testSelector, "Means: Wilcoxon signed-rank test (matched pairs)", false, 9);
+        addSelectOption(testSelector, "Means: Wilcoxon signed-rank test (one sample case)", false, 10);
+        addSelectOption(testSelector, "Means: Wilcoxon-Mann-Whitney test (two groups)", false, 11);
+        addSelectOption(testSelector, "Generic t test", false, 12);
+    } else if (family == "chi") {
+        addSelectOption(testSelector, "Goodness-of-fit tests: Contingency tables", true, 1);
+        addSelectOption(testSelector, "Variance: Difference from constant (one sample case)", true, 2);
+        addSelectOption(testSelector, "Generic χ² test", false, 3);
+    } else if (family == "z") {
+        addSelectOption(testSelector, "Correlation: Tetrachoric model", false, 1);
+        addSelectOption(testSelector, "Correlations: Two dependent Pearson r's (common index)", true, 2);
+        addSelectOption(testSelector, "Correlations: Two dependent Pearson r's (no common index)", true, 3);
+        addSelectOption(testSelector, "Correlations: Two independent Pearson r's", true, 4);
+        addSelectOption(testSelector, "Logistic regression", true, 5);
+        addSelectOption(testSelector, "Poisson regression", false, 6);
+        addSelectOption(testSelector, "Proportions: Difference between two independent proportions", false, 7);
+        addSelectOption(testSelector, "Generic z test", false, 8);
     }
     analysisChanged();
     return;
@@ -138,39 +124,23 @@ function enableOutputElement(id) {
 
 /** Update the input and output area based on the "Type of power analysis" setting. */
 function analysisChanged() {
-    // The number order is the same as the selector.
-    const familyValue = readInt("family");
     var inputTable = document.getElementById("input");
     removeAllTableRows(inputTable);
-    switch (familyValue) {
-        case 3: // t tests
-            addTableOption(inputTable, "Tail(s)", "<select onchange='updateOutput()' id='tail'><option value=1>One tail</option><option value=2>Two tails</option></select>");
-            break;
-        default:
+    const family = readString("family");
+    if (family == "exact") {
+    } else if (family == "f") {
+    } else if (family == "t") {
+        addTableOption(inputTable, "Tail(s)", "<select onchange='updateOutput()' id='tail'><option value=1>One tail</option><option value=2>Two tails</option></select>");
+    } else if (family == "chi") {
+    } else if (family == "z") {
     }
-    // Having the number as an integer makes it easy to pass it to WebAssembly.
-    const analysis = readString("analysis");
-    // The numbers match the order of the elements in the "Type of power analysis" box.
-    if (analysis != "n") {
-        // addTableOption(inputTable, "Total sample size", floatInputElement("n", 100, 5));
-    }
-    if (analysis != "alpha") {
-        // addTableOption(inputTable, "α err prob", floatInputElement("alpha", 0.05, 0.05));
-    }
-    if (analysis != "power") {
-        // addTableOption(inputTable, "Power (1-β err prob)", floatInputElement("power", 0.95, 0.05));
-    }
-    if (analysis != "es") {
-        // addTableOption(inputTable, "Effect size <i>d</i>", floatInputElement("es", 0.5, 0.1));
-    }
-
-    var outputTable = document.getElementById("output");
 
     enableOutputElement("n");
     enableOutputElement("alpha");
     enableOutputElement("power");
     enableOutputElement("es");
 
+    const analysis = readString("analysis");
     if (analysis == "n") {
         disableOutputElement("n");
     } else if (analysis == "alpha") {
@@ -195,6 +165,11 @@ function setFloat(id, value) {
     const elem = getElementById(id);
     elem.value = value;
     return null;
+}
+
+function readInt(id) {
+    const elem = getElementById(id);
+    return parseInt(elem.value);
 }
 
 function tail() {
@@ -254,12 +229,10 @@ function updateOutput() {
     setError("");
     restrictInput();
 
-    // The number order is the same as the selector.
-    const familyValue = readInt("family");
-    if (familyValue == 1) {
-    } else if (familyValue == 2) {
-
-    } else if (familyValue == 3) { // t tests
+    const family = readString("family");
+    if (family == "exact") {
+    } else if (family == "f") {
+    } else if (family == "t") {
         const analysis = readString("analysis");
         if (analysis == "n") {
             setOutput("n", Module._oneSampleTTestN(tail(), alpha(), power(), es()));
@@ -270,13 +243,8 @@ function updateOutput() {
         } else if (analysis == "es") {
         }
     }
-    //
-    // TODO: Get rid of the right table. Just have the numbers on the left and update automatically.
-    //
-    // console.log(readFloat("n"));
-    // var out = Module._add_ten(readFloat("n"));
-    // setFloat("df", out);
-    // return null;
+
+    return null;
 }
 
 Module['onRuntimeInitialized'] = function() {

@@ -21,12 +21,12 @@
         <div class="dropdowns border">
             <label for="family">
                 Test family:<br>
-                <select onchange="familyChanged(); analysisChanged();" name="type" id="family">
-                    <option value=1>Exact</option>
-                    <option value=2>F tests</option>
-                    <option value=3>t tests</option>
-                    <option value=4>χ² tests</option>
-                    <option value=5>z tests</option>
+                <select id="family" onchange="familyChanged(); analysisChanged();" name="type">
+                    <option value="exact">Exact</option>
+                    <option value="f">F tests</option>
+                    <option value="t">t tests</option>
+                    <option value="chi">χ² tests</option>
+                    <option value="z">z tests</option>
                 </select><br>
             </label>
             <label for="test">
@@ -37,7 +37,7 @@
             </label>
             <label for="analysis">
                 Type of power analysis:<br>
-                <select onchange="analysisChanged()" name="type" id="analysis">
+                <select id="analysis" onchange="analysisChanged()" name="type">
                     <option value="n">Compute required sample size (a priori)</option>
                     <option value="alpha">Compute required α (criterion)</option>
                     <option value="power">Compute achieved power (post hoc)</option>
