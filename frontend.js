@@ -162,12 +162,12 @@ function readFloat(id) {
 }
 
 const highlightBorder = [
-  { border: '1px var(--favicon-red) solid' }
+    { border: '1px var(--favicon-red) solid' }
 ];
 
 const highlightTiming = {
-  duration: 400,
-  iterations: 1,
+    duration: 400,
+    iterations: 1,
 }
 
 function setFloat(id, value) {
@@ -255,6 +255,15 @@ function updateOutput() {
     }
 
     return null;
+}
+
+/** Reset the numbers in the output area. */
+function resetOutput() {
+    setFloat("n", 100);
+    setFloat("alpha", 0.05);
+    setFloat("power", 0.95);
+    setFloat("es", 0.5);
+    updateOutput();
 }
 
 Module['onRuntimeInitialized'] = function() {
