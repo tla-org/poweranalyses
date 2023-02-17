@@ -9,7 +9,7 @@ struct AlphaArgs {
     es: f64
 }
 
-trait StatisticalTest {
+trait Calculation {
     fn null_distribution(&self, n: f64, es: f64) -> Box<dyn Distribution>;
     fn alternative_distribution(&self, n: f64, es: f64) -> Box<dyn Distribution>;
     fn power(&self, tail: i32, n: f64, alpha: f64, es: f64) -> f64 {
@@ -46,12 +46,33 @@ trait StatisticalTest {
 
 struct OneSampleTTest {}
 
-impl StatisticalTest for OneSampleTTest {
+impl Calculation for OneSampleTTest {
     fn null_distribution(&self, n: f64, _es: f64) -> Box<dyn Distribution> {
         return Box::new(NoncentralT{ v: n - 1.0, lambda: 0.0 })
     }
     fn alternative_distribution(&self, n: f64, es: f64) -> Box<dyn Distribution> {
         return Box::new(NoncentralT{ v: n - 1.0, lambda: n.sqrt() * es });
+    }
+}
+
+struct DeviationFromZeroMultipleRegression {
+    n_predictors: i32
+}
+
+impl Calculation for DeviationFromZeroMultipleRegression {
+    fn null_distribution(&self, n: f64, _es: f64) -> Box<dyn Distribution> {
+        return Box::new(NoncentralF::new(
+            self.n_predictors as f64,
+            (n as f64) - (self.n_predictors as f64) - (1 as f64),
+            0.0
+        ))
+    }
+    fn alternative_distribution(&self, n: f64, es: f64) -> Box<dyn Distribution> {
+        return Box::new(NoncentralF::new(
+            self.n_predictors as f64,
+            (n as f64) - (self.n_predictors as f64) - (1 as f64),
+            es.powi(2) * (n as f64)
+        ))
     }
 }
 
