@@ -2,6 +2,13 @@ use crate::dist::*;
 
 use roots::*;
 
+struct AlphaArgs {
+    tail: i32,
+    n: f64,
+    power: f64,
+    es: f64
+}
+
 trait StatisticalTest {
     fn null_distribution(&self, n: f64, es: f64) -> Box<dyn Distribution>;
     fn alternative_distribution(&self, n: f64, es: f64) -> Box<dyn Distribution>;
@@ -12,15 +19,15 @@ trait StatisticalTest {
         let critical_value = d0.quantile(right_tail, false);
         return d1.cdf(critical_value, false);
     }
-    fn alpha(&self, tail: i32, n: f64, power: f64, es: f64) -> f64 {
-        let d0 = self.null_distribution(n, es);
-        let d1 = self.alternative_distribution(n, es);
-        let critical_value = d1.quantile(power, false);
+    fn alpha(&self, args: AlphaArgs) -> f64 {
+        let d0 = self.null_distribution(args.n, args.es);
+        let d1 = self.alternative_distribution(args.n, args.es);
+        let critical_value = d1.quantile(args.power, false);
         let right_tail = d0.cdf(critical_value, false);
-        return if tail == 1 { right_tail } else { 2.0 * right_tail };
+        return if args.tail == 1 { right_tail } else { 2.0 * right_tail };
     }
     fn es(&self, tail: i32, n: f64, alpha: f64, power: f64) -> f64 {
-        let f = | es | { self.alpha(tail, n, power, es) - alpha };
+        let f = | es | { self.alpha(AlphaArgs { tail, n, power, es }) - alpha };
         let mut convergency = SimpleConvergency { eps: 0.00001f64, max_iter: 40 };
         return match find_root_brent(0f64, 1000f64, &f, &mut convergency) {
             Ok(number) => number,
@@ -28,7 +35,7 @@ trait StatisticalTest {
         };
     }
     fn n(&self, tail: i32, alpha: f64, power: f64, es: f64) -> i64 {
-        let f = | n | { self.alpha(tail, n, power, es) - alpha };
+        let f = | n | { self.alpha(AlphaArgs { tail, n, power, es }) - alpha };
         let mut convergency = SimpleConvergency { eps: 0.00001f64, max_iter: 40 };
         return match find_root_brent(2f64, 10000f64, &f, &mut convergency) {
             Ok(number) => number.round() as i64,
@@ -40,7 +47,7 @@ trait StatisticalTest {
 struct OneSampleTTest {}
 
 impl StatisticalTest for OneSampleTTest {
-    fn null_distribution(&self, n: f64, es: f64) -> Box<dyn Distribution> {
+    fn null_distribution(&self, n: f64, _es: f64) -> Box<dyn Distribution> {
         return Box::new(NoncentralT{ v: n - 1.0, lambda: 0.0 })
     }
     fn alternative_distribution(&self, n: f64, es: f64) -> Box<dyn Distribution> {
@@ -63,12 +70,17 @@ pub extern fn oneSampleTTestN(tail: i32, alpha: f64, power: f64, es: f64) -> i64
 
 #[no_mangle]
 pub extern fn oneSampleTTestAlpha(tail: i32, n: f64, power: f64, es: f64) -> f64 {
-    return round(OneSampleTTest{}.alpha(tail, n, power, es), 2);
+    return round(OneSampleTTest{}.alpha(AlphaArgs { tail, n, power, es }), 2);
 }
 
 #[no_mangle]
 pub extern fn oneSampleTTestPower(tail: i32, n: f64, alpha: f64, es: f64) -> f64 {
     return round(OneSampleTTest{}.power(tail, n, alpha, es), 2);
+}
+
+#[no_mangle]
+pub extern fn oneSampleTTestES(tail: i32, n: f64, alpha: f64, power: f64) -> f64 {
+    return round(OneSampleTTest{}.es(tail, n, alpha, power), 2);
 }
 
 #[cfg(test)]
@@ -83,8 +95,9 @@ mod tests {
         let alpha = 0.05;
         let power = 0.95;
         let n = 50.0;
-        assert_eq!(OneSampleTTest{}.alpha(2, n, power, es), 0.06731683009994659);
-        assert_eq!(OneSampleTTest{}.alpha(1, n, power, es), 0.03365841504997329);
+        assert_eq!(OneSampleTTest{}.alpha(AlphaArgs { tail: 2, n, power, es }), 0.06731683009994659);
+        assert_eq!(OneSampleTTest{}.alpha(AlphaArgs { tail: 2, n, power, es }), 0.06731683009994659);
+        assert_eq!(OneSampleTTest{}.alpha(AlphaArgs { tail: 1, n, power, es }), 0.03365841504997329);
         assert_eq!(OneSampleTTest{}.power(2, n, alpha, es), 0.9338975528614741);
         assert_eq!(OneSampleTTest{}.power(1, n, alpha, es), 0.9672067458263426);
 
