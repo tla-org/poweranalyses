@@ -92,20 +92,41 @@ fn round(x: f64, decimals: u32) -> f64 {
 pub extern fn oneSampleTTestN(tail: i32, alpha: f64, power: f64, es: f64) -> i64 {
     return TestKind::OneSampleTTest.n(tail, alpha, power, es);
 }
-
 #[no_mangle]
 pub extern fn oneSampleTTestAlpha(tail: i32, n: f64, power: f64, es: f64) -> f64 {
     return round(TestKind::OneSampleTTest.alpha(AlphaArgs { tail, n, power, es }), 3);
 }
-
 #[no_mangle]
 pub extern fn oneSampleTTestPower(tail: i32, n: f64, alpha: f64, es: f64) -> f64 {
     return round(TestKind::OneSampleTTest.power(tail, n, alpha, es), 3);
 }
-
 #[no_mangle]
 pub extern fn oneSampleTTestES(tail: i32, n: f64, alpha: f64, power: f64) -> f64 {
     return round(TestKind::OneSampleTTest.es(tail, n, alpha, power), 3);
+}
+
+#[no_mangle]
+pub extern fn deviationFromZeroMultipleRegressionN(n_predictors: i32, alpha: f64, power: f64, es: f64) -> i64 {
+    let tail = 1;
+    let test = TestKind::DeviationFromZeroMultipleRegression{ n_predictors };
+    test.n(tail, alpha, power, es)
+}
+#[no_mangle]
+pub extern fn deviationFromZeroMultipleRegressionAlpha(n_predictors: i32, n: f64, power: f64, es: f64) -> f64 {
+    let test = TestKind::DeviationFromZeroMultipleRegression{ n_predictors };
+    round(test.alpha(AlphaArgs { tail: 1, n, power, es }), 3)
+}
+#[no_mangle]
+pub extern fn deviationFromZeroMultipleRegressionPower(n_predictors: i32, n: f64, alpha: f64, es: f64) -> f64 {
+    let tail = 1;
+    let test = TestKind::DeviationFromZeroMultipleRegression{ n_predictors };
+    round(test.power(tail, n, alpha, es), 3)
+}
+#[no_mangle]
+pub extern fn deviationFromZeroMultipleRegressionES(n_predictors: i32, n: f64, alpha: f64, power: f64) -> f64 {
+    let tail = 1;
+    let test = TestKind::DeviationFromZeroMultipleRegression{ n_predictors };
+    round(test.es(tail, n, alpha, power), 3)
 }
 
 #[cfg(test)]
@@ -131,6 +152,10 @@ mod tests {
         assert_eq!(oneSampleTTestN(2, alpha, power, es), 54);
         assert_eq!(oneSampleTTestN(1, alpha, power, es), 45);
         assert_eq!(oneSampleTTestN(1, 0.99, power, es), -111);
+
+        // assert_eq!(deviationFromZeroMultipleRegressionN(2, alpha, power, es), 35);
+        let f_squared = es.sqrt();
+        assert_eq!(deviationFromZeroMultipleRegressionAlpha(2, n, power, f_squared), 0.006);
     }
 }
 
