@@ -60,8 +60,8 @@ function familyChanged() {
         addSelectOption(testSelector, "Linear bivariate regression: Two groups, difference between slopes", false, 4);
         addSelectOption(testSelector, "Linear multiple regression: Fixed model, single regression coefficient", false, 5);
         addSelectOption(testSelector, "Means: Difference between two dependent means (matched pairs)", false, 6);
-        addSelectOption(testSelector, "Means: Difference between two independent means (two groups)", false, 7);
-        addSelectOption(testSelector, "Means: Difference from constant (one sample case)", true, 8);
+        addSelectOption(testSelector, "Means: Difference between two independent means (two groups)", true, 'independentSamplesTTest');
+        addSelectOption(testSelector, "Means: Difference from constant (one sample case)", true, 'oneSampleTTest');
         addSelectOption(testSelector, "Means: Wilcoxon signed-rank test (matched pairs)", false, 9);
         addSelectOption(testSelector, "Means: Wilcoxon signed-rank test (one sample case)", false, 10);
         addSelectOption(testSelector, "Means: Wilcoxon-Mann-Whitney test (two groups)", false, 11);
@@ -243,6 +243,7 @@ function updateOutput() {
 
     const family = readString("family");
     const analysis = readString("analysis");
+    const test = readString("test");
     if (family == "exact") {
     } else if (family == "f") {
         let nPredictors = readFloat("nPredictors");
@@ -256,14 +257,26 @@ function updateOutput() {
             setOutput("es", Module._deviationFromZeroMultipleRegressionES(nPredictors, n(), alpha(), power()));
         }
     } else if (family == "t") {
-        if (analysis == "n") {
-            setOutput("n", Module._oneSampleTTestN(tail(), alpha(), power(), es()));
-        } else if (analysis == "alpha") {
-            setOutput("alpha", Module._oneSampleTTestAlpha(tail(), n(), power(), es()));
-        } else if (analysis == "power") {
-            setOutput("power", Module._oneSampleTTestPower(tail(), n(), alpha(), es()));
-        } else if (analysis == "es") {
-            setOutput("es", Module._oneSampleTTestES(tail(), n(), alpha(), power()));
+        if (test == "independentSamplesTTest") {
+            if (analysis == "n") {
+                setOutput("n", Module._independentSamplesTTestN(tail(), alpha(), power(), es()));
+            } else if (analysis == "alpha") {
+                setOutput("alpha", Module._independentSamplesTTestAlpha(tail(), n(), power(), es()));
+            } else if (analysis == "power") {
+                setOutput("power", Module._independentSamplesTTestPower(tail(), n(), alpha(), es()));
+            } else if (analysis == "es") {
+                setOutput("es", Module._independentSamplesTTestES(tail(), n(), alpha(), power()));
+            }
+        } else if (test == "oneSampleTTest") {
+            if (analysis == "n") {
+                setOutput("n", Module._oneSampleTTestN(tail(), alpha(), power(), es()));
+            } else if (analysis == "alpha") {
+                setOutput("alpha", Module._oneSampleTTestAlpha(tail(), n(), power(), es()));
+            } else if (analysis == "power") {
+                setOutput("power", Module._oneSampleTTestPower(tail(), n(), alpha(), es()));
+            } else if (analysis == "es") {
+                setOutput("es", Module._oneSampleTTestES(tail(), n(), alpha(), power()));
+            }
         }
     } else if (family == "chi") {
         const df = readFloat("df");
@@ -283,7 +296,7 @@ function updateOutput() {
 
 /** Reset the numbers in the output area. */
 function resetOutput() {
-    setFloat("n", 100);
+    setFloat("n", 50);
     setFloat("alpha", 0.05);
     setFloat("power", 0.95);
     setFloat("es", 0.5);

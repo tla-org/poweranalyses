@@ -20,7 +20,8 @@ enum TestKind {
     },
     GoodnessOfFitChisqTest {
         df: i32
-    }
+    },
+    IndependentSamplesTTest
 }
 
 impl TestKind {
@@ -38,7 +39,12 @@ impl TestKind {
             },
             TestKind::GoodnessOfFitChisqTest { df } => {
                 Box::new(NoncentralChisq::new(*df as f64, es.powi(2) * n))
+            },
+            TestKind::IndependentSamplesTTest => {
+                let v = n - 2.0; // n1 + n2 - 2
+                Box::new(NoncentralT::new(v, (n / 2.0).sqrt() * es))
             }
+
         }
     }
 
@@ -87,6 +93,11 @@ fn round(x: f64, decimals: u32) -> f64 {
         Some(number) => (x * number as f64).round() / number as f64,
         None => x
     };
+}
+
+#[test]
+fn rounding() {
+    assert_eq!(round(1.234, 2), 1.23);
 }
 
 #[no_mangle]
@@ -155,6 +166,23 @@ pub extern fn goodnessOfFitChisqTestES(df: i32, n: f64, alpha: f64, power: f64) 
     round(test.es(tail, n, alpha, power), 3)
 }
 
+#[no_mangle]
+pub extern fn independentSamplesTTestN(tail: i32, alpha: f64, power: f64, es: f64) -> i64 {
+    TestKind::IndependentSamplesTTest.n(tail, alpha, power, es)
+}
+#[no_mangle]
+pub extern fn independentSamplesTTestAlpha(tail: i32, n: f64, power: f64, es: f64) -> f64 {
+    round(TestKind::IndependentSamplesTTest.alpha(AlphaArgs { tail, n, power, es }), 3)
+}
+#[no_mangle]
+pub extern fn independentSamplesTTestPower(tail: i32, n: f64, alpha: f64, es: f64) -> f64 {
+    round(TestKind::IndependentSamplesTTest.power(tail, n, alpha, es), 3)
+}
+#[no_mangle]
+pub extern fn independentSamplesTTestES(tail: i32, n: f64, alpha: f64, power: f64) -> f64 {
+    round(TestKind::IndependentSamplesTTest.es(tail, n, alpha, power), 3)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -168,7 +196,6 @@ mod tests {
 
     #[test]
     fn one_sample_t_test() {
-        assert_eq!(round(1.234, 2), 1.23);
         assert_eq!(oneSampleTTestAlpha(2, N, POWER, ES), 0.067);
         assert_eq!(oneSampleTTestAlpha(1, N, POWER, ES), 0.034);
         assert_eq!(oneSampleTTestPower(2, N, ALPHA, ES), 0.934);
@@ -203,6 +230,13 @@ mod tests {
         // root finding algorithm.
         assert_eq!(goodnessOfFitChisqTestES(df, N, ALPHA, POWER), 0.670);
         assert_eq!(goodnessOfFitChisqTestN(df, ALPHA, POWER, ES), 79);
+    }
+
+    #[test]
+    fn independent_samples_t_test() {
+        // G*Power only gives 0.392 if you put sample size group 1 and 2 both on n=50.
+        // pwr.t.test(n=50, d=0.5, sig.level=NULL, power=0.95, type="two.sample", alternative="two.sided")
+        assert_eq!(independentSamplesTTestAlpha(2, N, POWER, ES), 0.398);
     }
 }
 
