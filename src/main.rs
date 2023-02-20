@@ -2,7 +2,6 @@ mod dist;
 mod power;
 
 use crate::dist::*;
-use crate::power::*;
 
 #[no_mangle]
 pub extern fn add_ten(x: i32) -> i32 {

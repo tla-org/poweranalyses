@@ -36,7 +36,7 @@ function familyChanged() {
         addSelectOption(testSelector, "Proportions: Inequality (offset), two independent groups (unconditional)", false, 7);
         addSelectOption(testSelector, "Proportions: Sign test (binomial test)", false, 8);
     } else if (family == "f") {
-        addSelectOption(testSelector, "ANCOVA: Fixed effects, main effects, and interactions", true, 1);
+        addSelectOption(testSelector, "ANCOVA: Fixed effects, main effects, and interactions", false, 1);
         addSelectOption(testSelector, "ANOVA: Fixed effects, omnibus, one-way", false, 2);
         addSelectOption(testSelector, "ANOVA: Fixed effects, special, main effects, and interactions", false, 3);
         addSelectOption(testSelector, "ANOVA: Repeated measures, between factors", false, 4);
@@ -49,7 +49,7 @@ function familyChanged() {
         addSelectOption(testSelector, "MANOVA: Repeated measures, between factors", false, 11);
         addSelectOption(testSelector, "MANOVA: Repeated measures, within factors", false, 12);
         addSelectOption(testSelector, "MANOVA: Repeated measures, within-between interaction", false, 13);
-        addSelectOption(testSelector, "Linear multiple regression: Fixed model, R² deviation from zero", false, 14);
+        addSelectOption(testSelector, "Linear multiple regression: Fixed model, R² deviation from zero", true, 14);
         addSelectOption(testSelector, "Linear multiple regression: Fixed model, R² increase", false, 15);
         addSelectOption(testSelector, "Variance: Test of equality (two sample case)", false, 16);
         addSelectOption(testSelector, "Generic F test", false, 17);
@@ -129,6 +129,7 @@ function analysisChanged() {
     const family = readString("family");
     if (family == "exact") {
     } else if (family == "f") {
+        addTableOption(inputTable, "Number of predictors", "<input onchange='updateOutput()' id='nPredictors' value='2' min='0' max=1000' step='5'>");
     } else if (family == "t") {
         addTableOption(inputTable, "Tail(s)", "<select onchange='updateOutput()' id='tail'><option value=1>One tail</option><option value=2>Two tails</option></select>");
     } else if (family == "chi") {
@@ -184,6 +185,10 @@ function readInt(id) {
 
 function tail() {
     return readInt("tail");
+}
+
+function nPredictors() {
+    return readFloat("nPredictors");
 }
 
 function alpha() {
@@ -242,6 +247,16 @@ function updateOutput() {
     const family = readString("family");
     if (family == "exact") {
     } else if (family == "f") {
+        const analysis = readString("analysis");
+        if (analysis == "n") {
+            setOutput("n", Module._deviationFromZeroMultipleRegressionN(nPredictors(), alpha(), power(), es()));
+        } else if (analysis == "alpha") {
+            setOutput("alpha", Module._deviationFromZeroMultipleRegressionAlpha(nPredictors(), n(), power(), es()));
+        } else if (analysis == "power") {
+            setOutput("power", Module._deviationFromZeroMultipleRegressionPower(nPredictors(), n(), alpha(), es()));
+        } else if (analysis == "es") {
+            setOutput("es", Module._deviationFromZeroMultipleRegressionES(nPredictors(), n(), alpha(), power()));
+        }
     } else if (family == "t") {
         const analysis = readString("analysis");
         if (analysis == "n") {
@@ -249,8 +264,9 @@ function updateOutput() {
         } else if (analysis == "alpha") {
             setOutput("alpha", Module._oneSampleTTestAlpha(tail(), n(), power(), es()));
         } else if (analysis == "power") {
-            setOutput("power", Module._oneSampleTTestAlpha(tail(), n(), alpha(), es()));
+            setOutput("power", Module._oneSampleTTestPower(tail(), n(), alpha(), es()));
         } else if (analysis == "es") {
+            setOutput("es", Module._oneSampleTTestES(tail(), n(), alpha(), power()));
         }
     }
 
