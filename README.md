@@ -1,5 +1,7 @@
 # poweranalyses.org
 
+Statistical power analyses in the browser via R's nmath library and WebAssembly.
+
 ## License
 
 The favicon is obtained from Flaticon (https://www.flaticon.com/free-icon/statistics_4064965).
