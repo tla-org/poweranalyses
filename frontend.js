@@ -129,7 +129,7 @@ function analysisChanged() {
     const family = readString("family");
     if (family == "exact") {
     } else if (family == "f") {
-        addTableOption(inputTable, "Number of predictors", "<input onchange='updateOutput()' id='fsquared' value='2' min='0' max=1000' step='5'>");
+        addTableOption(inputTable, "Number of predictors", "<input onchange='updateOutput()' id='nPredictors' value='2' min='0' max=1000' step='5'>");
     } else if (family == "t") {
         addTableOption(inputTable, "Tail(s)", "<select onchange='updateOutput()' id='tail'><option value=1>One tail</option><option value=2>Two tails</option></select>");
     } else if (family == "chi") {
@@ -187,8 +187,8 @@ function tail() {
     return readInt("tail");
 }
 
-function fsquared() {
-    return readFloat("fsquared");
+function nPredictors() {
+    return readFloat("nPredictors");
 }
 
 function alpha() {
@@ -249,7 +249,13 @@ function updateOutput() {
     } else if (family == "f") {
         const analysis = readString("analysis");
         if (analysis == "n") {
-            setOutput("n", Module._deviationFromZeroMultipleRegressionN(fsquared(), alpha(), power(), es()));
+            setOutput("n", Module._deviationFromZeroMultipleRegressionN(nPredictors(), alpha(), power(), es()));
+        } else if (analysis == "alpha") {
+            setOutput("alpha", Module._deviationFromZeroMultipleRegressionAlpha(nPredictors(), n(), power(), es()));
+        } else if (analysis == "power") {
+            setOutput("power", Module._deviationFromZeroMultipleRegressionPower(nPredictors(), n(), alpha(), es()));
+        } else if (analysis == "es") {
+            setOutput("es", Module._deviationFromZeroMultipleRegressionES(nPredictors(), n(), alpha(), power()));
         }
     } else if (family == "t") {
         const analysis = readString("analysis");
@@ -258,8 +264,9 @@ function updateOutput() {
         } else if (analysis == "alpha") {
             setOutput("alpha", Module._oneSampleTTestAlpha(tail(), n(), power(), es()));
         } else if (analysis == "power") {
-            setOutput("power", Module._oneSampleTTestAlpha(tail(), n(), alpha(), es()));
+            setOutput("power", Module._oneSampleTTestPower(tail(), n(), alpha(), es()));
         } else if (analysis == "es") {
+            setOutput("es", Module._oneSampleTTestES(tail(), n(), alpha(), power()));
         }
     }
 
