@@ -15,6 +15,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - run: |
+          VERSION="$(date +'%Y-%d-%m %H:%M')"
+          sed --in-place "s/<VERSION>/$VERSION/g" index.html
+        shell: bash
+
       - uses: mymindstorm/setup-emsdk@v11
 
       - uses: actions-rs/toolchain@v1
