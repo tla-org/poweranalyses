@@ -20,6 +20,7 @@ pub struct NoncentralT {
 
 impl NoncentralT {
     pub fn new(v: f64, lambda: f64) -> Self {
+        println!("NoncentralT with v1: {v} and lambda: {lambda}");
         return Self{ v, lambda };
     }
 }
@@ -42,9 +43,18 @@ pub struct NoncentralF {
     lambda: f64
 }
 
+fn ensure_positive_non_zero(x: f64) -> f64 {
+    if x <= 0.0 { 1e-10f64 } else { x}
+}
+
 impl NoncentralF {
     pub fn new(v1: f64, v2: f64, lambda: f64) -> Self {
-        return Self{ v1, v2, lambda };
+        println!("NoncentralF with v1: {v1}, v2: {v2}, and lambda: {lambda}");
+        Self{
+            v1: ensure_positive_non_zero(v1),
+            v2: ensure_positive_non_zero(v2),
+            lambda
+        }
     }
 }
 

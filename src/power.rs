@@ -47,8 +47,8 @@ impl TestKind {
 
     fn n(&self, tail: i32, alpha: f64, power: f64, es: f64) -> i64 {
         let f = | n | { self.alpha(AlphaArgs { tail, n, power, es }) - alpha };
-        let mut convergency = SimpleConvergency { eps: 0.00001f64, max_iter: 40 };
-        return match find_root_brent(2f64, 10000f64, &f, &mut convergency) {
+        let mut convergency = SimpleConvergency { eps: 0.0001f64, max_iter: 1000 };
+        return match find_root_brent(2f64, 1000f64, &f, &mut convergency) {
             Ok(number) => number.round() as i64,
             Err(_) => -111
         };
@@ -72,8 +72,8 @@ impl TestKind {
 
     fn es(&self, tail: i32, n: f64, alpha: f64, power: f64) -> f64 {
         let f = | es | { self.alpha(AlphaArgs { tail, n, power, es }) - alpha };
-        let mut convergency = SimpleConvergency { eps: 0.00001f64, max_iter: 40 };
-        return match find_root_brent(0f64, 1000f64, &f, &mut convergency) {
+        let mut convergency = SimpleConvergency { eps: 1e-10f64, max_iter: 1000 };
+        return match find_root_regula_falsi(0.1f64, 10f64, &f, &mut convergency) {
             Ok(number) => number,
             Err(_) => -111.0
         };
@@ -148,14 +148,16 @@ mod tests {
 
         assert_eq!(oneSampleTTestES(2, n, alpha, power), 0.520);
         assert_eq!(oneSampleTTestES(1, n, alpha, power), 0.472);
-        assert_eq!(oneSampleTTestES(1, 0.99, power, es), -111.0);
+        assert!(oneSampleTTestES(1, 0.99, power, es).is_nan());
         assert_eq!(oneSampleTTestN(2, alpha, power, es), 54);
         assert_eq!(oneSampleTTestN(1, alpha, power, es), 45);
         assert_eq!(oneSampleTTestN(1, 0.99, power, es), -111);
 
-        // assert_eq!(deviationFromZeroMultipleRegressionN(2, alpha, power, es), 35);
         let f_squared = es.sqrt();
         assert_eq!(deviationFromZeroMultipleRegressionAlpha(2, n, power, f_squared), 0.006);
+        assert_eq!(deviationFromZeroMultipleRegressionPower(2, n, alpha, f_squared), 0.994);
+        assert_eq!(deviationFromZeroMultipleRegressionES(2, n, alpha, power), 0.574);
+        assert_eq!(deviationFromZeroMultipleRegressionN(2, alpha, power, f_squared), 34);
     }
 }
 
