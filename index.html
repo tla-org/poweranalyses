@@ -15,18 +15,17 @@
             <img class="favicon" src="/favicon.png"/>
             PowerAnalyses.org Beta
         </div>
-        <div class="center" style="font-size: 14px; margin-bottom: 2em;"><i>Work in progress</i></div>
         <img class="plot center" src=""></img>
 
         <div class="dropdowns border">
             <label for="family">
                 Test family:<br>
                 <select id="family" onchange="familyChanged(); analysisChanged();" name="type">
-                    <option value="exact">Exact</option>
+                    <option disabled value="exact">Exact</option>
                     <option value="f">F tests</option>
                     <option value="t">t tests</option>
                     <option value="chi">χ² tests</option>
-                    <option value="z">z tests</option>
+                    <option disabled value="z">z tests</option>
                 </select><br>
             </label>
             <label for="test">

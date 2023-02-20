@@ -68,7 +68,7 @@ function familyChanged() {
         addSelectOption(testSelector, "Generic t test", false, 12);
     } else if (family == "chi") {
         addSelectOption(testSelector, "Goodness-of-fit tests: Contingency tables", true, 1);
-        addSelectOption(testSelector, "Variance: Difference from constant (one sample case)", true, 2);
+        addSelectOption(testSelector, "Variance: Difference from constant (one sample case)", false, 2);
         addSelectOption(testSelector, "Generic χ² test", false, 3);
     } else if (family == "z") {
         addSelectOption(testSelector, "Correlation: Tetrachoric model", false, 1);
@@ -133,6 +133,7 @@ function analysisChanged() {
     } else if (family == "t") {
         addTableOption(inputTable, "Tail(s)", "<select onchange='updateOutput()' id='tail'><option value=1>One tail</option><option value=2>Two tails</option></select>");
     } else if (family == "chi") {
+        addTableOption(inputTable, "Df", "<input onchange='updateOutput()' id='df' value='5' min='1' max=1000' step='1'>");
     } else if (family == "z") {
     }
 
@@ -185,10 +186,6 @@ function readInt(id) {
 
 function tail() {
     return readInt("tail");
-}
-
-function nPredictors() {
-    return readFloat("nPredictors");
 }
 
 function alpha() {
@@ -245,20 +242,20 @@ function updateOutput() {
     restrictInput();
 
     const family = readString("family");
+    const analysis = readString("analysis");
     if (family == "exact") {
     } else if (family == "f") {
-        const analysis = readString("analysis");
+        let nPredictors = readFloat("nPredictors");
         if (analysis == "n") {
-            setOutput("n", Module._deviationFromZeroMultipleRegressionN(nPredictors(), alpha(), power(), es()));
+            setOutput("n", Module._deviationFromZeroMultipleRegressionN(nPredictors, alpha(), power(), es()));
         } else if (analysis == "alpha") {
-            setOutput("alpha", Module._deviationFromZeroMultipleRegressionAlpha(nPredictors(), n(), power(), es()));
+            setOutput("alpha", Module._deviationFromZeroMultipleRegressionAlpha(nPredictors, n(), power(), es()));
         } else if (analysis == "power") {
-            setOutput("power", Module._deviationFromZeroMultipleRegressionPower(nPredictors(), n(), alpha(), es()));
+            setOutput("power", Module._deviationFromZeroMultipleRegressionPower(nPredictors, n(), alpha(), es()));
         } else if (analysis == "es") {
-            setOutput("es", Module._deviationFromZeroMultipleRegressionES(nPredictors(), n(), alpha(), power()));
+            setOutput("es", Module._deviationFromZeroMultipleRegressionES(nPredictors, n(), alpha(), power()));
         }
     } else if (family == "t") {
-        const analysis = readString("analysis");
         if (analysis == "n") {
             setOutput("n", Module._oneSampleTTestN(tail(), alpha(), power(), es()));
         } else if (analysis == "alpha") {
@@ -267,6 +264,17 @@ function updateOutput() {
             setOutput("power", Module._oneSampleTTestPower(tail(), n(), alpha(), es()));
         } else if (analysis == "es") {
             setOutput("es", Module._oneSampleTTestES(tail(), n(), alpha(), power()));
+        }
+    } else if (family == "chi") {
+        const df = readFloat("df");
+        if (analysis == "n") {
+            setOutput("n", Module._goodnessOfFitChisqTestN(df, alpha(), power(), es()));
+        } else if (analysis == "alpha") {
+            setOutput("alpha", Module._goodnessOfFitChisqTestAlpha(df, n(), power(), es()));
+        } else if (analysis == "power") {
+            setOutput("power", Module._goodnessOfFitChisqTestPower(df, n(), alpha(), es()));
+        } else if (analysis == "es") {
+            setOutput("es", Module._goodnessOfFitChisqTestES(df, n(), alpha(), power()));
         }
     }
 
