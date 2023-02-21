@@ -59,7 +59,7 @@ function familyChanged() {
         addSelectOption(testSelector, "Linear bivariate regression: Two groups, difference between intercepts", false, 3);
         addSelectOption(testSelector, "Linear bivariate regression: Two groups, difference between slopes", false, 4);
         addSelectOption(testSelector, "Linear multiple regression: Fixed model, single regression coefficient", false, 5);
-        addSelectOption(testSelector, "Means: Difference between two dependent means (matched pairs)", false, 6);
+        addSelectOption(testSelector, "Means: Difference between two dependent means (matched pairs)", true, 'dependentSamplesTTest');
         addSelectOption(testSelector, "Means: Difference between two independent means (two groups)", true, 'independentSamplesTTest');
         addSelectOption(testSelector, "Means: Difference from constant (one sample case)", true, 'oneSampleTTest');
         addSelectOption(testSelector, "Means: Wilcoxon signed-rank test (matched pairs)", false, 9);
@@ -267,7 +267,7 @@ function updateOutput() {
             } else if (analysis == "es") {
                 setOutput("es", Module._independentSamplesTTestES(tail(), n(), alpha(), power()));
             }
-        } else if (test == "oneSampleTTest") {
+        } else if (test == "oneSampleTTest" || test == "dependentSamplesTTest") {
             if (analysis == "n") {
                 setOutput("n", Module._oneSampleTTestN(tail(), alpha(), power(), es()));
             } else if (analysis == "alpha") {
