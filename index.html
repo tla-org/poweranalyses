@@ -20,7 +20,7 @@
         <div class="dropdowns border">
             <label for="family">
                 Test family:<br>
-                <select id="family" onchange="familyChanged(); updateNumberOutputAreas();" name="type">
+                <select id="family" onchange="familyChanged()" name="type">
                     <option disabled value="exact">Exact</option>
                     <option value="f">F tests</option>
                     <option value="t">t tests</option>
@@ -30,7 +30,7 @@
             </label>
             <label for="test">
                 Statistical test:<br>
-                <select id="test" onchange="testChanged()" name="type">
+                <select id="test" onchange="updateNumberOutputAreas()" name="type">
                     <option value="1">ANCOVA - Fixed effects, main effects, and interactions</option>
                 </select><br>
             </label>

@@ -84,10 +84,6 @@ function familyChanged() {
     return;
 }
 
-function testChanged() {
-    updateNumberOutputAreas();
-}
-
 function removeAllTableRows(table) {
     while (table.rows.length > 0) {
         table.deleteRow(0);
