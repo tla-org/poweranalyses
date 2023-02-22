@@ -49,8 +49,8 @@ function familyChanged() {
         addSelectOption(testSelector, "MANOVA: Repeated measures, between factors", false, 11);
         addSelectOption(testSelector, "MANOVA: Repeated measures, within factors", false, 12);
         addSelectOption(testSelector, "MANOVA: Repeated measures, within-between interaction", false, 13);
-        addSelectOption(testSelector, "Linear multiple regression: Fixed model, R² deviation from zero", true, 14);
-        addSelectOption(testSelector, "Linear multiple regression: Fixed model, R² increase", false, 15);
+        addSelectOption(testSelector, "Linear multiple regression: Fixed model, R² deviation from zero", true, 'DeviationFromZeroMultipleRegression');
+        addSelectOption(testSelector, "Linear multiple regression: Fixed model, R² increase", true, 'IncreaseMultipleRegression');
         addSelectOption(testSelector, "Variance: Test of equality (two sample case)", false, 16);
         addSelectOption(testSelector, "Generic F test", false, 17);
     } else if (family == "t") {
@@ -80,8 +80,12 @@ function familyChanged() {
         addSelectOption(testSelector, "Proportions: Difference between two independent proportions", false, 7);
         addSelectOption(testSelector, "Generic z test", false, 8);
     }
-    analysisChanged();
+    updateNumberOutputAreas();
     return;
+}
+
+function testChanged() {
+    updateNumberOutputAreas();
 }
 
 function removeAllTableRows(table) {
@@ -123,13 +127,19 @@ function enableOutputElement(id) {
 }
 
 /** Update the input and output area based on the "Type of power analysis" setting. */
-function analysisChanged() {
+function updateNumberOutputAreas() {
     var inputTable = document.getElementById("input");
     removeAllTableRows(inputTable);
     const family = readString("family");
+    const test = readString("test");
     if (family == "exact") {
     } else if (family == "f") {
-        addTableOption(inputTable, "Number of predictors", "<input onchange='updateOutput()' id='nPredictors' value='2' min='0' max=1000' step='5'>");
+        if (test == "DeviationFromZeroMultipleRegression") {
+            addTableOption(inputTable, "Number of predictors", "<input onchange='updateOutput()' id='nPredictors' value='2' min='0' max='1000' step='5'>");
+        } else if (test == "IncreaseMultipleRegression") {
+            addTableOption(inputTable, "Number of tested predictors", "<input onchange='updateOutput()' id='q' value='2' min='0' max='1000' step='1'>");
+            addTableOption(inputTable, "Total number of predictors", "<input onchange='updateOutput()' id='p' value='5' min='0' max='1000' step='1'>");
+        }
     } else if (family == "t") {
         addTableOption(inputTable, "Tail(s)", "<select onchange='updateOutput()' id='tail'><option value=1>One tail</option><option value=2>Two tails</option></select>");
     } else if (family == "chi") {
@@ -246,15 +256,29 @@ function updateOutput() {
     const test = readString("test");
     if (family == "exact") {
     } else if (family == "f") {
-        let nPredictors = readFloat("nPredictors");
-        if (analysis == "n") {
-            setOutput("n", Module._deviationFromZeroMultipleRegressionN(nPredictors, alpha(), power(), es()));
-        } else if (analysis == "alpha") {
-            setOutput("alpha", Module._deviationFromZeroMultipleRegressionAlpha(nPredictors, n(), power(), es()));
-        } else if (analysis == "power") {
-            setOutput("power", Module._deviationFromZeroMultipleRegressionPower(nPredictors, n(), alpha(), es()));
-        } else if (analysis == "es") {
-            setOutput("es", Module._deviationFromZeroMultipleRegressionES(nPredictors, n(), alpha(), power()));
+        if (test == "DeviationFromZeroMultipleRegression") {
+            let nPredictors = readFloat("nPredictors");
+            if (analysis == "n") {
+                setOutput("n", Module._deviationFromZeroMultipleRegressionN(nPredictors, alpha(), power(), es()));
+            } else if (analysis == "alpha") {
+                setOutput("alpha", Module._deviationFromZeroMultipleRegressionAlpha(nPredictors, n(), power(), es()));
+            } else if (analysis == "power") {
+                setOutput("power", Module._deviationFromZeroMultipleRegressionPower(nPredictors, n(), alpha(), es()));
+            } else if (analysis == "es") {
+                setOutput("es", Module._deviationFromZeroMultipleRegressionES(nPredictors, n(), alpha(), power()));
+            }
+        } else if (test == "IncreaseMultipleRegression") {
+            let p = readFloat("p");
+            let q = readFloat("q");
+            if (analysis == "n") {
+                setOutput("n", Module._increaseMultipleRegressionN(p, q, alpha(), power(), es()));
+            } else if (analysis == "alpha") {
+                setOutput("alpha", Module._increaseMultipleRegressionAlpha(p, q, n(), power(), es()));
+            } else if (analysis == "power") {
+                setOutput("power", Module._increaseMultipleRegressionPower(p, q, n(), alpha(), es()));
+            } else if (analysis == "es") {
+                setOutput("es", Module._increaseMultipleRegressionES(p, q, n(), alpha(), power()));
+            }
         }
     } else if (family == "t") {
         if (test == "independentSamplesTTest") {
@@ -308,6 +332,6 @@ Module['onRuntimeInitialized'] = function() {
     var x = Module._some_r();
     document.getElementById("n").textContent = 1 + parseFloat(x).toFixed(2);
     familyChanged();
-    analysisChanged();
+    updateNumberOutputAreas();
     updateOutput();
 }

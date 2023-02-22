@@ -1,5 +1,7 @@
-use crate::dist::*;
-
+use crate::dist::Dist;
+use crate::dist::NoncentralChisq;
+use crate::dist::NoncentralF;
+use crate::dist::NoncentralT;
 use roots::*;
 
 struct AlphaArgs {
@@ -21,11 +23,18 @@ enum TestKind {
     GoodnessOfFitChisqTest {
         df: i32
     },
+    /// Multiple regression: increase of R^2.
+    /// Total number of predictors `p` (#A + #B).
+    /// Number of tested predictors `q` (#B).
+    IncreaseMultipleRegression {
+        p: i32,
+        q: i32
+    },
     IndependentSamplesTTest
 }
 
 impl TestKind {
-    fn alternative_distribution(&self, n: f64, es: f64) -> Box<dyn Distribution> {
+    fn alternative_distribution(&self, n: f64, es: f64) -> Dist {
         match self {
             TestKind::OneSampleTTest => {
                 Box::new(NoncentralT::new(n - 1.0, n.sqrt() * es))
@@ -40,6 +49,13 @@ impl TestKind {
             TestKind::GoodnessOfFitChisqTest { df } => {
                 Box::new(NoncentralChisq::new(*df as f64, es.powi(2) * n))
             },
+            TestKind::IncreaseMultipleRegression { p, q } => {
+                Box::new(NoncentralF::new(
+                    *q as f64,
+                    n - (*p as f64) - 1.0,
+                    es.powi(2) * n)
+                )
+            }
             TestKind::IndependentSamplesTTest => {
                 let v = n - 2.0; // n1 + n2 - 2
                 Box::new(NoncentralT::new(v, (n / 2.0).sqrt() * es))
@@ -48,7 +64,7 @@ impl TestKind {
         }
     }
 
-    fn null_distribution(&self, n: f64, es: f64) -> Box<dyn Distribution> {
+    fn null_distribution(&self, n: f64, es: f64) -> Dist {
         self.alternative_distribution(n, es).central_distribution()
     }
 
@@ -167,6 +183,30 @@ pub extern fn goodnessOfFitChisqTestES(df: i32, n: f64, alpha: f64, power: f64) 
 }
 
 #[no_mangle]
+pub extern fn increaseMultipleRegressionN(p: i32, q: i32, alpha: f64, power: f64, es: f64) -> i64 {
+    let tail = 1;
+    let test = TestKind::IncreaseMultipleRegression{ p, q };
+    test.n(tail, alpha, power, es)
+}
+#[no_mangle]
+pub extern fn increaseMultipleRegressionAlpha(p: i32, q: i32, n: f64, power: f64, es: f64) -> f64 {
+    let test = TestKind::IncreaseMultipleRegression{ p, q };
+    round(test.alpha(AlphaArgs { tail: 1, n, power, es }), 3)
+}
+#[no_mangle]
+pub extern fn increaseMultipleRegressionPower(p: i32, q: i32, n: f64, alpha: f64, es: f64) -> f64 {
+    let tail = 1;
+    let test = TestKind::IncreaseMultipleRegression{ p, q };
+    round(test.power(tail, n, alpha, es), 3)
+}
+#[no_mangle]
+pub extern fn increaseMultipleRegressionES(p: i32, q: i32, n: f64, alpha: f64, power: f64) -> f64 {
+    let tail = 1;
+    let test = TestKind::IncreaseMultipleRegression{ p, q };
+    round(test.es(tail, n, alpha, power), 3)
+}
+
+#[no_mangle]
 pub extern fn independentSamplesTTestN(tail: i32, alpha: f64, power: f64, es: f64) -> i64 {
     TestKind::IndependentSamplesTTest.n(tail, alpha, power, es)
 }
@@ -226,10 +266,18 @@ mod tests {
         // This number is 0.629 in G*Power and I cannot figure out why.
         // After manual inspection, the root finding is going well so that is not it.
         // Also, the logic here matches the rest, so I guess that G*Power is off again.
-        // G*Power was also sometimes off compared to Julia likely due to a not suboptimal 
+        // G*Power was also sometimes off compared to Julia likely due to a not suboptimal
         // root finding algorithm.
         assert_eq!(goodnessOfFitChisqTestES(df, N, ALPHA, POWER), 0.670);
         assert_eq!(goodnessOfFitChisqTestN(df, ALPHA, POWER, ES), 79);
+    }
+
+    #[test]
+    fn increase_multiple_regression() {
+        let p = 5;
+        let q = 2;
+        let f_squared = ES.sqrt();
+        assert_eq!(increaseMultipleRegressionAlpha(p, q, N, POWER, f_squared), 0.006);
     }
 
     #[test]

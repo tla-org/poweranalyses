@@ -15,6 +15,8 @@ pub trait Distribution {
     fn central_distribution(&self) -> Box<dyn Distribution>;
 }
 
+pub type Dist = Box<dyn Distribution>;
+
 /// Implements the noncentral t-distribution with `v` degrees of freedom and
 /// noncentrality parameter `lambda`.
 #[derive(Clone)]
@@ -37,7 +39,7 @@ impl Distribution for NoncentralT {
     fn quantile(&self, x: f64, lower_tail: bool) -> f64 {
         return unsafe { qnt(x, self.v, self.lambda, lower_tail as i32, 0) };
     }
-    fn central_distribution(&self) -> Box<dyn Distribution> {
+    fn central_distribution(&self) -> Dist {
         let mut clone = self.clone();
         clone.lambda = 0.0;
         Box::new(clone)
@@ -80,7 +82,7 @@ impl Distribution for NoncentralF {
     fn quantile(&self, x: f64, lower_tail: bool) -> f64 {
         return unsafe { qnf(x, self.v1, self.v2, self.lambda, lower_tail as i32, 0) };
     }
-    fn central_distribution(&self) -> Box<dyn Distribution> {
+    fn central_distribution(&self) -> Dist {
         let mut clone = self.clone();
         clone.lambda = 0.0;
         Box::new(clone)
@@ -109,7 +111,7 @@ impl Distribution for NoncentralChisq {
     fn quantile(&self, x: f64, lower_tail: bool) -> f64 {
         return unsafe { qnchisq(x, self.v, self.lambda, lower_tail as i32, 0) };
     }
-    fn central_distribution(&self) -> Box<dyn Distribution> {
+    fn central_distribution(&self) -> Dist {
         let mut clone = self.clone();
         clone.lambda = 0.0;
         Box::new(clone)
