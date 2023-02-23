@@ -2,7 +2,7 @@
 name = "pa"
 version = "0.1.0"
 authors = ["Rik Huijzer <rust@huijzer.xyz>"]
-edition = "2018"
+edition = "2021"
 
 [build-dependencies]
 cc = "1.0"
@@ -13,6 +13,9 @@ roots = "0.0.7"
 
 [dev-dependencies]
 approx = "0.5.1"
+headless_chrome = { git = "https://github.com/atroche/rust-headless-chrome", tag="v1.0.5", features = ["fetch"] }
+tokio = { version = "1", features = ["full"] }
+warp = "0.3"
 
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = false

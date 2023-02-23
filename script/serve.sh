@@ -6,4 +6,9 @@ BASEDIR=$(dirname $(dirname $(readlink -f "$0")))
 
 cd "$BASEDIR/public"
 
-live-server --no-browser
+PORT="$1"
+if [ "$PORT" = "" ]; then
+    PORT="8080"
+fi
+
+live-server --no-browser --port="$PORT"
