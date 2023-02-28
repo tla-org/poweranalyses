@@ -9,6 +9,7 @@ cc = "1.0"
 
 [dependencies]
 getrandom = { version = "0.2", features = ["js"] }
+json = "0.12"
 roots = "0.0.7"
 
 [dev-dependencies]

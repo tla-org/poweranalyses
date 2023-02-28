@@ -295,6 +295,7 @@ function updateOutput() {
     const ptr = Module._alloc();
     writeToPtr(buffer, ptr, json);
     Module._foo(ptr);
+    Module._dealloc(ptr);
 
     if (family == "exact") {
     } else if (family == "f") {

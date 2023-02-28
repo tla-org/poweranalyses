@@ -4,6 +4,7 @@ mod string;
 
 use crate::dist::*;
 use crate::string::u8_to_string;
+use crate::string::json;
 
 #[no_mangle]
 pub extern fn add_ten(x: i32) -> i32 {
@@ -18,7 +19,9 @@ pub extern fn some_r() -> f64 {
 #[no_mangle]
 pub extern fn foo(ptr: *mut u8) {
     let text = unsafe { u8_to_string(ptr) };
-    println!("bar {text}");
+    println!("text: {text}");
+    let data = json(text);
+    println!("data: {data:?}");
 }
 
 pub fn main() {}
