@@ -304,9 +304,12 @@ function updateOutput() {
     const ptr = Module._alloc();
     writeToPtr(ptr, json);
     Module._calculatePower(ptr);
-    const result = JSON.parse(readFromPtr(ptr));
-    console.log(result);
+    const returned = readFromPtr(ptr);
     Module._dealloc(ptr);
+    console.log(`Received the following json from the back end: ${returned}`);
+    const result = JSON.parse(returned);
+    const id = Object.keys(result)[0];
+    setFloat(id, result[id]);
 
     return null;
 }
