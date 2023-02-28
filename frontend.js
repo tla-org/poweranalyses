@@ -122,9 +122,13 @@ function enableOutputElement(id) {
     return null;
 }
 
+function getInputTable() {
+    return document.getElementById("input");
+}
+
 /** Update the input and output area based on the "Type of power analysis" setting. */
 function updateNumberOutputAreas() {
-    var inputTable = document.getElementById("input");
+    const inputTable = getInputTable();
     removeAllTableRows(inputTable);
     const family = readString("family");
     const test = readString("test");
@@ -242,6 +246,39 @@ function setOutput(id, out) {
     return null;
 }
 
+function frontEndState() {
+    const inputTable = getInputTable();
+    const inputElements = inputTable.getElementsByTagName('input');
+
+    const state = {
+        n: n(),
+        alpha: alpha(),
+        power: power(),
+        es: es()
+    };
+
+    for (let i = 0; i < inputElements.length; i++) {
+        const elem = inputElements[i];
+        state[elem.id] = elem.value;
+    }
+
+    return state;
+}
+
+function writeToPtr(buffer, ptr, text) {
+    const view = new Uint8Array(buffer, ptr, 1024);
+    const encoder = new TextEncoder();
+    view.set(encoder.encode(text));
+}
+
+function readFromPtr(ptr, buffer) {
+    const view = new Uint8Array(buffer, ptr, 1024);
+    const length = view.findIndex(byte => byte === 0);
+    const decoder = new TextDecoder();
+
+    return decoder.decode(new Uint8Array(buffer, ptr, length));
+}
+
 /** Update the output area by calculating the numbers via WebAssembly. */
 function updateOutput() {
     setError("");
@@ -250,6 +287,15 @@ function updateOutput() {
     const family = readString("family");
     const analysis = readString("analysis");
     const test = readString("test");
+
+    const state = frontEndState();
+    const json = JSON.stringify(state);
+    console.log(`Sending the following json to the back end: ${json}`);
+    const buffer = Module.HEAPU8.buffer;
+    const ptr = Module._alloc();
+    writeToPtr(buffer, ptr, json);
+    Module._foo(ptr);
+
     if (family == "exact") {
     } else if (family == "f") {
         if (test == "DeviationFromZeroMultipleRegression") {
@@ -325,8 +371,6 @@ function resetOutput() {
 
 Module['onRuntimeInitialized'] = function() {
     console.log("Loading of the poweranalyses.wasm library succeeded.");
-    var x = Module._some_r();
-    document.getElementById("n").textContent = 1 + parseFloat(x).toFixed(2);
     familyChanged();
     updateNumberOutputAreas();
     updateOutput();
