@@ -250,7 +250,14 @@ function frontEndState() {
     const inputTable = getInputTable();
     const inputElements = inputTable.getElementsByTagName('input');
 
+    const family = readString("family");
+    const analysis = readString("analysis");
+    const test = readString("test");
+
     const state = {
+        family: family,
+        analysis: analysis,
+        test: test,
         n: n(),
         alpha: alpha(),
         power: power(),
@@ -265,13 +272,15 @@ function frontEndState() {
     return state;
 }
 
-function writeToPtr(buffer, ptr, text) {
+function writeToPtr(ptr, text) {
+    const buffer = Module.HEAPU8.buffer;
     const view = new Uint8Array(buffer, ptr, 1024);
     const encoder = new TextEncoder();
     view.set(encoder.encode(text));
 }
 
-function readFromPtr(ptr, buffer) {
+function readFromPtr(ptr) {
+    const buffer = Module.HEAPU8.buffer;
     const view = new Uint8Array(buffer, ptr, 1024);
     const length = view.findIndex(byte => byte === 0);
     const decoder = new TextDecoder();
@@ -291,72 +300,13 @@ function updateOutput() {
     const state = frontEndState();
     const json = JSON.stringify(state);
     console.log(`Sending the following json to the back end: ${json}`);
-    const buffer = Module.HEAPU8.buffer;
-    const ptr = Module._alloc();
-    writeToPtr(buffer, ptr, json);
-    Module._foo(ptr);
-    Module._dealloc(ptr);
 
-    if (family == "exact") {
-    } else if (family == "f") {
-        if (test == "DeviationFromZeroMultipleRegression") {
-            let nPredictors = readFloat("nPredictors");
-            if (analysis == "n") {
-                setOutput("n", Module._deviationFromZeroMultipleRegressionN(nPredictors, alpha(), power(), es()));
-            } else if (analysis == "alpha") {
-                setOutput("alpha", Module._deviationFromZeroMultipleRegressionAlpha(nPredictors, n(), power(), es()));
-            } else if (analysis == "power") {
-                setOutput("power", Module._deviationFromZeroMultipleRegressionPower(nPredictors, n(), alpha(), es()));
-            } else if (analysis == "es") {
-                setOutput("es", Module._deviationFromZeroMultipleRegressionES(nPredictors, n(), alpha(), power()));
-            }
-        } else if (test == "IncreaseMultipleRegression") {
-            let p = readFloat("p");
-            let q = readFloat("q");
-            if (analysis == "n") {
-                setOutput("n", Module._increaseMultipleRegressionN(p, q, alpha(), power(), es()));
-            } else if (analysis == "alpha") {
-                setOutput("alpha", Module._increaseMultipleRegressionAlpha(p, q, n(), power(), es()));
-            } else if (analysis == "power") {
-                setOutput("power", Module._increaseMultipleRegressionPower(p, q, n(), alpha(), es()));
-            } else if (analysis == "es") {
-                setOutput("es", Module._increaseMultipleRegressionES(p, q, n(), alpha(), power()));
-            }
-        }
-    } else if (family == "t") {
-        if (test == "independentSamplesTTest") {
-            if (analysis == "n") {
-                setOutput("n", Module._independentSamplesTTestN(tail(), alpha(), power(), es()));
-            } else if (analysis == "alpha") {
-                setOutput("alpha", Module._independentSamplesTTestAlpha(tail(), n(), power(), es()));
-            } else if (analysis == "power") {
-                setOutput("power", Module._independentSamplesTTestPower(tail(), n(), alpha(), es()));
-            } else if (analysis == "es") {
-                setOutput("es", Module._independentSamplesTTestES(tail(), n(), alpha(), power()));
-            }
-        } else if (test == "oneSampleTTest" || test == "dependentSamplesTTest") {
-            if (analysis == "n") {
-                setOutput("n", Module._oneSampleTTestN(tail(), alpha(), power(), es()));
-            } else if (analysis == "alpha") {
-                setOutput("alpha", Module._oneSampleTTestAlpha(tail(), n(), power(), es()));
-            } else if (analysis == "power") {
-                setOutput("power", Module._oneSampleTTestPower(tail(), n(), alpha(), es()));
-            } else if (analysis == "es") {
-                setOutput("es", Module._oneSampleTTestES(tail(), n(), alpha(), power()));
-            }
-        }
-    } else if (family == "chi") {
-        const df = readFloat("df");
-        if (analysis == "n") {
-            setOutput("n", Module._goodnessOfFitChisqTestN(df, alpha(), power(), es()));
-        } else if (analysis == "alpha") {
-            setOutput("alpha", Module._goodnessOfFitChisqTestAlpha(df, n(), power(), es()));
-        } else if (analysis == "power") {
-            setOutput("power", Module._goodnessOfFitChisqTestPower(df, n(), alpha(), es()));
-        } else if (analysis == "es") {
-            setOutput("es", Module._goodnessOfFitChisqTestES(df, n(), alpha(), power()));
-        }
-    }
+    const ptr = Module._alloc();
+    writeToPtr(ptr, json);
+    Module._calculatePower(ptr);
+    const result = JSON.parse(readFromPtr(ptr));
+    console.log(result);
+    Module._dealloc(ptr);
 
     return null;
 }

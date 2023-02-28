@@ -2,7 +2,12 @@ use crate::dist::Dist;
 use crate::dist::NoncentralChisq;
 use crate::dist::NoncentralF;
 use crate::dist::NoncentralT;
-use roots::*;
+use crate::string::json;
+use crate::string::u8_to_string;
+use crate::string::write_to_ptr;
+use roots::SimpleConvergency;
+use roots::find_root_brent;
+use roots::find_root_regula_falsi;
 
 struct AlphaArgs {
     tail: i32,
@@ -221,6 +226,15 @@ pub extern fn independentSamplesTTestPower(tail: i32, n: f64, alpha: f64, es: f6
 #[no_mangle]
 pub extern fn independentSamplesTTestES(tail: i32, n: f64, alpha: f64, power: f64) -> f64 {
     round(TestKind::IndependentSamplesTTest.es(tail, n, alpha, power), 3)
+}
+
+#[no_mangle]
+pub extern fn calculatePower(ptr: *mut u8) {
+    let text = unsafe { u8_to_string(ptr) };
+    let data = json(text);
+    // let result = json::parse(r#"{"n": 10}"#).unwrap();
+    let result = r#"{"n":10}"#;
+    write_to_ptr(ptr, result);
 }
 
 #[cfg(test)]
