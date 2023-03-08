@@ -323,9 +323,31 @@ function resetOutput() {
     updateOutput();
 }
 
-Module['onRuntimeInitialized'] = function() {
-    console.log("Loading of the poweranalyses.wasm library succeeded.");
-    familyChanged();
-    updateNumberOutputAreas();
-    updateOutput();
+function webAssemblySupport() {
+    try {
+        if (typeof WebAssembly === "object" && typeof WebAssembly.instantiate === "function") {
+            const module = new WebAssembly.Module(Uint8Array.of(0x0, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00));
+            if (module instanceof WebAssembly.Module) {
+                return new WebAssembly.Instance(module) instanceof WebAssembly.Instance;
+            }
+        }
+    } catch (e) {
+    }
+    return false;
+}
+
+if (!webAssemblySupport()) {
+    document.body.innerHTML = `
+        <br>
+        <center>
+        This site only works with WebAssembly. Enable WebAssembly in your browser to continue.
+        </center>
+        `;
+} else {
+    Module['onRuntimeInitialized'] = function() {
+        console.log("Loading of the poweranalyses.wasm library succeeded.");
+        familyChanged();
+        updateNumberOutputAreas();
+        updateOutput();
+    }
 }
