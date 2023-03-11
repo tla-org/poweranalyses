@@ -1,6 +1,7 @@
 mod dist;
 mod power;
 mod string;
+mod interface;
 
 use crate::dist::*;
 

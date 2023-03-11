@@ -38,9 +38,8 @@ pub fn write_to_ptr(ptr: *mut u8, text: &str) {
     header_bytes[..bytes.len()].copy_from_slice(bytes);
 }
 
-pub fn json(text: String) -> Option<JsonValue> {
-    match json::parse(&text) {
-        Ok(parsed) => Some(parsed),
+pub fn json(text: &str) -> Option<JsonValue> {
+    match json::parse(text) { Ok(parsed) => Some(parsed),
         Err(error) => {
             eprintln!("Failed to parse json: {error:?}");
             None

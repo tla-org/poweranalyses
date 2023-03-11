@@ -250,12 +250,11 @@ function frontEndState() {
     const inputTable = getInputTable();
     const inputElements = inputTable.getElementsByTagName('input');
 
-    const family = readString("family");
+    // Ignoring family because the back end will infer it from the test.
     const analysis = readString("analysis");
     const test = readString("test");
 
     const state = {
-        family: family,
         analysis: analysis,
         test: test,
         n: n(),
