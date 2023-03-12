@@ -130,7 +130,7 @@ impl TestKind {
         let d1 = self.alternative_distribution(n, es);
         let right_tail = match tail {
             Tail::OneSided => alpha,
-            Tail::TwoSided => 1.0 - alpha / 2.0,
+            Tail::TwoSided => alpha / 2.0,
         };
         let critical_value = d0.quantile(right_tail, false);
         return d1.cdf(critical_value, false);

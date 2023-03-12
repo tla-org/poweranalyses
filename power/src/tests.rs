@@ -61,6 +61,6 @@ fn one_sample_t_test() {
     test_interface(&with_base(&extra), 0.067);
     let extra = json!({"test": test, "tail": 1, "analysis": "power"});
     test_interface(&with_base(&extra), 0.967);
-    // let extra = json!({"test": test, "tail": 2, "analysis": "power"});
-    // test_interface(&with_base(&extra), 0.934);
+    let extra = json!({"test": test, "tail": 2, "analysis": "power"});
+    test_interface(&with_base(&extra), 0.934);
 }
