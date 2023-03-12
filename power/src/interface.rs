@@ -90,18 +90,38 @@ pub extern fn calculatePower(ptr: *mut u8) {
     write_to_ptr(ptr, &result.to_string());
 }
 
-#[test]
-fn handling() {
-    let text = json!({
-        "analysis": "n",
-        "test": "OneSampleTTest",
-        "n": 100,
-        "alpha": 0.05,
-        "power": 0.95,
-        "es": 0.5,
-        "tail": 1
-    }).to_string();
-    let recv = Received::from_str(&text).unwrap();
-    let result = handle_received(recv);
-    assert_eq!(result["n"].as_i64().unwrap(), 45);
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const ES: f64 = 0.5;
+    const ALPHA: f64 = 0.05;
+    const POWER: f64 = 0.95;
+    const N: f64 = 50.0;
+
+    fn test_interface(input: &Value, output: f64) {
+        let analysis = input["analysis"].as_str().unwrap();
+        let text = input.to_owned().to_string();
+        let recv = Received::from_str(&text).unwrap();
+        let result = handle_received(recv);
+        assert_eq!(result[analysis].as_f64().unwrap(), output);
+    }
+
+    fn default_input() -> Value {
+        json!({
+            "n": N,
+            "alpha": ALPHA,
+            "power": POWER,
+            "es": ES,
+        })
+    }
+
+    #[test]
+    fn one_sample_t_test() {
+        let mut input = default_input();
+        input["test"] = json!("OneSampleTTest");
+        input["analysis"] = json!("alpha");
+        input["tail"] = json!(1);
+        test_interface(&input, 0.034);
+    }
 }
