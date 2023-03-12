@@ -1,7 +1,7 @@
-use crate::dist::Dist;
-use crate::dist::NoncentralChisq;
-use crate::dist::NoncentralF;
-use crate::dist::NoncentralT;
+use dist::Dist;
+use dist::NoncentralChisq;
+use dist::NoncentralF;
+use dist::NoncentralT;
 use roots::SimpleConvergency;
 use roots::find_root_brent;
 use roots::find_root_regula_falsi;

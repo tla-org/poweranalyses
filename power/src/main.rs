@@ -1,4 +1,3 @@
-mod dist;
 mod power;
 mod string;
 mod interface;

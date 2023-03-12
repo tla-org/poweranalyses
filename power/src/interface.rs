@@ -89,3 +89,19 @@ pub extern fn calculatePower(ptr: *mut u8) {
     let result = handle_received(recv);
     write_to_ptr(ptr, &result.to_string());
 }
+
+#[test]
+fn handling() {
+    let text = json!({
+        "analysis": "n",
+        "test": "OneSampleTTest",
+        "n": 100,
+        "alpha": 0.05,
+        "power": 0.95,
+        "es": 0.5,
+        "tail": 1
+    }).to_string();
+    let recv = Received::from_str(&text).unwrap();
+    let result = handle_received(recv);
+    assert_eq!(result["n"].as_i64().unwrap(), 45);
+}
