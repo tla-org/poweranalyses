@@ -60,7 +60,7 @@ fn with_rest(test: &str) -> impl Fn(&Value) -> Value {
 
 #[test]
 fn one_sample_t_test() {
-    let join = with_rest("OneSampleTTest");
+    let join = with_rest("oneSampleTTest");
     let extra = json!({"tail": 1, "analysis": "alpha"});
     test_interface(&join(&extra), 0.034);
     let extra = json!({"tail": 2, "analysis": "alpha"});
@@ -73,7 +73,7 @@ fn one_sample_t_test() {
 
 #[test]
 fn deviation_from_zero_multiple_regression() {
-    let join = with_rest("DeviationFromZeroMultipleRegression");
+    let join = with_rest("deviationFromZeroMultipleRegression");
     let f_squared = ES.sqrt();
     let extra = json!({"nPredictors": 2, "es": f_squared, "analysis": "alpha"});
     test_interface(&join(&extra), 0.006);

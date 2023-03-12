@@ -53,21 +53,21 @@ impl Tail {
 impl TestKind {
     pub fn from_str(text: &str, data: &Value) -> Result<TestKind, String> {
         match text {
-            "OneSampleTTest" => Ok(TestKind::OneSampleTTest),
-            "DeviationFromZeroMultipleRegression" => {
+            "oneSampleTTest" => Ok(TestKind::OneSampleTTest),
+            "deviationFromZeroMultipleRegression" => {
                 let n_predictors = data["nPredictors"].as_i64().ok_or("nPredictors is not an integer")?;
                 Ok(TestKind::DeviationFromZeroMultipleRegression{ n_predictors})
             },
-            "GoodnessOfFitChisqTest" => {
+            "goodnessOfFitChisqTest" => {
                 let df = data["df"].as_i64().ok_or("df is not an integer")?;
                 Ok(TestKind::GoodnessOfFitChisqTest{ df })
             },
-            "IncreaseMultipleRegression" => {
+            "increaseMultipleRegression" => {
                 let p = data["p"].as_i64().ok_or("p is not an integer")?;
                 let q = data["q"].as_i64().ok_or("q is not an integer")?;
                 Ok(TestKind::IncreaseMultipleRegression{ p, q })
             },
-            "IndependentSamplesTTest" => Ok(TestKind::IndependentSamplesTTest),
+            "independentSamplesTTest" => Ok(TestKind::IndependentSamplesTTest),
             _ => Err(format!("Unknown test: {}", text)),
         }
     }
