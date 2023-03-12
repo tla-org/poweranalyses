@@ -2,7 +2,8 @@
 /// Logic to transfer strings between Javascript and WebAssembly.
 /// Thanks to Richard L. Apodaca at https://depth-first.com.
 ///
-use json::JsonValue;
+use serde_json;
+use serde_json::Value;
 use std::ffi::{CStr, CString};
 use std::mem;
 use std::os::raw::c_void;
@@ -38,8 +39,9 @@ pub fn write_to_ptr(ptr: *mut u8, text: &str) {
     header_bytes[..bytes.len()].copy_from_slice(bytes);
 }
 
-pub fn json(text: &str) -> Option<JsonValue> {
-    match json::parse(text) { Ok(parsed) => Some(parsed),
+pub fn json(text: &str) -> Option<Value> {
+    match serde_json::from_str(text) {
+        Ok(parsed) => Some(parsed),
         Err(error) => {
             eprintln!("Failed to parse json: {error:?}");
             None

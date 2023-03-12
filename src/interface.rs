@@ -2,8 +2,8 @@ use crate::power::TestKind;
 use crate::string::json;
 use crate::string::u8_to_string;
 use crate::string::write_to_ptr;
-use json::JsonValue;
-use json::object;
+use serde_json::Value;
+use serde_json::json;
 
 enum Analysis {
     N,
@@ -35,7 +35,7 @@ struct Received {
 
 impl Received {
     fn from_str(text: &str) -> Result<Received, String> {
-        let data: JsonValue = json(text).unwrap();
+        let data: Value = json(text).unwrap();
         let test = TestKind::from_str(data["test"].as_str().unwrap(), &data)?;
         let analysis = Analysis::from_str(data["analysis"].as_str().unwrap())?;
         let n = data["n"].as_f64().unwrap();
@@ -59,25 +59,25 @@ fn rounding() {
     assert_eq!(round(1.234, 2), 1.23);
 }
 
-fn handle_received(recv: Received) -> JsonValue {
+fn handle_received(recv: Received) -> Value {
     let test = recv.test;
     let tail = 1;
     match recv.analysis {
         Analysis::N => {
             let n = test.n(tail, recv.alpha, recv.power, recv.es);
-            object!{"n": n}
+            json!({"n": n})
         },
         Analysis::Alpha => {
             let alpha = round(test.alpha(tail, recv.n, recv.power, recv.es), 3);
-            object!{"alpha": alpha}
+            json!({"alpha": alpha})
         }
         Analysis::Power => {
             let power = round(test.power(tail, recv.n, recv.alpha, recv.es), 3);
-            object!{"power": power}
+            json!({"power": power})
         },
         Analysis::ES => {
             let es = round(test.es(tail, recv.n, recv.alpha, recv.power), 3);
-            object!{"es": es}
+            json!({"es": es})
         }
     }
 }

@@ -2,10 +2,10 @@ use crate::dist::Dist;
 use crate::dist::NoncentralChisq;
 use crate::dist::NoncentralF;
 use crate::dist::NoncentralT;
-use json::JsonValue;
 use roots::SimpleConvergency;
 use roots::find_root_brent;
 use roots::find_root_regula_falsi;
+use serde_json::Value;
 
 /// Supertype for all test types.
 ///
@@ -14,36 +14,37 @@ use roots::find_root_regula_falsi;
 pub enum TestKind {
     OneSampleTTest,
     DeviationFromZeroMultipleRegression {
-        n_predictors: i32
+        n_predictors: i64
     },
     GoodnessOfFitChisqTest {
-        df: i32
+        df: i64
     },
     /// Multiple regression: increase of R^2.
     /// Total number of predictors `p` (#A + #B).
     /// Number of tested predictors `q` (#B).
     IncreaseMultipleRegression {
-        p: i32,
-        q: i32
+        p: i64,
+        q: i64
     },
     IndependentSamplesTTest
 }
 
 impl TestKind {
-    pub fn from_str(text: &str, data: &JsonValue) -> Result<TestKind, String> {
+    pub fn from_str(text: &str, data: &Value) -> Result<TestKind, String> {
+        println!("{data:?}");
         match text {
             "OneSampleTTest" => Ok(TestKind::OneSampleTTest),
             "DeviationFromZeroMultipleRegression" => {
-                let n_predictors = data["n_predictors"].as_i32().ok_or("n_predictors is not an integer")?;
-                Ok(TestKind::DeviationFromZeroMultipleRegression{ n_predictors })
+                let n_predictors = data["nPredictors"].as_i64().ok_or("nPredictors is not an integer")?;
+                Ok(TestKind::DeviationFromZeroMultipleRegression{ n_predictors})
             },
             "GoodnessOfFitChisqTest" => {
-                let df = data["df"].as_i32().ok_or("df is not an integer")?;
+                let df = data["df"].as_i64().ok_or("df is not an integer")?;
                 Ok(TestKind::GoodnessOfFitChisqTest{ df })
             },
             "IncreaseMultipleRegression" => {
-                let p: i32 = data["p"].as_i32().ok_or("p is not an integer")?.try_into().unwrap();
-                let q: i32 = data["q"].as_i32().ok_or("q is not an integer")?.try_into().unwrap();
+                let p = data["p"].as_i64().ok_or("p is not an integer")?;
+                let q = data["q"].as_i64().ok_or("q is not an integer")?;
                 Ok(TestKind::IncreaseMultipleRegression{ p, q })
             },
             "IndependentSamplesTTest" => Ok(TestKind::IndependentSamplesTTest),
