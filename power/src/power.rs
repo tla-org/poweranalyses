@@ -29,9 +29,29 @@ pub enum TestKind {
     IndependentSamplesTTest
 }
 
+#[derive(Clone, Debug)]
+pub enum Tail {
+    OneSided,
+    TwoSided,
+}
+
+impl Tail {
+    pub fn from_json(value: &Value) -> Option<Tail> {
+        let tail: &Value = match value.get("tail") {
+            Some(tail) => tail,
+            None => return None,
+        };
+        let tail: i64 = tail.as_i64().unwrap();
+        match tail {
+            1 => Some(Tail::OneSided),
+            2 => Some(Tail::TwoSided),
+            _ => None,
+        }
+    }
+}
+
 impl TestKind {
     pub fn from_str(text: &str, data: &Value) -> Result<TestKind, String> {
-        println!("{data:?}");
         match text {
             "OneSampleTTest" => Ok(TestKind::OneSampleTTest),
             "DeviationFromZeroMultipleRegression" => {
@@ -85,8 +105,8 @@ impl TestKind {
         self.alternative_distribution(n, es).central_distribution()
     }
 
-    pub fn n(&self, tail: i32, alpha: f64, power: f64, es: f64) -> i64 {
-        let f = | n | { self.alpha(tail, n, power, es) - alpha };
+    pub fn n(&self, tail: Tail, alpha: f64, power: f64, es: f64) -> i64 {
+        let f = | n | { self.alpha(tail.clone(), n, power, es) - alpha };
         let mut convergency = SimpleConvergency { eps: 0.0001f64, max_iter: 500 };
         return match find_root_brent(2f64, 1000f64, &f, &mut convergency) {
             Ok(number) => number.round() as i64,
@@ -94,24 +114,30 @@ impl TestKind {
         };
     }
 
-    pub fn alpha(&self, tail: i32, n: f64, power: f64, es: f64) -> f64 {
+    pub fn alpha(&self, tail: Tail, n: f64, power: f64, es: f64) -> f64 {
         let d0 = self.null_distribution(n, es);
         let d1 = self.alternative_distribution(n, es);
         let critical_value = d1.quantile(power, false);
         let right_tail = d0.cdf(critical_value, false);
-        return if tail == 1 { right_tail } else { 2.0 * right_tail };
+        match tail {
+            Tail::OneSided => right_tail,
+            Tail::TwoSided => 2.0 * right_tail,
+        }
     }
 
-    pub fn power(&self, tail: i32, n: f64, alpha: f64, es: f64) -> f64 {
+    pub fn power(&self, tail: Tail, n: f64, alpha: f64, es: f64) -> f64 {
         let d0 = self.null_distribution(n, es);
         let d1 = self.alternative_distribution(n, es);
-        let right_tail = if tail == 1 { alpha } else { alpha / 2.0 };
+        let right_tail = match tail {
+            Tail::OneSided => alpha,
+            Tail::TwoSided => 1.0 - alpha / 2.0,
+        };
         let critical_value = d0.quantile(right_tail, false);
         return d1.cdf(critical_value, false);
     }
 
-    pub fn es(&self, tail: i32, n: f64, alpha: f64, power: f64) -> f64 {
-        let f = | es | { self.alpha(tail, n, power, es) - alpha };
+    pub fn es(&self, tail: Tail, n: f64, alpha: f64, power: f64) -> f64 {
+        let f = | es | { self.alpha(tail.clone(), n, power, es) - alpha };
         let mut convergency = SimpleConvergency { eps: 0.0001f64, max_iter: 500 };
         return match find_root_regula_falsi(0.001f64, 8f64, &f, &mut convergency) {
             Ok(number) => number,

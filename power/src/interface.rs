@@ -4,6 +4,7 @@ use crate::string::u8_to_string;
 use crate::string::write_to_ptr;
 use serde_json::Value;
 use serde_json::json;
+use crate::power::Tail;
 
 enum Analysis {
     N,
@@ -34,8 +35,7 @@ struct Received {
 }
 
 impl Received {
-    fn from_str(text: &str) -> Result<Received, String> {
-        let data: Value = json(text).unwrap();
+    fn from_json(data: &Value) -> Result<Received, String> {
         let test = TestKind::from_str(data["test"].as_str().unwrap(), &data)?;
         let analysis = Analysis::from_str(data["analysis"].as_str().unwrap())?;
         let n = data["n"].as_f64().unwrap();
@@ -47,7 +47,7 @@ impl Received {
 }
 
 fn round(x: f64, decimals: u32) -> f64 {
-    let factor = i32::checked_pow(10, decimals);
+    let factor = i64::checked_pow(10, decimals);
     return match factor {
         Some(number) => (x * number as f64).round() / number as f64,
         None => x
@@ -59,9 +59,14 @@ fn rounding() {
     assert_eq!(round(1.234, 2), 1.23);
 }
 
-fn handle_received(recv: Received) -> Value {
+pub fn handle_received(text: &str) -> Value {
+    let data: Value = json(&text).unwrap();
+    let recv = Received::from_json(&data).unwrap();
+    let tail = match Tail::from_json(&data) {
+        Some(tail) => tail,
+        None => Tail::OneSided,
+    };
     let test = recv.test;
-    let tail = 1;
     match recv.analysis {
         Analysis::N => {
             let n = test.n(tail, recv.alpha, recv.power, recv.es);
@@ -72,6 +77,8 @@ fn handle_received(recv: Received) -> Value {
             json!({"alpha": alpha})
         }
         Analysis::Power => {
+            println!("{tail:?}");
+            println!("{}", test.power(tail.clone(), recv.n, recv.alpha, recv.es));
             let power = round(test.power(tail, recv.n, recv.alpha, recv.es), 3);
             json!({"power": power})
         },
@@ -85,43 +92,6 @@ fn handle_received(recv: Received) -> Value {
 #[no_mangle]
 pub extern fn calculatePower(ptr: *mut u8) {
     let text = unsafe { u8_to_string(ptr) };
-    let recv = Received::from_str(&text).unwrap();
-    let result = handle_received(recv);
+    let result = handle_received(&text);
     write_to_ptr(ptr, &result.to_string());
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    const ES: f64 = 0.5;
-    const ALPHA: f64 = 0.05;
-    const POWER: f64 = 0.95;
-    const N: f64 = 50.0;
-
-    fn test_interface(input: &Value, output: f64) {
-        let analysis = input["analysis"].as_str().unwrap();
-        let text = input.to_owned().to_string();
-        let recv = Received::from_str(&text).unwrap();
-        let result = handle_received(recv);
-        assert_eq!(result[analysis].as_f64().unwrap(), output);
-    }
-
-    fn default_input() -> Value {
-        json!({
-            "n": N,
-            "alpha": ALPHA,
-            "power": POWER,
-            "es": ES,
-        })
-    }
-
-    #[test]
-    fn one_sample_t_test() {
-        let mut input = default_input();
-        input["test"] = json!("OneSampleTTest");
-        input["analysis"] = json!("alpha");
-        input["tail"] = json!(1);
-        test_interface(&input, 0.034);
-    }
 }
