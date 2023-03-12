@@ -14,6 +14,7 @@ const ALPHA: f64 = 0.05;
 const POWER: f64 = 0.95;
 const N: f64 = 50.0;
 
+/// Join two JSON objects; note that the second object takes precedence.
 fn join_json(a: &Value, b: &Value) -> Value {
     let mut result = a.to_owned();
     for (key, value) in b.as_object().unwrap() {
@@ -52,15 +53,35 @@ fn default_input() -> Value {
     })
 }
 
+fn with_rest(test: &str) -> impl Fn(&Value) -> Value {
+    let extra = json!({"test": test});
+    move | input | join_json(&with_base(input), &extra)
+}
+
 #[test]
 fn one_sample_t_test() {
-    let test = "OneSampleTTest";
-    let extra = json!({"test": test, "tail": 1, "analysis": "alpha"});
-    test_interface(&with_base(&extra), 0.034);
-    let extra = json!({"test": test, "tail": 2, "analysis": "alpha"});
-    test_interface(&with_base(&extra), 0.067);
-    let extra = json!({"test": test, "tail": 1, "analysis": "power"});
-    test_interface(&with_base(&extra), 0.967);
-    let extra = json!({"test": test, "tail": 2, "analysis": "power"});
-    test_interface(&with_base(&extra), 0.934);
+    let join = with_rest("OneSampleTTest");
+    let extra = json!({"tail": 1, "analysis": "alpha"});
+    test_interface(&join(&extra), 0.034);
+    let extra = json!({"tail": 2, "analysis": "alpha"});
+    test_interface(&join(&extra), 0.067);
+    let extra = json!({"tail": 1, "analysis": "power"});
+    test_interface(&join(&extra), 0.967);
+    let extra = json!({"tail": 2, "analysis": "power"});
+    test_interface(&join(&extra), 0.934);
 }
+
+#[test]
+fn deviation_from_zero_multiple_regression() {
+    let join = with_rest("DeviationFromZeroMultipleRegression");
+    let f_squared = ES.sqrt();
+    let extra = json!({"nPredictors": 2, "es": f_squared, "analysis": "alpha"});
+    test_interface(&join(&extra), 0.006);
+    let extra = json!({"nPredictors": 2, "es": f_squared, "analysis": "power"});
+    test_interface(&join(&extra), 0.994);
+    let extra = json!({"nPredictors": 2, "es": f_squared, "analysis": "es"});
+    test_interface(&join(&extra), 0.574);
+    let extra = json!({"nPredictors": 2, "es": f_squared, "analysis": "n"});
+    test_interface(&join(&extra), 34.0);
+}
+
