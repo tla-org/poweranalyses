@@ -23,10 +23,13 @@ pub unsafe extern "C" fn dealloc(ptr: *mut c_void) {
 }
 
 pub unsafe fn u8_to_string(ptr: *mut u8) -> String {
-    let mut text = CStr::from_ptr(ptr as *const i8).to_str().unwrap().to_string();
-    // For some reason, the last character is sometimes an unknown character.
-    if !text.ends_with('}') {
-        text.pop();
+    let mut text = CStr::from_ptr(ptr as *const i8)
+        .to_str()
+        .unwrap()
+        .to_string();
+    match text.find("<END>") {
+        Some(index) => text.truncate(index),
+        None => panic!("Expected <END> but couldn't find it.")
     }
     text
 }

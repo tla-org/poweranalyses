@@ -275,7 +275,8 @@ function writeToPtr(ptr, text) {
     const buffer = Module.HEAPU8.buffer;
     const view = new Uint8Array(buffer, ptr, 1024);
     const encoder = new TextEncoder();
-    view.set(encoder.encode(text));
+    const with_stop = text + "<END>";
+    view.set(encoder.encode(with_stop));
 }
 
 function readFromPtr(ptr) {
