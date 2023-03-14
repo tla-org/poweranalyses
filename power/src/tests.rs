@@ -96,14 +96,21 @@ fn goodness_of_fit_chisq() {
     test_interface(&join(&extra), 79.0);
 }
 
-fn plus_one(x: i32) -> i32 {
-    x + 1
+#[test]
+fn increase_multiple_regression() {
+    let p = 5;
+    let q = 2;
+    let f_squared = ES.sqrt();
+    let join = with_rest("increaseMultipleRegression");
+    let extra = json!({"analysis": "alpha", "p": p, "q": q, "es": f_squared});
+    test_interface(&join(&extra), 0.006);
 }
 
 #[test]
-fn it_works() {
-    assert_eq!(2 + 2, 4);
-    assert_eq!(plus_one(1), 2);
+fn independent_samples_t_test() {
+    // G*Power only gives 0.392 if you put sample size group 1 and 2 both on n=50.
+    // pwr.t.test(n=50, d=0.5, sig.level=NULL, power=0.95, type="two.sample", alternative="two.sided")
+    let join = with_rest("independentSamplesTTest");
+    let extra = json!({"analysis": "alpha", "tail": 2});
+    test_interface(&join(&extra), 0.398);
 }
-
-
