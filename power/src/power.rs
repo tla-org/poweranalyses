@@ -35,29 +35,29 @@ pub enum Tail {
     TwoSided,
 }
 
-impl Tail {
-    pub fn from_json(value: &Value) -> Option<Tail> {
-        let tail: &Value = match value.get("tail") {
-            Some(tail) => tail,
-            None => return None,
-        };
-        let tail: i64 = tail.as_i64().unwrap();
-        match tail {
-            1 => Some(Tail::OneSided),
-            2 => Some(Tail::TwoSided),
-            _ => None,
-        }
-    }
-}
-
 fn parse_i64(data: &Value, field: &str) -> Result<i64, String> {
-    let value: &str = data[field]
+    let value = match data.get(field) {
+        Some(value) => value,
+        None => return Err(format!("Missing field: {}", field)),
+    };
+    let value: &str = value
         .as_str()
         .expect("{field} could not be converted to a str");
     let value: i64 = value
         .parse()
         .expect("{field} could not be converted to an integer");
     Ok(value)
+}
+
+impl Tail {
+    pub fn from_json(value: &Value) -> Option<Tail> {
+        let tail: i64 = parse_i64(value, "tail").unwrap();
+        match tail {
+            1 => Some(Tail::OneSided),
+            2 => Some(Tail::TwoSided),
+            _ => None,
+        }
+    }
 }
 
 impl TestKind {

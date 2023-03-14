@@ -248,7 +248,7 @@ function setOutput(id, out) {
 
 function frontEndState() {
     const inputTable = getInputTable();
-    const inputElements = inputTable.getElementsByTagName('input');
+    const inputElements = inputTable.querySelectorAll("input, select");
 
     // Ignoring family because the back end will infer it from the test.
     const analysis = readString("analysis");
