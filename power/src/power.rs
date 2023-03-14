@@ -50,21 +50,31 @@ impl Tail {
     }
 }
 
+fn parse_i64(data: &Value, field: &str) -> Result<i64, String> {
+    let value: &str = data[field]
+        .as_str()
+        .expect("{field} could not be converted to a str");
+    let value: i64 = value
+        .parse()
+        .expect("{field} could not be converted to an integer");
+    Ok(value)
+}
+
 impl TestKind {
     pub fn from_str(text: &str, data: &Value) -> Result<TestKind, String> {
         match text {
             "oneSampleTTest" => Ok(TestKind::OneSampleTTest),
             "deviationFromZeroMultipleRegression" => {
-                let n_predictors = data["nPredictors"].as_i64().ok_or("nPredictors is not an integer")?;
-                Ok(TestKind::DeviationFromZeroMultipleRegression{ n_predictors})
+                let n_predictors = parse_i64(data, "nPredictors").unwrap();
+                Ok(TestKind::DeviationFromZeroMultipleRegression{ n_predictors })
             },
             "goodnessOfFitChisqTest" => {
-                let df = data["df"].as_i64().ok_or("df is not an integer")?;
+                let df = parse_i64(data, "df").unwrap();
                 Ok(TestKind::GoodnessOfFitChisqTest{ df })
             },
             "increaseMultipleRegression" => {
-                let p = data["p"].as_i64().ok_or("p is not an integer")?;
-                let q = data["q"].as_i64().ok_or("q is not an integer")?;
+                let p = parse_i64(data, "p").unwrap();
+                let q = parse_i64(data, "q").unwrap();
                 Ok(TestKind::IncreaseMultipleRegression{ p, q })
             },
             "independentSamplesTTest" => Ok(TestKind::IndependentSamplesTTest),

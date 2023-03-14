@@ -49,8 +49,8 @@ function familyChanged() {
         addSelectOption(testSelector, "MANOVA: Repeated measures, between factors", false, 11);
         addSelectOption(testSelector, "MANOVA: Repeated measures, within factors", false, 12);
         addSelectOption(testSelector, "MANOVA: Repeated measures, within-between interaction", false, 13);
-        addSelectOption(testSelector, "Linear multiple regression: Fixed model, R² deviation from zero", true, 'DeviationFromZeroMultipleRegression');
-        addSelectOption(testSelector, "Linear multiple regression: Fixed model, R² increase", true, 'IncreaseMultipleRegression');
+        addSelectOption(testSelector, "Linear multiple regression: Fixed model, R² deviation from zero", true, 'deviationFromZeroMultipleRegression');
+        addSelectOption(testSelector, "Linear multiple regression: Fixed model, R² increase", true, 'increaseMultipleRegression');
         addSelectOption(testSelector, "Variance: Test of equality (two sample case)", false, 16);
         addSelectOption(testSelector, "Generic F test", false, 17);
     } else if (family == "t") {
@@ -134,9 +134,9 @@ function updateNumberOutputAreas() {
     const test = readString("test");
     if (family == "exact") {
     } else if (family == "f") {
-        if (test == "DeviationFromZeroMultipleRegression") {
+        if (test == "deviationFromZeroMultipleRegression") {
             addTableOption(inputTable, "Number of predictors", "<input onchange='updateOutput()' id='nPredictors' value='2' min='0' max='1000' step='5'>");
-        } else if (test == "IncreaseMultipleRegression") {
+        } else if (test == "increaseMultipleRegression") {
             addTableOption(inputTable, "Number of tested predictors", "<input onchange='updateOutput()' id='q' value='2' min='0' max='1000' step='1'>");
             addTableOption(inputTable, "Total number of predictors", "<input onchange='updateOutput()' id='p' value='5' min='0' max='1000' step='1'>");
         }
