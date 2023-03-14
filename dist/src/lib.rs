@@ -28,16 +28,16 @@ pub struct NoncentralT {
 impl NoncentralT {
     pub fn new(v: f64, lambda: f64) -> Self {
         // println!("NoncentralT with v1: {v} and lambda: {lambda}");
-        return Self{ v, lambda };
+        Self{ v, lambda }
     }
 }
 
 impl Distribution for NoncentralT {
     fn cdf(&self, x: f64, lower_tail: bool) -> f64 {
-        return unsafe { pnt(x, self.v, self.lambda, lower_tail as i32, 0) };
+        unsafe { pnt(x, self.v, self.lambda, lower_tail as i32, 0) }
     }
     fn quantile(&self, x: f64, lower_tail: bool) -> f64 {
-        return unsafe { qnt(x, self.v, self.lambda, lower_tail as i32, 0) };
+        unsafe { qnt(x, self.v, self.lambda, lower_tail as i32, 0) }
     }
     fn central_distribution(&self) -> Dist {
         let mut clone = self.clone();
@@ -77,10 +77,10 @@ impl NoncentralF {
 
 impl Distribution for NoncentralF {
     fn cdf(&self, x: f64, lower_tail: bool) -> f64 {
-        return unsafe { pnf(x, self.v1, self.v2, self.lambda, lower_tail as i32, 0) };
+        unsafe { pnf(x, self.v1, self.v2, self.lambda, lower_tail as i32, 0) }
     }
     fn quantile(&self, x: f64, lower_tail: bool) -> f64 {
-        return unsafe { qnf(x, self.v1, self.v2, self.lambda, lower_tail as i32, 0) };
+        unsafe { qnf(x, self.v1, self.v2, self.lambda, lower_tail as i32, 0) }
     }
     fn central_distribution(&self) -> Dist {
         let mut clone = self.clone();
@@ -106,10 +106,10 @@ impl NoncentralChisq {
 
 impl Distribution for NoncentralChisq {
     fn cdf(&self, x: f64, lower_tail: bool) -> f64 {
-        return unsafe { pnchisq(x, self.v, self.lambda, lower_tail as i32, 0) };
+        unsafe { pnchisq(x, self.v, self.lambda, lower_tail as i32, 0) }
     }
     fn quantile(&self, x: f64, lower_tail: bool) -> f64 {
-        return unsafe { qnchisq(x, self.v, self.lambda, lower_tail as i32, 0) };
+        unsafe { qnchisq(x, self.v, self.lambda, lower_tail as i32, 0) }
     }
     fn central_distribution(&self) -> Dist {
         let mut clone = self.clone();

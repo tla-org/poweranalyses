@@ -59,7 +59,7 @@ function familyChanged() {
         addSelectOption(testSelector, "Linear bivariate regression: Two groups, difference between intercepts", false, 3);
         addSelectOption(testSelector, "Linear bivariate regression: Two groups, difference between slopes", false, 4);
         addSelectOption(testSelector, "Linear multiple regression: Fixed model, single regression coefficient", false, 5);
-        addSelectOption(testSelector, "Means: Difference between two dependent means (matched pairs)", true, 'dependentSamplesTTest');
+        addSelectOption(testSelector, "Means: Difference between two dependent means (matched pairs)", false, 'dependentSamplesTTest');
         addSelectOption(testSelector, "Means: Difference between two independent means (two groups)", true, 'independentSamplesTTest');
         addSelectOption(testSelector, "Means: Difference from constant (one sample case)", true, 'oneSampleTTest');
         addSelectOption(testSelector, "Means: Wilcoxon signed-rank test (matched pairs)", false, 9);
@@ -122,9 +122,13 @@ function enableOutputElement(id) {
     return null;
 }
 
+function getInputTable() {
+    return document.getElementById("input");
+}
+
 /** Update the input and output area based on the "Type of power analysis" setting. */
 function updateNumberOutputAreas() {
-    var inputTable = document.getElementById("input");
+    const inputTable = getInputTable();
     removeAllTableRows(inputTable);
     const family = readString("family");
     const test = readString("test");
@@ -242,6 +246,47 @@ function setOutput(id, out) {
     return null;
 }
 
+function frontEndState() {
+    const inputTable = getInputTable();
+    const inputElements = inputTable.getElementsByTagName('input');
+
+    // Ignoring family because the back end will infer it from the test.
+    const analysis = readString("analysis");
+    const test = readString("test");
+
+    const state = {
+        analysis: analysis,
+        test: test,
+        n: n(),
+        alpha: alpha(),
+        power: power(),
+        es: es()
+    };
+
+    for (let i = 0; i < inputElements.length; i++) {
+        const elem = inputElements[i];
+        state[elem.id] = elem.value;
+    }
+
+    return state;
+}
+
+function writeToPtr(ptr, text) {
+    const buffer = Module.HEAPU8.buffer;
+    const view = new Uint8Array(buffer, ptr, 1024);
+    const encoder = new TextEncoder();
+    view.set(encoder.encode(text));
+}
+
+function readFromPtr(ptr) {
+    const buffer = Module.HEAPU8.buffer;
+    const view = new Uint8Array(buffer, ptr, 1024);
+    const length = view.findIndex(byte => byte === 0);
+    const decoder = new TextDecoder();
+
+    return decoder.decode(new Uint8Array(buffer, ptr, length));
+}
+
 /** Update the output area by calculating the numbers via WebAssembly. */
 function updateOutput() {
     setError("");
@@ -250,66 +295,20 @@ function updateOutput() {
     const family = readString("family");
     const analysis = readString("analysis");
     const test = readString("test");
-    if (family == "exact") {
-    } else if (family == "f") {
-        if (test == "DeviationFromZeroMultipleRegression") {
-            let nPredictors = readFloat("nPredictors");
-            if (analysis == "n") {
-                setOutput("n", Module._deviationFromZeroMultipleRegressionN(nPredictors, alpha(), power(), es()));
-            } else if (analysis == "alpha") {
-                setOutput("alpha", Module._deviationFromZeroMultipleRegressionAlpha(nPredictors, n(), power(), es()));
-            } else if (analysis == "power") {
-                setOutput("power", Module._deviationFromZeroMultipleRegressionPower(nPredictors, n(), alpha(), es()));
-            } else if (analysis == "es") {
-                setOutput("es", Module._deviationFromZeroMultipleRegressionES(nPredictors, n(), alpha(), power()));
-            }
-        } else if (test == "IncreaseMultipleRegression") {
-            let p = readFloat("p");
-            let q = readFloat("q");
-            if (analysis == "n") {
-                setOutput("n", Module._increaseMultipleRegressionN(p, q, alpha(), power(), es()));
-            } else if (analysis == "alpha") {
-                setOutput("alpha", Module._increaseMultipleRegressionAlpha(p, q, n(), power(), es()));
-            } else if (analysis == "power") {
-                setOutput("power", Module._increaseMultipleRegressionPower(p, q, n(), alpha(), es()));
-            } else if (analysis == "es") {
-                setOutput("es", Module._increaseMultipleRegressionES(p, q, n(), alpha(), power()));
-            }
-        }
-    } else if (family == "t") {
-        if (test == "independentSamplesTTest") {
-            if (analysis == "n") {
-                setOutput("n", Module._independentSamplesTTestN(tail(), alpha(), power(), es()));
-            } else if (analysis == "alpha") {
-                setOutput("alpha", Module._independentSamplesTTestAlpha(tail(), n(), power(), es()));
-            } else if (analysis == "power") {
-                setOutput("power", Module._independentSamplesTTestPower(tail(), n(), alpha(), es()));
-            } else if (analysis == "es") {
-                setOutput("es", Module._independentSamplesTTestES(tail(), n(), alpha(), power()));
-            }
-        } else if (test == "oneSampleTTest" || test == "dependentSamplesTTest") {
-            if (analysis == "n") {
-                setOutput("n", Module._oneSampleTTestN(tail(), alpha(), power(), es()));
-            } else if (analysis == "alpha") {
-                setOutput("alpha", Module._oneSampleTTestAlpha(tail(), n(), power(), es()));
-            } else if (analysis == "power") {
-                setOutput("power", Module._oneSampleTTestPower(tail(), n(), alpha(), es()));
-            } else if (analysis == "es") {
-                setOutput("es", Module._oneSampleTTestES(tail(), n(), alpha(), power()));
-            }
-        }
-    } else if (family == "chi") {
-        const df = readFloat("df");
-        if (analysis == "n") {
-            setOutput("n", Module._goodnessOfFitChisqTestN(df, alpha(), power(), es()));
-        } else if (analysis == "alpha") {
-            setOutput("alpha", Module._goodnessOfFitChisqTestAlpha(df, n(), power(), es()));
-        } else if (analysis == "power") {
-            setOutput("power", Module._goodnessOfFitChisqTestPower(df, n(), alpha(), es()));
-        } else if (analysis == "es") {
-            setOutput("es", Module._goodnessOfFitChisqTestES(df, n(), alpha(), power()));
-        }
-    }
+
+    const state = frontEndState();
+    const json = JSON.stringify(state);
+    console.log(`Sending the following json to the back end: ${json}`);
+
+    const ptr = Module._alloc();
+    writeToPtr(ptr, json);
+    Module._calculatePower(ptr);
+    const returned = readFromPtr(ptr);
+    Module._dealloc(ptr);
+    console.log(`Received the following json from the back end: ${returned}`);
+    const result = JSON.parse(returned);
+    const id = Object.keys(result)[0];
+    setFloat(id, result[id]);
 
     return null;
 }
@@ -323,11 +322,31 @@ function resetOutput() {
     updateOutput();
 }
 
-Module['onRuntimeInitialized'] = function() {
-    console.log("Loading of the poweranalyses.wasm library succeeded.");
-    var x = Module._some_r();
-    document.getElementById("n").textContent = 1 + parseFloat(x).toFixed(2);
-    familyChanged();
-    updateNumberOutputAreas();
-    updateOutput();
+function webAssemblySupport() {
+    try {
+        if (typeof WebAssembly === "object" && typeof WebAssembly.instantiate === "function") {
+            const module = new WebAssembly.Module(Uint8Array.of(0x0, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00));
+            if (module instanceof WebAssembly.Module) {
+                return new WebAssembly.Instance(module) instanceof WebAssembly.Instance;
+            }
+        }
+    } catch (e) {
+    }
+    return false;
+}
+
+if (!webAssemblySupport()) {
+    document.body.innerHTML = `
+        <br>
+        <center>
+        This site only works with WebAssembly. Enable WebAssembly in your browser to continue.
+        </center>
+        `;
+} else {
+    Module['onRuntimeInitialized'] = function() {
+        console.log("Loading of the poweranalyses.wasm library succeeded.");
+        familyChanged();
+        updateNumberOutputAreas();
+        updateOutput();
+    }
 }
