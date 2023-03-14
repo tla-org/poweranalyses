@@ -1,12 +1,7 @@
 #[cfg(test)]
 
-use crate::power::TestKind;
-use crate::string::json;
-use crate::string::u8_to_string;
-use crate::string::write_to_ptr;
 use serde_json::Value;
 use serde_json::json;
-use crate::power::Tail;
 use crate::interface::handle_received;
 
 const ES: f64 = 0.5;
@@ -84,4 +79,31 @@ fn deviation_from_zero_multiple_regression() {
     let extra = json!({"nPredictors": 2, "es": f_squared, "analysis": "n"});
     test_interface(&join(&extra), 34.0);
 }
+
+#[test]
+fn goodness_of_fit_chisq() {
+    let df = 5;
+    let join = with_rest("goodnessOfFitChisqTest");
+    let extra = json!({"analysis": "alpha", "df": df});
+    test_interface(&join(&extra), 0.254);
+    let extra = json!({"analysis": "alpha", "df": df, "es": 0.628});
+    test_interface(&join(&extra), 0.051);
+    let extra = json!({"analysis": "power", "df": df});
+    test_interface(&join(&extra), 0.788);
+    let extra = json!({"analysis": "es", "df": df});
+    test_interface(&join(&extra), 0.629);
+    let extra = json!({"analysis": "n", "df": df});
+    test_interface(&join(&extra), 79.0);
+}
+
+fn plus_one(x: i32) -> i32 {
+    x + 1
+}
+
+#[test]
+fn it_works() {
+    assert_eq!(2 + 2, 4);
+    assert_eq!(plus_one(1), 2);
+}
+
 
