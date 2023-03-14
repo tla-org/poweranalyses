@@ -309,7 +309,7 @@ function updateOutput() {
     console.log(`Received the following json from the back end: ${returned}`);
     const result = JSON.parse(returned);
     const id = Object.keys(result)[0];
-    setFloat(id, result[id]);
+    setOutput(id, result[id]);
 
     return null;
 }
