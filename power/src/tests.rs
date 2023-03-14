@@ -56,13 +56,13 @@ fn with_rest(test: &str) -> impl Fn(&Value) -> Value {
 #[test]
 fn one_sample_t_test() {
     let join = with_rest("oneSampleTTest");
-    let extra = json!({"tail": 1, "analysis": "alpha"});
+    let extra = json!({"tail": "1", "analysis": "alpha"});
     test_interface(&join(&extra), 0.034);
-    let extra = json!({"tail": 2, "analysis": "alpha"});
+    let extra = json!({"tail": "2", "analysis": "alpha"});
     test_interface(&join(&extra), 0.067);
-    let extra = json!({"tail": 1, "analysis": "power"});
+    let extra = json!({"tail": "1", "analysis": "power"});
     test_interface(&join(&extra), 0.967);
-    let extra = json!({"tail": 2, "analysis": "power"});
+    let extra = json!({"tail": "2", "analysis": "power"});
     test_interface(&join(&extra), 0.934);
 }
 
@@ -70,19 +70,19 @@ fn one_sample_t_test() {
 fn deviation_from_zero_multiple_regression() {
     let join = with_rest("deviationFromZeroMultipleRegression");
     let f_squared = ES.sqrt();
-    let extra = json!({"nPredictors": 2, "es": f_squared, "analysis": "alpha"});
+    let extra = json!({"nPredictors": "2", "es": f_squared, "analysis": "alpha"});
     test_interface(&join(&extra), 0.006);
-    let extra = json!({"nPredictors": 2, "es": f_squared, "analysis": "power"});
+    let extra = json!({"nPredictors": "2", "es": f_squared, "analysis": "power"});
     test_interface(&join(&extra), 0.994);
-    let extra = json!({"nPredictors": 2, "es": f_squared, "analysis": "es"});
+    let extra = json!({"nPredictors": "2", "es": f_squared, "analysis": "es"});
     test_interface(&join(&extra), 0.574);
-    let extra = json!({"nPredictors": 2, "es": f_squared, "analysis": "n"});
+    let extra = json!({"nPredictors": "2", "es": f_squared, "analysis": "n"});
     test_interface(&join(&extra), 34.0);
 }
 
 #[test]
 fn goodness_of_fit_chisq() {
-    let df = 5;
+    let df = "5";
     let join = with_rest("goodnessOfFitChisqTest");
     let extra = json!({"analysis": "alpha", "df": df});
     test_interface(&join(&extra), 0.254);
@@ -98,8 +98,8 @@ fn goodness_of_fit_chisq() {
 
 #[test]
 fn increase_multiple_regression() {
-    let p = 5;
-    let q = 2;
+    let p = "5";
+    let q = "2";
     let f_squared = ES.sqrt();
     let join = with_rest("increaseMultipleRegression");
     let extra = json!({"analysis": "alpha", "p": p, "q": q, "es": f_squared});
@@ -111,6 +111,6 @@ fn independent_samples_t_test() {
     // G*Power only gives 0.392 if you put sample size group 1 and 2 both on n=50.
     // pwr.t.test(n=50, d=0.5, sig.level=NULL, power=0.95, type="two.sample", alternative="two.sided")
     let join = with_rest("independentSamplesTTest");
-    let extra = json!({"analysis": "alpha", "tail": 2});
+    let extra = json!({"analysis": "alpha", "tail": "2"});
     test_interface(&join(&extra), 0.398);
 }

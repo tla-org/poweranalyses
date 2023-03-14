@@ -62,8 +62,8 @@ fn rounding() {
 pub fn handle_received(text: &str) -> Value {
     let data: Value = json(text).unwrap();
     let recv = Received::from_json(&data).unwrap();
-    let tail = match Tail::from_json(&data) {
-        Some(tail) => tail,
+    let tail = match data.get("tail") {
+        Some(_) => Tail::from_json(&data).unwrap(),
         None => Tail::OneSided,
     };
     let test = recv.test;

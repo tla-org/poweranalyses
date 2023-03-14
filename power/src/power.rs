@@ -50,8 +50,8 @@ fn parse_i64(data: &Value, field: &str) -> Result<i64, String> {
 }
 
 impl Tail {
-    pub fn from_json(value: &Value) -> Option<Tail> {
-        let tail: i64 = parse_i64(value, "tail").unwrap();
+    pub fn from_json(data: &Value) -> Option<Tail> {
+        let tail: i64 = parse_i64(data, "tail").unwrap();
         match tail {
             1 => Some(Tail::OneSided),
             2 => Some(Tail::TwoSided),
