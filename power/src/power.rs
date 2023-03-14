@@ -80,8 +80,8 @@ impl TestKind {
             TestKind::DeviationFromZeroMultipleRegression { n_predictors } => {
                 Box::new(NoncentralF::new(
                     *n_predictors as f64,
-                    (n as f64) - (*n_predictors as f64) - (1 as f64),
-                    es.powi(2) * (n as f64)
+                    n - (*n_predictors as f64) - 1.0,
+                    es.powi(2) * n
                 ))
             },
             TestKind::GoodnessOfFitChisqTest { df } => {
@@ -107,11 +107,12 @@ impl TestKind {
 
     pub fn n(&self, tail: Tail, alpha: f64, power: f64, es: f64) -> i64 {
         let f = | n | { self.alpha(tail.clone(), n, power, es) - alpha };
-        let mut convergency = SimpleConvergency { eps: 0.0001f64, max_iter: 500 };
-        return match find_root_brent(2f64, 1000f64, &f, &mut convergency) {
-            Ok(number) => number.round() as i64,
-            Err(_) => -111
+        let mut conv = SimpleConvergency {
+            eps: 0.0001f64,
+            max_iter: 500
         };
+        let root = find_root_brent(2f64, 1000f64, f, &mut conv);
+        root.unwrap_or(-111.0) as i64
     }
 
     pub fn alpha(&self, tail: Tail, n: f64, power: f64, es: f64) -> f64 {
@@ -133,15 +134,16 @@ impl TestKind {
             Tail::TwoSided => alpha / 2.0,
         };
         let critical_value = d0.quantile(right_tail, false);
-        return d1.cdf(critical_value, false);
+        d1.cdf(critical_value, false)
     }
 
     pub fn es(&self, tail: Tail, n: f64, alpha: f64, power: f64) -> f64 {
         let f = | es | { self.alpha(tail.clone(), n, power, es) - alpha };
-        let mut convergency = SimpleConvergency { eps: 0.0001f64, max_iter: 500 };
-        return match find_root_regula_falsi(0.001f64, 8f64, &f, &mut convergency) {
-            Ok(number) => number,
-            Err(_) => -111.0
+        let mut conv = SimpleConvergency {
+            eps: 0.0001f64,
+            max_iter: 500
         };
+        let root = find_root_regula_falsi(0.001f64, 8f64, f, &mut conv);
+        root.unwrap_or(-111.0)
     }
 }

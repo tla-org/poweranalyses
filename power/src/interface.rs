@@ -36,7 +36,7 @@ struct Received {
 
 impl Received {
     fn from_json(data: &Value) -> Result<Received, String> {
-        let test = TestKind::from_str(data["test"].as_str().unwrap(), &data)?;
+        let test = TestKind::from_str(data["test"].as_str().unwrap(), data)?;
         let analysis = Analysis::from_str(data["analysis"].as_str().unwrap())?;
         let n = data["n"].as_f64().unwrap();
         let alpha = data["alpha"].as_f64().unwrap();
@@ -48,10 +48,10 @@ impl Received {
 
 fn round(x: f64, decimals: u32) -> f64 {
     let factor = i64::checked_pow(10, decimals);
-    return match factor {
+    match factor {
         Some(number) => (x * number as f64).round() / number as f64,
         None => x
-    };
+    }
 }
 
 #[test]
@@ -60,7 +60,7 @@ fn rounding() {
 }
 
 pub fn handle_received(text: &str) -> Value {
-    let data: Value = json(&text).unwrap();
+    let data: Value = json(text).unwrap();
     let recv = Received::from_json(&data).unwrap();
     let tail = match Tail::from_json(&data) {
         Some(tail) => tail,

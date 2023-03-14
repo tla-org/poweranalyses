@@ -2,7 +2,6 @@
 /// Logic to transfer strings between Javascript and WebAssembly.
 /// Thanks to Richard L. Apodaca at https://depth-first.com.
 ///
-use serde_json;
 use serde_json::Value;
 use std::ffi::{CStr, CString};
 use std::mem;
@@ -26,7 +25,7 @@ pub unsafe extern "C" fn dealloc(ptr: *mut c_void) {
 pub unsafe fn u8_to_string(ptr: *mut u8) -> String {
     let mut text = CStr::from_ptr(ptr as *const i8).to_str().unwrap().to_string();
     // For some reason, the last character is sometimes an unknown character.
-    if text.chars().last() != Some('}') {
+    if !text.ends_with('}') {
         text.pop();
     }
     text
