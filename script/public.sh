@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+#
+# Copy the files to the public directory.
+#
+
 set -e
 
 BASEDIR=$(dirname $(dirname $(readlink -f "$0")))

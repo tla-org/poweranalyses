@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+#
+# Move the front end files when a file changes.
+#
+
 set -e
 
 BASEDIR=$(dirname $(dirname $(readlink -f "$0")))
