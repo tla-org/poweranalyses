@@ -30,13 +30,14 @@ jobs:
 
       - run: ./script/build.sh
 
-      - uses: actions/upload-artifact@v4
+      - if: ${{ github.event_name != 'pull_request' }}
+        run: echo "poweranalyses.org" > public/CNAME
+
+      - uses: actions/upload-pages-artifact@v3
         if: ${{ github.event_name != 'pull_request' }}
         with:
-          name: 'github-pages'
           path: 'public/'
           retention-days: '1'
-          overwrite: 'true'
 
   deploy:
     # Separate step to keep the permissions separated.
