@@ -25,7 +25,6 @@ jobs:
         with:
           target: 'wasm32-unknown-emscripten'
           toolchain: 'stable'
-          override: 'true'
 
       - run: cargo test
 
@@ -41,6 +40,7 @@ jobs:
   deploy:
     # Separate step to keep the permissions separated.
     needs: build
+    if: ${{ github.event_name != 'pull_request' }}
     permissions:
       pages: write
       id-token: write
@@ -50,5 +50,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: deployment
-        if: ${{ github.event_name != 'pull_request' }}
         uses: actions/deploy-pages@v4
