@@ -3,7 +3,6 @@ use dist::NoncentralChisq;
 use dist::NoncentralF;
 use dist::NoncentralT;
 use roots::SimpleConvergency;
-use roots::find_root_brent;
 use roots::find_root_regula_falsi;
 use serde_json::Value;
 
@@ -121,8 +120,18 @@ impl TestKind {
             eps: 0.0001f64,
             max_iter: 500
         };
-        let root = find_root_brent(2f64, 1000f64, f, &mut conv);
-        root.unwrap_or(-111.0) as i64
+        let step_size = 20;
+        // There is probably a better way to do this, but it works.
+        for lower in (0..1000).step_by(step_size) {
+            let upper = lower + step_size;
+            let root = find_root_regula_falsi(lower as f64, upper as f64, f, &mut conv);
+            let n = root.unwrap_or(-111.0);
+            if n == -111.0 || n.is_nan() {
+                continue;
+            }
+            return n.round() as i64;
+        }
+        return -111
     }
 
     pub fn alpha(&self, tail: Tail, n: f64, power: f64, es: f64) -> f64 {

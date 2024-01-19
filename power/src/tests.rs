@@ -113,4 +113,7 @@ fn independent_samples_t_test() {
     let join = with_rest("independentSamplesTTest");
     let extra = json!({"analysis": "alpha", "tail": "2"});
     test_interface(&join(&extra), 0.398);
+
+    let extra = json!({"tail": "1", "analysis": "n"});
+    test_interface(&join(&extra), 88.0);
 }
