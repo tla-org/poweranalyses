@@ -143,3 +143,18 @@ fn one_way_anova_test() {
     let extra = json!({"k": k, "analysis": "n"});
     test_interface(&join(&extra), 80.0);
 }
+
+#[test]
+fn two_way_anova_test() {
+    let k = "5";
+    let q = "10";
+    let join = with_rest("twoWayANOVA");
+    let extra = json!({"k": k, "q": q, "analysis": "alpha"});
+    test_interface(&join(&extra), 0.465);
+    let extra = json!({"k": k, "q": q, "analysis": "power"});
+    test_interface(&join(&extra), 0.560);
+    let extra = json!({"k": k, "q": q, "analysis": "es"});
+    test_interface(&join(&extra), 0.770);
+    let extra = json!({"k": k, "q": q, "analysis": "n"});
+    test_interface(&join(&extra), 107.0);
+}

@@ -40,7 +40,7 @@ function familyChanged() {
     } else if (family == "f") {
         addSelectOption(testSelector, "ANCOVA: Fixed effects, main effects, and interactions", false, 1);
         addSelectOption(testSelector, "ANOVA: Fixed effects, omnibus, one-way", true, 'oneWayANOVA');
-        addSelectOption(testSelector, "ANOVA: Fixed effects, special, main effects, and interactions", false, 3);
+        addSelectOption(testSelector, "ANOVA: Fixed effects, special, main effects, and interactions", true , 'twoWayANOVA');
         addSelectOption(testSelector, "ANOVA: Repeated measures, between factors", false, 4);
         addSelectOption(testSelector, "ANOVA: Repeated measures, within factors", false, 5);
         addSelectOption(testSelector, "ANOVA: Repeated measures, within-between interaction", false, 6);
@@ -142,6 +142,9 @@ function updateNumberOutputAreas() {
             addTableOption(inputTable, "Number of tested predictors", "<input onchange='updateOutput()' id='q' value='2' min='0' max='1000' step='1'>");
             addTableOption(inputTable, "Total number of predictors", "<input onchange='updateOutput()' id='p' value='5' min='0' max='1000' step='1'>");
         } else if (test == "oneWayANOVA") {
+            addTableOption(inputTable, "Number of groups", "<input onchange='updateOutput()' id='k' value='5' min='0' max='1000' step='1'>");
+        } else if (test == "twoWayANOVA") {
+            addTableOption(inputTable, "Numerator df", "<input onchange='updateOutput()' id='q' value='10' min='0' max='1000' step='1'>");
             addTableOption(inputTable, "Number of groups", "<input onchange='updateOutput()' id='k' value='5' min='0' max='1000' step='1'>");
         }
     } else if (family == "t") {
