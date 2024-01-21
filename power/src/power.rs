@@ -2,8 +2,8 @@ use dist::Dist;
 use dist::NoncentralChisq;
 use dist::NoncentralF;
 use dist::NoncentralT;
-use roots::SimpleConvergency;
 use roots::find_root_regula_falsi;
+use roots::SimpleConvergency;
 use serde_json::Value;
 
 /// Supertype for all test types.
@@ -12,20 +12,22 @@ use serde_json::Value;
 /// (https://doi.org/10.3758/BF03193146).
 pub enum TestKind {
     OneSampleTTest,
+    IndependentSamplesTTest,
     DeviationFromZeroMultipleRegression {
-        n_predictors: i64
+        /// Number of predictors (#A).
+        n_predictors: i64,
     },
     GoodnessOfFitChisqTest {
-        df: i64
+        /// Degrees of freedom.
+        df: i64,
     },
     /// Multiple regression: increase of R^2.
-    /// Total number of predictors `p` (#A + #B).
-    /// Number of tested predictors `q` (#B).
     IncreaseMultipleRegression {
-        p: i64,
-        q: i64
+        /// Total number of predictors (#A + #B).
+        rho: i64,
+        /// Number of tested predictors (#B).
+        q: i64,
     },
-    IndependentSamplesTTest
 }
 
 #[derive(Clone, Debug)]
@@ -63,50 +65,46 @@ impl TestKind {
     pub fn from_str(text: &str, data: &Value) -> Result<TestKind, String> {
         match text {
             "oneSampleTTest" => Ok(TestKind::OneSampleTTest),
+            "independentSamplesTTest" => Ok(TestKind::IndependentSamplesTTest),
             "deviationFromZeroMultipleRegression" => {
                 let n_predictors = parse_i64(data, "nPredictors").unwrap();
-                Ok(TestKind::DeviationFromZeroMultipleRegression{ n_predictors })
-            },
+                Ok(TestKind::DeviationFromZeroMultipleRegression { n_predictors })
+            }
             "goodnessOfFitChisqTest" => {
                 let df = parse_i64(data, "df").unwrap();
-                Ok(TestKind::GoodnessOfFitChisqTest{ df })
-            },
+                Ok(TestKind::GoodnessOfFitChisqTest { df })
+            }
             "increaseMultipleRegression" => {
-                let p = parse_i64(data, "p").unwrap();
+                let rho = parse_i64(data, "rho").unwrap();
                 let q = parse_i64(data, "q").unwrap();
-                Ok(TestKind::IncreaseMultipleRegression{ p, q })
-            },
-            "independentSamplesTTest" => Ok(TestKind::IndependentSamplesTTest),
+                Ok(TestKind::IncreaseMultipleRegression { rho, q })
+            }
             _ => Err(format!("Unknown test: {}", text)),
         }
     }
 
     fn alternative_distribution(&self, n: f64, es: f64) -> Dist {
         match self {
-            TestKind::OneSampleTTest => {
-                Box::new(NoncentralT::new(n - 1.0, n.sqrt() * es))
-            },
-            TestKind::DeviationFromZeroMultipleRegression { n_predictors } => {
-                Box::new(NoncentralF::new(
-                    *n_predictors as f64,
-                    n - (*n_predictors as f64) - 1.0,
-                    es.powi(2) * n
-                ))
-            },
-            TestKind::GoodnessOfFitChisqTest { df } => {
-                Box::new(NoncentralChisq::new(*df as f64, es.powi(2) * n))
-            },
-            TestKind::IncreaseMultipleRegression { p, q } => {
-                Box::new(NoncentralF::new(
-                    *q as f64,
-                    n - (*p as f64) - 1.0,
-                    es.powi(2) * n)
-                )
-            }
+            TestKind::OneSampleTTest => Box::new(NoncentralT::new(n - 1.0, n.sqrt() * es)),
             TestKind::IndependentSamplesTTest => {
                 let v = n - 2.0; // n1 + n2 - 2
                 Box::new(NoncentralT::new(v, (n / 2.0).sqrt() * es))
             }
+            TestKind::DeviationFromZeroMultipleRegression { n_predictors } => {
+                Box::new(NoncentralF::new(
+                    *n_predictors as f64,
+                    n - (*n_predictors as f64) - 1.0,
+                    es.powi(2) * n,
+                ))
+            }
+            TestKind::GoodnessOfFitChisqTest { df } => {
+                Box::new(NoncentralChisq::new(*df as f64, es.powi(2) * n))
+            }
+            TestKind::IncreaseMultipleRegression { rho, q } => Box::new(NoncentralF::new(
+                *q as f64,
+                n - (*rho as f64) - 1.0,
+                es.powi(2) * n,
+            )),
         }
     }
 
@@ -115,10 +113,10 @@ impl TestKind {
     }
 
     pub fn n(&self, tail: Tail, alpha: f64, power: f64, es: f64) -> i64 {
-        let f = | n | { self.alpha(tail.clone(), n, power, es) - alpha };
+        let f = |n| self.alpha(tail.clone(), n, power, es) - alpha;
         let mut conv = SimpleConvergency {
             eps: 0.0001f64,
-            max_iter: 500
+            max_iter: 500,
         };
         let step_size = 20;
         // There is probably a better way to do this, but it works.
@@ -131,7 +129,7 @@ impl TestKind {
             }
             return n.round() as i64;
         }
-        return -111
+        return -111;
     }
 
     pub fn alpha(&self, tail: Tail, n: f64, power: f64, es: f64) -> f64 {
@@ -157,10 +155,10 @@ impl TestKind {
     }
 
     pub fn es(&self, tail: Tail, n: f64, alpha: f64, power: f64) -> f64 {
-        let f = | es | { self.alpha(tail.clone(), n, power, es) - alpha };
+        let f = |es| self.alpha(tail.clone(), n, power, es) - alpha;
         let mut conv = SimpleConvergency {
             eps: 0.0001f64,
-            max_iter: 500
+            max_iter: 500,
         };
         let root = find_root_regula_falsi(0.001f64, 8f64, f, &mut conv);
         root.unwrap_or(-111.0)
