@@ -31,3 +31,5 @@ cp target/wasm32-unknown-emscripten/release/pa.wasm public
 chmod 444 public/index.html
 chmod 444 public/style.css
 chmod 444 public/frontend.js
+chmod 444 public/pa.js
+chmod 444 public/pa.wasm

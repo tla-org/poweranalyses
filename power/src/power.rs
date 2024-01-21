@@ -129,7 +129,7 @@ impl TestKind {
             }
             return n.round() as i64;
         }
-        return -111;
+        -111
     }
 
     pub fn alpha(&self, tail: Tail, n: f64, power: f64, es: f64) -> f64 {
