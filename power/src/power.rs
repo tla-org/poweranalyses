@@ -58,6 +58,15 @@ pub enum TestKind {
         /// (number of factor levels - 1).
         q: i64,
     },
+    /// ANOVA: Repeated measures, between factors.
+    BetweenRepeatedANOVA {
+        /// Levels of between factor.
+        k: i64,
+        /// Levels of repeated measures.
+        m: i64,
+        /// Correlation among repeated measures.
+        rho: f64,
+    },
 }
 
 #[derive(Clone, Debug)]
@@ -77,6 +86,20 @@ fn parse_i64(data: &Value, field: &str) -> Result<i64, String> {
     let value: i64 = value
         .parse()
         .expect("{field} could not be converted to an integer");
+    Ok(value)
+}
+
+fn parse_f64(data: &Value, field: &str) -> Result<f64, String> {
+    let value = match data.get(field) {
+        Some(value) => value,
+        None => return Err(format!("Missing field: {}", field)),
+    };
+    let value: &str = value
+        .as_str()
+        .expect("{field} could not be converted to a str");
+    let value: f64 = value
+        .parse()
+        .expect("{field} could not be converted to a floating number");
     Ok(value)
 }
 
@@ -124,6 +147,12 @@ impl TestKind {
                 let q = parse_i64(data, "q").unwrap();
                 Ok(TestKind::TwoWayANOVA { k, q })
             }
+            "betweenRepeatedANOVA" => {
+                let k = parse_i64(data, "k").unwrap();
+                let m = parse_i64(data, "m").unwrap();
+                let rho = parse_f64(data, "rho").unwrap();
+                Ok(TestKind::BetweenRepeatedANOVA { k, m, rho })
+            }
             _ => Err(format!("Unknown test: {}", text)),
         }
     }
@@ -162,6 +191,15 @@ impl TestKind {
             )),
             TestKind::TwoWayANOVA { k, q } => {
                 Box::new(NoncentralF::new(*q as f64, n - *k as f64, es.powi(2) * n))
+            }
+
+            TestKind::BetweenRepeatedANOVA { k, m, rho } => {
+                let u = *m as f64 / (1.0 + ((*m as f64 - 1.0) * *rho));
+                Box::new(NoncentralF::new(
+                    *k as f64 - 1.0,
+                    n - *k as f64,
+                    es.powi(2) * u * n,
+                ))
             }
         }
     }

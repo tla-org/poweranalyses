@@ -187,3 +187,32 @@ fn ancova_test() {
     let extra = json!({"k": k, "q": q, "p": p, "analysis": "n"});
     test_interface(&join(&extra), 204.0);
 }
+
+#[test]
+fn between_repeated_anova_test() {
+    let k = "2";
+    let m = "4";
+    let rho = "0.5";
+    let join = with_rest("betweenRepeatedANOVA");
+    let extra = json!({"k": k, "m": m, "rho": rho, "analysis": "alpha"});
+    test_interface(&join(&extra), 0.008);
+    let extra = json!({"k": k, "m": m, "rho": rho, "analysis": "power"});
+    test_interface(&join(&extra), 0.992);
+    let extra = json!({"k": k, "m": m, "rho": rho, "analysis": "es"});
+    test_interface(&join(&extra), 0.411);
+    let extra = json!({"k": k, "m": m, "rho": rho, "analysis": "n"});
+    test_interface(&join(&extra), 36.0);
+
+    let k = "5";
+    let m = "10";
+    let rho = "0.75";
+    let join = with_rest("betweenRepeatedANOVA");
+    let extra = json!({"k": k, "m": m, "rho": rho, "analysis": "alpha"});
+    test_interface(&join(&extra), 0.125);
+    let extra = json!({"k": k, "m": m, "rho": rho, "analysis": "power"});
+    test_interface(&join(&extra), 0.880);
+    let extra = json!({"k": k, "m": m, "rho": rho, "analysis": "es"});
+    test_interface(&join(&extra), 0.566);
+    let extra = json!({"k": k, "m": m, "rho": rho, "analysis": "n"});
+    test_interface(&join(&extra), 65.0);
+}
