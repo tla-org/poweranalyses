@@ -1,8 +1,7 @@
-#[cfg(test)]
-
-use serde_json::Value;
-use serde_json::json;
 use crate::interface::handle_received;
+use serde_json::json;
+#[cfg(test)]
+use serde_json::Value;
 
 const ES: f64 = 0.5;
 const ALPHA: f64 = 0.05;
@@ -50,7 +49,7 @@ fn default_input() -> Value {
 
 fn with_rest(test: &str) -> impl Fn(&Value) -> Value {
     let extra = json!({"test": test});
-    move | input | join_json(&with_base(input), &extra)
+    move |input| join_json(&with_base(input), &extra)
 }
 
 #[test]
@@ -98,11 +97,11 @@ fn goodness_of_fit_chisq() {
 
 #[test]
 fn increase_multiple_regression() {
-    let p = "5";
+    let rho = "5";
     let q = "2";
     let f_squared = ES.sqrt();
     let join = with_rest("increaseMultipleRegression");
-    let extra = json!({"analysis": "alpha", "p": p, "q": q, "es": f_squared});
+    let extra = json!({"analysis": "alpha", "rho": rho, "q": q, "es": f_squared});
     test_interface(&join(&extra), 0.006);
 }
 
