@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-  workflow_dispatch:
 
 jobs:
   build:
@@ -33,18 +31,24 @@ jobs:
       - name: Rust cache
         uses: Swatinem/rust-cache@v2
 
-      - name: Test
-        run: cargo test
-        
       - name: Build site
         run: ./script/build.sh
 
       - name: Copy compiled WASM to public
         run: ./script/public.sh
 
-      - name: Upload arfifact
-        uses: actions/upload-pages-artifact@v3
-        if: ${{ github.event_name == 'pull_request' }}
+  deploy:
+    runs-on: ubuntu-latest
+    # Separate step to keep the permissions separated.
+    needs: build
+    permissions:
+      # For the push to `gh-pages` branch.
+      contents: write
+      pages: write
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          path: 'public/'
-          retention-days: '1'
+          branch: gh-pages
+          folder: public
