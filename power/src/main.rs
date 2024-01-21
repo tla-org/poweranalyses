@@ -1,7 +1,8 @@
+mod interface;
 mod power;
 mod string;
-mod interface;
 
-#[cfg(test)] mod tests;
+#[cfg(test)]
+mod tests;
 
 pub fn main() {}

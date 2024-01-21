@@ -29,7 +29,7 @@ pub unsafe fn u8_to_string(ptr: *mut u8) -> String {
         .to_string();
     match text.find("<END>") {
         Some(index) => text.truncate(index),
-        None => panic!("Expected <END> but couldn't find it.")
+        None => panic!("Expected <END> but couldn't find it."),
     }
     text
 }
