@@ -32,6 +32,19 @@ pub enum TestKind {
         /// Number of tested predictors (#B).
         q: i64,
     },
+    /// ANCOVA: Fixed effects, main effects and interattions.
+    ANCOVA {
+        /// Number of groups.
+        /// In factorial ANCOVA is A*B*C.
+        k: i64,
+        /// Degrees of freedom of the tested effect.
+        /// (number of factor levels - 1).
+        /// In ANCOVA it depends on what factor you are interested,
+        /// e.g. A, B, or C.
+        q: i64,
+        /// Number of covariates.
+        p: i64,
+    },
     /// ANOVA: Fixed effects, omnibus, one-way.
     OneWayANOVA {
         /// Number of groups.
@@ -42,6 +55,7 @@ pub enum TestKind {
         /// Total number of cells in the design.
         k: i64,
         /// Degrees of freedom of the tested effect.
+        /// (number of factor levels - 1).
         q: i64,
     },
 }
@@ -95,6 +109,12 @@ impl TestKind {
                 let q = parse_i64(data, "q").unwrap();
                 Ok(TestKind::IncreaseMultipleRegression { rho, q })
             }
+            "ANCOVA" => {
+                let k = parse_i64(data, "k").unwrap();
+                let q = parse_i64(data, "q").unwrap();
+                let p = parse_i64(data, "p").unwrap();
+                Ok(TestKind::ANCOVA { k, q, p })
+            }
             "oneWayANOVA" => {
                 let k = parse_i64(data, "k").unwrap();
                 Ok(TestKind::OneWayANOVA { k })
@@ -128,6 +148,11 @@ impl TestKind {
             TestKind::IncreaseMultipleRegression { rho, q } => Box::new(NoncentralF::new(
                 *q as f64,
                 n - (*rho as f64) - 1.0,
+                es.powi(2) * n,
+            )),
+            TestKind::ANCOVA { k, q, p } => Box::new(NoncentralF::new(
+                *q as f64,
+                n - *k as f64 - *p as f64 - 1.0,
                 es.powi(2) * n,
             )),
             TestKind::OneWayANOVA { k } => Box::new(NoncentralF::new(

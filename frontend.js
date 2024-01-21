@@ -38,7 +38,7 @@ function familyChanged() {
         addSelectOption(testSelector, "Proportions: Inequality (offset), two independent groups (unconditional)", false, 7);
         addSelectOption(testSelector, "Proportions: Sign test (binomial test)", false, 8);
     } else if (family == "f") {
-        addSelectOption(testSelector, "ANCOVA: Fixed effects, main effects, and interactions", false, 1);
+        addSelectOption(testSelector, "ANCOVA: Fixed effects, main effects, and interactions", true, 'ANCOVA');
         addSelectOption(testSelector, "ANOVA: Fixed effects, omnibus, one-way", true, 'oneWayANOVA');
         addSelectOption(testSelector, "ANOVA: Fixed effects, special, main effects, and interactions", true , 'twoWayANOVA');
         addSelectOption(testSelector, "ANOVA: Repeated measures, between factors", false, 4);
@@ -146,6 +146,10 @@ function updateNumberOutputAreas() {
         } else if (test == "twoWayANOVA") {
             addTableOption(inputTable, "Numerator df", "<input onchange='updateOutput()' id='q' value='10' min='0' max='1000' step='1'>");
             addTableOption(inputTable, "Number of groups", "<input onchange='updateOutput()' id='k' value='5' min='0' max='1000' step='1'>");
+        } else if (test == "ANCOVA") {
+            addTableOption(inputTable, "Numerator df", "<input onchange='updateOutput()' id='q' value='10' min='0' max='1000' step='1'>");
+            addTableOption(inputTable, "Number of groups", "<input onchange='updateOutput()' id='k' value='5' min='0' max='1000' step='1'>");
+            addTableOption(inputTable, "Number of covariates", "<input onchange='updateOutput()' id='p' value='1' min='0' max='1000' step='1'>");
         }
     } else if (family == "t") {
         addTableOption(inputTable, "Tail(s)", "<select onchange='updateOutput()' id='tail'><option value=1>One tail</option><option value=2>Two tails</option></select>");

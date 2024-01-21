@@ -158,3 +158,32 @@ fn two_way_anova_test() {
     let extra = json!({"k": k, "q": q, "analysis": "n"});
     test_interface(&join(&extra), 107.0);
 }
+
+#[test]
+fn ancova_test() {
+    let k = "5";
+    let q = "10";
+    let p = "2";
+    let join = with_rest("ANCOVA");
+    let extra = json!({"k": k, "q": q, "p": p, "analysis": "alpha"});
+    test_interface(&join(&extra), 0.469); // G*Power gives 0.467
+    let extra = json!({"k": k, "q": q, "p": p, "analysis": "power"});
+    test_interface(&join(&extra), 0.553); // G*Power gives 0.555
+    let extra = json!({"k": k, "q": q, "p": p, "analysis": "es"});
+    test_interface(&join(&extra), 0.775); // G*Power gives 0.773
+    let extra = json!({"k": k, "q": q, "p": p, "analysis": "n"});
+    test_interface(&join(&extra), 107.0);
+
+    let k = "10";
+    let q = "50";
+    let p = "10";
+    let join = with_rest("ANCOVA");
+    let extra = json!({"k": k, "q": q, "p": p, "analysis": "alpha"});
+    test_interface(&join(&extra), 0.826); // G*Power gives 0.825
+    let extra = json!({"k": k, "q": q, "p": p, "analysis": "power"});
+    test_interface(&join(&extra), 0.156); // G*Power gives 0.158
+    let extra = json!({"k": k, "q": q, "p": p, "analysis": "es"});
+    test_interface(&join(&extra), 1.357); // G*Power gives 1.344
+    let extra = json!({"k": k, "q": q, "p": p, "analysis": "n"});
+    test_interface(&join(&extra), 204.0);
+}
