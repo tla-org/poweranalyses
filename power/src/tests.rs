@@ -216,3 +216,102 @@ fn between_repeated_anova_test() {
     let extra = json!({"k": k, "m": m, "rho": rho, "analysis": "n"});
     test_interface(&join(&extra), 65.0);
 }
+
+#[test]
+fn within_repeated_anova_test() {
+    let k = "4";
+    let m = "2";
+    let rho = "0.5";
+    let epsilon = "1.0";
+    let n = 12.0;
+    let join =
+        json!({"n": n, "alpha": ALPHA, "power": POWER, "es": ES, "test": "withinRepeatedANOVA"});
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "alpha"});
+    test_interface(&join_json(&join, &extra), 0.123);
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "power"});
+    test_interface(&join_json(&join, &extra), 0.857);
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "es"});
+    test_interface(&join_json(&join, &extra), 0.597);
+    let join = with_rest("withinRepeatedANOVA");
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "n"});
+    test_interface(&join(&extra), 16.0);
+
+    let k = "4";
+    let m = "3";
+    let rho = "0.75";
+    let epsilon = "0.7";
+    let n = 10.0;
+    let join =
+        json!({"n": n, "alpha": ALPHA, "power": POWER, "es": ES, "test": "withinRepeatedANOVA"});
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "alpha"});
+    test_interface(&join_json(&join, &extra), 0.040);
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "power"});
+    test_interface(&join_json(&join, &extra), 0.963);
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "es"});
+    test_interface(&join_json(&join, &extra), 0.481);
+    let join = with_rest("withinRepeatedANOVA");
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "n"});
+    test_interface(&join(&extra), 10.0);
+}
+
+#[test]
+#[should_panic(expected = "lower bound of ε corresponds to 1 / (number of measurements - 1)")]
+fn within_repeated_anova_epsilon_error() {
+    let k = "4";
+    let m = "2";
+    let rho = "0.5";
+    let epsilon = "0.2"; // lower bound is 1/3.
+    let n = 12.0;
+    let join =
+        json!({"n": n, "alpha": ALPHA, "power": POWER, "es": ES, "test": "withinRepeatedANOVA"});
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "alpha"});
+    test_interface(&join_json(&join, &extra), 0.123);
+}
+
+#[test]
+fn within_between_repeated_anova_test() {
+    let k = "4";
+    let m = "2";
+    let rho = "0.5";
+    let epsilon = "1.0";
+    let n = 15.0;
+    let join = json!({"n": n, "alpha": ALPHA, "power": POWER, "es": ES, "test": "withinBetweenRepeatedANOVA"});
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "alpha"});
+    test_interface(&join_json(&join, &extra), 0.187);
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "power"});
+    test_interface(&join_json(&join, &extra), 0.782);
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "es"});
+    test_interface(&join_json(&join, &extra), 0.644);
+    let join = with_rest("withinBetweenRepeatedANOVA");
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "n"});
+    test_interface(&join(&extra), 24.0);
+
+    let k = "4";
+    let m = "3";
+    let rho = "0.75";
+    let epsilon = "0.7";
+    let n = 12.0;
+    let join = json!({"n": n, "alpha": ALPHA, "power": POWER, "es": ES, "test": "withinBetweenRepeatedANOVA"});
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "alpha"});
+    test_interface(&join_json(&join, &extra), 0.078);
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "power"});
+    test_interface(&join_json(&join, &extra), 0.913);
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "es"});
+    test_interface(&join_json(&join, &extra), 0.539);
+    let join = with_rest("withinBetweenRepeatedANOVA");
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "n"});
+    test_interface(&join(&extra), 16.0);
+}
+
+#[test]
+#[should_panic(expected = "lower bound of ε corresponds to 1 / (number of measurements - 1)")]
+fn within_between_repeated_anova_epsilon_error() {
+    let k = "4";
+    let m = "2";
+    let rho = "0.5";
+    let epsilon = "0.2"; // lower bound is 1/3.
+    let n = 12.0;
+    let join = json!({"n": n, "alpha": ALPHA, "power": POWER, "es": ES, "test": "withinBetweenRepeatedANOVA"});
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "alpha"});
+    test_interface(&join_json(&join, &extra), 0.123);
+}

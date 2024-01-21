@@ -1,3 +1,4 @@
+#![allow(clippy::upper_case_acronyms)]
 use dist::Dist;
 use dist::NoncentralChisq;
 use dist::NoncentralF;
@@ -66,6 +67,28 @@ pub enum TestKind {
         m: i64,
         /// Correlation among repeated measures.
         rho: f64,
+    },
+    /// ANOVA: Repeated measures, within factors.
+    WithinRepeatedANOVA {
+        /// Levels of between factor.
+        k: i64,
+        /// Levels of repeated measures.
+        m: i64,
+        /// Correlation among repeated measures.
+        rho: f64,
+        /// Nonsphericity correction.
+        epsilon: f64,
+    },
+    /// ANOVA: Repeated measures, within-between interactions.
+    WithinBetweenRepeatedANOVA {
+        /// Levels of between factor.
+        k: i64,
+        /// Levels of repeated measures.
+        m: i64,
+        /// Correlation among repeated measures.
+        rho: f64,
+        /// Nonsphericity correction.
+        epsilon: f64,
     },
 }
 
@@ -153,6 +176,34 @@ impl TestKind {
                 let rho = parse_f64(data, "rho").unwrap();
                 Ok(TestKind::BetweenRepeatedANOVA { k, m, rho })
             }
+            "withinRepeatedANOVA" => {
+                let k = parse_i64(data, "k").unwrap();
+                let m = parse_i64(data, "m").unwrap();
+                let rho = parse_f64(data, "rho").unwrap();
+                let epsilon = parse_f64(data, "epsilon").unwrap();
+                if epsilon < (1.0 / (m as f64 - 1.0)) {
+                    Err(
+                        "lower bound of ε corresponds to 1 / (number of measurements - 1)"
+                            .to_string(),
+                    )
+                } else {
+                    Ok(TestKind::WithinRepeatedANOVA { k, m, rho, epsilon })
+                }
+            }
+            "withinBetweenRepeatedANOVA" => {
+                let k = parse_i64(data, "k").unwrap();
+                let m = parse_i64(data, "m").unwrap();
+                let rho = parse_f64(data, "rho").unwrap();
+                let epsilon = parse_f64(data, "epsilon").unwrap();
+                if epsilon < (1.0 / (m as f64 - 1.0)) {
+                    Err(
+                        "lower bound of ε corresponds to 1 / (number of measurements - 1)"
+                            .to_string(),
+                    )
+                } else {
+                    Ok(TestKind::WithinBetweenRepeatedANOVA { k, m, rho, epsilon })
+                }
+            }
             _ => Err(format!("Unknown test: {}", text)),
         }
     }
@@ -199,6 +250,22 @@ impl TestKind {
                     *k as f64 - 1.0,
                     n - *k as f64,
                     es.powi(2) * u * n,
+                ))
+            }
+            TestKind::WithinRepeatedANOVA { k, m, rho, epsilon } => {
+                let u = *m as f64 / (1.0 - *rho);
+                Box::new(NoncentralF::new(
+                    (*m as f64 - 1.0) * *epsilon,
+                    (n - *k as f64) * (*m as f64 - 1.0) * *epsilon,
+                    es.powi(2) * u * n * *epsilon, // NOTE: G*Power paper is missing the epsilon.
+                ))
+            }
+            TestKind::WithinBetweenRepeatedANOVA { k, m, rho, epsilon } => {
+                let u = *m as f64 / (1.0 - *rho);
+                Box::new(NoncentralF::new(
+                    (*k as f64 - 1.0) * (*m as f64 - 1.0) * *epsilon,
+                    (n - *k as f64) * (*m as f64 - 1.0) * *epsilon,
+                    es.powi(2) * u * n * *epsilon,
                 ))
             }
         }
