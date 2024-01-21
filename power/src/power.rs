@@ -14,16 +14,18 @@ pub enum TestKind {
     OneSampleTTest,
     IndependentSamplesTTest,
     DeviationFromZeroMultipleRegression {
+        /// Number of predictors (#A).
         n_predictors: i64,
     },
     GoodnessOfFitChisqTest {
+        /// Degrees of freedom.
         df: i64,
     },
     /// Multiple regression: increase of R^2.
-    /// Total number of predictors `p` (#A + #B).
-    /// Number of tested predictors `q` (#B).
     IncreaseMultipleRegression {
+        /// Total number of predictors (#A + #B).
         rho: i64,
+        /// Number of tested predictors (#B).
         q: i64,
     },
 }
