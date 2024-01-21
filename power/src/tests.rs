@@ -129,3 +129,17 @@ fn increase_multiple_regression() {
     let extra = json!({"rho": rho, "q": q, "es": f_squared, "analysis": "n"});
     test_interface(&join(&extra), 35.0);
 }
+
+#[test]
+fn one_way_anova_test() {
+    let k = "5";
+    let join = with_rest("oneWayANOVA");
+    let extra = json!({"k": k, "analysis": "alpha"});
+    test_interface(&join(&extra), 0.247);
+    let extra = json!({"k": k, "analysis": "power"});
+    test_interface(&join(&extra), 0.773);
+    let extra = json!({"k": k, "analysis": "es"});
+    test_interface(&join(&extra), 0.643);
+    let extra = json!({"k": k, "analysis": "n"});
+    test_interface(&join(&extra), 80.0);
+}

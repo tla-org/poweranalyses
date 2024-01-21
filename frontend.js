@@ -39,7 +39,7 @@ function familyChanged() {
         addSelectOption(testSelector, "Proportions: Sign test (binomial test)", false, 8);
     } else if (family == "f") {
         addSelectOption(testSelector, "ANCOVA: Fixed effects, main effects, and interactions", false, 1);
-        addSelectOption(testSelector, "ANOVA: Fixed effects, omnibus, one-way", false, 2);
+        addSelectOption(testSelector, "ANOVA: Fixed effects, omnibus, one-way", true, 'oneWayANOVA');
         addSelectOption(testSelector, "ANOVA: Fixed effects, special, main effects, and interactions", false, 3);
         addSelectOption(testSelector, "ANOVA: Repeated measures, between factors", false, 4);
         addSelectOption(testSelector, "ANOVA: Repeated measures, within factors", false, 5);
@@ -141,6 +141,8 @@ function updateNumberOutputAreas() {
         } else if (test == "increaseMultipleRegression") {
             addTableOption(inputTable, "Number of tested predictors", "<input onchange='updateOutput()' id='q' value='2' min='0' max='1000' step='1'>");
             addTableOption(inputTable, "Total number of predictors", "<input onchange='updateOutput()' id='p' value='5' min='0' max='1000' step='1'>");
+        } else if (test == "oneWayANOVA") {
+            addTableOption(inputTable, "Number of groups", "<input onchange='updateOutput()' id='k' value='5' min='0' max='1000' step='1'>");
         }
     } else if (family == "t") {
         addTableOption(inputTable, "Tail(s)", "<select onchange='updateOutput()' id='tail'><option value=1>One tail</option><option value=2>Two tails</option></select>");

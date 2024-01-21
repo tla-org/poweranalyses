@@ -32,6 +32,12 @@ pub enum TestKind {
         /// Number of tested predictors (#B).
         q: i64,
     },
+    IndependentSamplesTTest,
+    /// ANOVA: Fixed effects, omnibus, one-way.
+    OneWayANOVA {
+        /// Number of groups.
+        k: i64,
+    },
 }
 
 #[derive(Clone, Debug)]
@@ -81,7 +87,12 @@ impl TestKind {
             "increaseMultipleRegression" => {
                 let rho = parse_i64(data, "rho").unwrap();
                 let q = parse_i64(data, "q").unwrap();
-                Ok(TestKind::IncreaseMultipleRegression { rho, q })
+                Ok(TestKind::IncreaseMultipleRegression{ p, q })
+            },
+            "independentSamplesTTest" => Ok(TestKind::IndependentSamplesTTest),
+            "oneWayANOVA" => {
+                let k = parse_i64(data, "k").unwrap();
+                Ok(TestKind::OneWayANOVA { k })
             }
             _ => Err(format!("Unknown test: {}", text)),
         }
@@ -94,19 +105,9 @@ impl TestKind {
                 let v = n - 2.0; // n1 + n2 - 2
                 Box::new(NoncentralT::new(v, (n / 2.0).sqrt() * es))
             }
-            TestKind::DeviationFromZeroMultipleRegression { n_predictors } => {
-                Box::new(NoncentralF::new(
-                    *n_predictors as f64,
-                    n - (*n_predictors as f64) - 1.0,
-                    es.powi(2) * n,
-                ))
-            }
-            TestKind::GoodnessOfFitChisqTest { df } => {
-                Box::new(NoncentralChisq::new(*df as f64, es.powi(2) * n))
-            }
-            TestKind::IncreaseMultipleRegression { rho, q } => Box::new(NoncentralF::new(
-                *q as f64,
-                n - (*rho as f64) - 1.0,
+            TestKind::OneWayANOVA { k } => Box::new(NoncentralF::new(
+                *k as f64 - 1.0,
+                n - *k as f64,
                 es.powi(2) * n,
             )),
         }
