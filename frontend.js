@@ -142,17 +142,17 @@ function updateNumberOutputAreas() {
             addTableOption(inputTable, "Number of tested predictors", "<input onchange='updateOutput()' id='q' value='2' min='0' max='1000' step='1'>");
             addTableOption(inputTable, "Total number of predictors", "<input onchange='updateOutput()' id='p' value='5' min='0' max='1000' step='1'>");
         } else if (test == "oneWayANOVA") {
-            addTableOption(inputTable, "Number of groups", "<input onchange='updateOutput()' id='k' value='5' min='0' max='1000' step='1'>");
+            addTableOption(inputTable, "Number of groups", "<input onchange='updateOutput()' id='k' value='5' min='1' max='1000' step='1'>");
         } else if (test == "twoWayANOVA") {
-            addTableOption(inputTable, "Numerator df", "<input onchange='updateOutput()' id='q' value='10' min='0' max='1000' step='1'>");
-            addTableOption(inputTable, "Number of groups", "<input onchange='updateOutput()' id='k' value='5' min='0' max='1000' step='1'>");
+            addTableOption(inputTable, "Numerator df", "<input onchange='updateOutput()' id='q' value='10' min='1' max='1000' step='1'>");
+            addTableOption(inputTable, "Number of groups", "<input onchange='updateOutput()' id='k' value='5' min='1' max='1000' step='1'>");
         } else if (test == "ANCOVA") {
-            addTableOption(inputTable, "Numerator df", "<input onchange='updateOutput()' id='q' value='10' min='0' max='1000' step='1'>");
-            addTableOption(inputTable, "Number of groups", "<input onchange='updateOutput()' id='k' value='5' min='0' max='1000' step='1'>");
-            addTableOption(inputTable, "Number of covariates", "<input onchange='updateOutput()' id='p' value='1' min='0' max='1000' step='1'>");
+            addTableOption(inputTable, "Numerator df", "<input onchange='updateOutput()' id='q' value='10' min='1' max='1000' step='1'>");
+            addTableOption(inputTable, "Number of groups", "<input onchange='updateOutput()' id='k' value='5' min='1' max='1000' step='1'>");
+            addTableOption(inputTable, "Number of covariates", "<input onchange='updateOutput()' id='p' value='2' min='2' max='1000' step='1'>");
         } else if (test == "betweenRepeatedANOVA") {
             addTableOption(inputTable, "Number of groups", "<input onchange='updateOutput()' id='k' value='2' min='0' max='1000' step='1'>");
-            addTableOption(inputTable, "Number of measurement", "<input onchange='updateOutput()' id='4' value='1' min='0' max='1000' step='1'>");
+            addTableOption(inputTable, "Number of measurement", "<input onchange='updateOutput()' id='m' value='1' min='0' max='1000' step='1'>");
             addTableOption(inputTable, "Corr among rep measures", "<input onchange='updateOutput()' id='rho' value='0.5' min='0' max='1' step='0.1'>");
         }
     } else if (family == "t") {
