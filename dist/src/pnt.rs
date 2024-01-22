@@ -1,29 +1,22 @@
-/*
- *  Mathlib : A C Library of Special Functions
- *  Copyright (C) 1998-2015 The R Core Team
- *  based on AS243 (C) 1989 Royal Statistical Society
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, a copy is available at
- *  https://www.R-project.org/Licenses/
- */
-
-/*  Algorithm AS 243  Lenth,R.V. (1989). Appl. Statist., Vol.38, 185-189.
- *  ----------------
- *  Cumulative probability at t of the non-central t-distribution
- *  with df degrees of freedom (may be fractional) and non-centrality
- *  parameter delta.
- */
+//!
+//! Mathlib : A C Library of Special Functions
+//! Copyright (C) 1998-2015 The R Core Team
+//! based on AS243 (C) 1989 Royal Statistical Society
+//!
+//! This program is free software; you can redistribute it and/or modify
+//! it under the terms of the GNU General Public License as published by
+//! the Free Software Foundation; either version 2 of the License, or
+//! (at your option) any later version.
+//!
+//! This program is distributed in the hope that it will be useful,
+//! but WITHOUT ANY WARRANTY; without even the implied warranty of
+//! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//! GNU General Public License for more details.
+//!
+//! You should have received a copy of the GNU General Public License
+//! along with this program; if not, a copy is available at
+//! https://www.R-project.org/Licenses/
+//!
 
 use crate::dpq;
 use crate::nmath;
@@ -44,6 +37,11 @@ fn finis(mut tnc: f64, del: f64, negdel: bool, mut lower_tail: bool) -> f64 {
     dpq::r_dt_val(f64::min(tnc, 1.0), lower_tail, /*log_p*/ false)
 }
 
+/// Algorithm AS 243  Lenth,R.V. (1989). Appl. Statist., Vol.38, 185-189.
+/// ----------------
+/// Cumulative probability at t of the non-central t-distribution
+/// with df degrees of freedom (may be fractional) and non-centrality
+/// parameter delta.
 pub fn pnt(t: f64, df: f64, ncp: f64, lower_tail: bool, log_p: bool) -> f64 {
     let albeta: f64;
     let mut a: f64;
