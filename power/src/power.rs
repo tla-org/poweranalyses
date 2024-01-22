@@ -257,7 +257,7 @@ impl TestKind {
                 Box::new(NoncentralF::new(
                     (*m as f64 - 1.0) * *epsilon,
                     (n - *k as f64) * (*m as f64 - 1.0) * *epsilon,
-                    es.powi(2) * u * n * *epsilon, // NOTE: G*Power paper is missing the epsilon.
+                    es.powi(2) * u * n * *epsilon, // G*Power paper is missing the epsilon.
                 ))
             }
             TestKind::WithinBetweenRepeatedANOVA { k, m, rho, epsilon } => {
