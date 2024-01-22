@@ -12,6 +12,7 @@ function addSelectOption(selector, text, enabled, value) {
 
 function getElementById(id) {
     const elem = document.getElementById(id);
+    var assert = require('assert');
     assert(elem != null);
     return elem;
 }
