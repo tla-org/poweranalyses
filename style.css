@@ -1,157 +1,169 @@
 :root {
-    --black: #000000;
-    --small: 15px;
-    --medium: 19px;
-    --favicon-blue: #7fb3fa;
-    --favicon-green: #64d465;
-    --favicon-yellow: #f4dd45;
-    --favicon-red: #f87c68;
+  --black: #000000;
+  --small: 15px;
+  --medium: 19px;
+  --large: 24px;
+  --favicon-blue: #7fb3fa;
+  --favicon-green: #64d465;
+  --favicon-yellow: #f4dd45;
+  --favicon-red: #f87c68;
 }
 
 body {
-    font-family: sans-serif;
-    font-size: var(--small);
+  font-family: sans-serif;
+  font-size: var(--medium);
 }
 
 .favicon {
-    vertical-align: bottom;
-    height: 1.7rem;
+  vertical-align: bottom;
+  height: 1.7rem;
 }
 
 @media (min-width: 800px) {
-    body {
-        font-size: var(--medium);
-    }
-    .content {
-        max-width: 640px;
-    }
+  body {
+    font-size: var(--large);
+  }
+
+  .content {
+    max-width: 640px;
+  }
 }
 
 .content {
-    margin: 6px;
-    padding-top: 20px;
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
+  margin: 6px;
+  padding-top: 20px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .title {
-    margin-bottom: 1em;
-    font-weight: 900;
+  margin-bottom: 1em;
+  font-weight: 900;
 }
 
 .center {
-    display: block;
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
+  display: block;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .plot {
-    width: 95%;
-    height: 0px;
-    margin-bottom: 1em;
+  width: 95%;
+  height: 0px;
+  margin-bottom: 1em;
 }
 
 label {
-    display: inline-block;
-    margin-top: 1em;
-    margin-left: 0.4em;
-    text-align: left;
-    font-size: 0.8rem;
+  display: inline-block;
+  margin-top: 1em;
+  margin-left: 0.2em;
+  text-align: left;
+  font-size: 0.8rem;
 }
 
 select {
-    margin-left: 0em;
-    margin-top: 0.4em;
-    font-size: 0.6rem;
-    text-overflow: ellipsis;
-    background-color: transparent;
-    border: 1px gray solid;
-    border-radius: 4px;
-    padding: 4px;
+  margin-left: 0em;
+  margin-top: 0.4em;
+  text-overflow: ellipsis;
+  background-color: transparent;
+  border: 1px gray solid;
+  border-radius: 4px;
+  padding: 4px;
+  font-size: 0.8rem;
+  width: 100%;
+}
+
+.drop-down {
+  max-width: 30rem;
 }
 
 .numbers {
-    font-size: 0.6rem;
-    margin-left: 0.1em;
-    margin-right: 0.1em;
-    display: table;
-    width: 100%;
+  font-size: 0.6rem;
+  margin-left: 0.1em;
+  margin-right: 0.1em;
+  display: table;
+  width: 100%;
 }
 
 .numbers table {
-    border-spacing: 0.6em 0.6em;
-    height: 100%;
+  border-spacing: 0.6em 0.6em;
+  height: 100%;
 }
 
 .numbers td {
-    vertical-align: baseline;
+  vertical-align: baseline;
 }
 
 .border {
-    margin-top: 5px;
-    margin-bottom: 5px;
-    border: 1px var(--favicon-blue) solid;
-    border-radius: 5px;
-    padding: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border: 1.5px var(--favicon-blue) solid;
+  border-radius: 5px;
+  padding: 5px;
 }
 
 @media (min-width: 400px) {
-    table#input {
-        float: left;
-        width: 48%;
-    }
-    .output {
-        float: right;
-        width: 48%;
-    }
+  table#input {
+    float: left;
+    width: 48%;
+  }
+
+  .output {
+    float: right;
+    width: 48%;
+  }
 }
 
 input[type="number"] {
-    font-size: 0.6rem;
-    margin-bottom: 0.3rem;
+  font-size: 0.8rem;
+  margin-bottom: 0.3rem;
+}
+
+td {
+  font-size: 0.8rem;
 }
 
 input {
-    width: 95%;
-    border: 1px gray solid;
-    border-radius: 4px;
-    padding: 3px 4px;
+  width: 95%;
+  border: 1px gray solid;
+  border-radius: 4px;
+  padding: 3px 4px;
 }
 
 .result {
-    font-weight: 800;
+  font-weight: 800;
 }
 
 button {
-    background-color: var(--favicon-green);
-    color: white;
-    border: 0px;
-    text-align: center;
-    padding: 4px 10px;
-    border-radius: 4px;
-    margin-top: 1rem;
+  background-color: var(--favicon-green);
+  color: white;
+  border: 0px;
+  text-align: center;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-top: 1rem;
 }
 
 .resetBtn {
-    background-color: gray;
-    margin-right: 0.2rem;
+  background-color: gray;
+  margin-right: 0.2rem;
 }
 
 .error {
-    color: var(--favicon-red);
-    font-size: 0.8rem;
-    margin: 0.6rem 0;
+  color: var(--favicon-red);
+  font-size: 0.8rem;
+  margin: 0.6rem 0;
 }
 
 .footer {
-    display: block;
-    margin-top: auto;
-    font-style: italic;
-    font-size: 0.8rem;
+  display: block;
+  margin-top: auto;
+  font-style: italic;
+  font-size: 0.8rem;
 }
 
 .changed {
-    border: 1px var(--favicon-red) solid;
+  border: 1px var(--favicon-red) solid;
 }
