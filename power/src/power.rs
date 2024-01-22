@@ -11,15 +11,19 @@ use serde_json::Value;
 /// See the G*Power 3 paper for the equations for the distribution parameters
 /// (https://doi.org/10.3758/BF03193146).
 pub enum TestKind {
+    /// Means: Difference from constant (one sample case).
     OneSampleTTest,
+    /// Means: Difference between two independent means (two groups).
     IndependentSamplesTTest,
-    DeviationFromZeroMultipleRegression {
-        /// Number of predictors (#A).
-        n_predictors: i64,
-    },
+    /// Goodness-of-fit tests: Contingency tables.
     GoodnessOfFitChisqTest {
         /// Degrees of freedom.
         df: i64,
+    },
+    /// Linear multiple regression: Fixed model, R^2 deviation from zero.
+    DeviationFromZeroMultipleRegression {
+        /// Number of predictors (#A).
+        n_predictors: i64,
     },
     /// Multiple regression: increase of R^2.
     IncreaseMultipleRegression {
@@ -66,13 +70,13 @@ impl TestKind {
         match text {
             "oneSampleTTest" => Ok(TestKind::OneSampleTTest),
             "independentSamplesTTest" => Ok(TestKind::IndependentSamplesTTest),
-            "deviationFromZeroMultipleRegression" => {
-                let n_predictors = parse_i64(data, "nPredictors").unwrap();
-                Ok(TestKind::DeviationFromZeroMultipleRegression { n_predictors })
-            }
             "goodnessOfFitChisqTest" => {
                 let df = parse_i64(data, "df").unwrap();
                 Ok(TestKind::GoodnessOfFitChisqTest { df })
+            }
+            "deviationFromZeroMultipleRegression" => {
+                let n_predictors = parse_i64(data, "nPredictors").unwrap();
+                Ok(TestKind::DeviationFromZeroMultipleRegression { n_predictors })
             }
             "increaseMultipleRegression" => {
                 let rho = parse_i64(data, "rho").unwrap();
@@ -127,7 +131,7 @@ impl TestKind {
             if n == -111.0 || n.is_nan() {
                 continue;
             }
-            return n.round() as i64;
+            return n.ceil() as i64;
         }
         -111
     }

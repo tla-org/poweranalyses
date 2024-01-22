@@ -63,6 +63,41 @@ fn one_sample_t_test() {
     test_interface(&join(&extra), 0.967);
     let extra = json!({"tail": "2", "analysis": "power"});
     test_interface(&join(&extra), 0.934);
+    let extra = json!({"tail": "1", "analysis": "es"});
+    test_interface(&join(&extra), 0.472);
+    let extra = json!({"tail": "2", "analysis": "es"});
+    test_interface(&join(&extra), 0.520);
+    let extra = json!({"tail": "1", "analysis": "n"});
+    test_interface(&join(&extra), 45.0);
+    let extra = json!({"tail": "2", "analysis": "n"});
+    test_interface(&join(&extra), 54.0);
+}
+
+#[test]
+fn independent_samples_t_test() {
+    // G*Power only gives 0.392 if you put sample size group 1 and 2 both on n=50.
+    // pwr.t.test(n=50, d=0.5, sig.level=NULL, power=0.95, type="two.sample", alternative="two.sided")
+    let join = with_rest("independentSamplesTTest");
+    let extra = json!({"tail": "2", "analysis": "alpha"});
+    test_interface(&join(&extra), 0.398);
+    let extra = json!({"tail": "1", "analysis": "n"});
+    test_interface(&join(&extra), 88.0);
+}
+
+#[test]
+fn goodness_of_fit_chisq() {
+    let df = "5";
+    let join = with_rest("goodnessOfFitChisqTest");
+    let extra = json!({"df": df, "analysis": "alpha"});
+    test_interface(&join(&extra), 0.254);
+    let extra = json!({"df": df, "es": 0.628, "analysis": "alpha"});
+    test_interface(&join(&extra), 0.051);
+    let extra = json!({"df": df, "analysis": "power"});
+    test_interface(&join(&extra), 0.788);
+    let extra = json!({"df": df, "analysis": "es"});
+    test_interface(&join(&extra), 0.629);
+    let extra = json!({"df": df, "analysis": "n"});
+    test_interface(&join(&extra), 80.0);
 }
 
 #[test]
@@ -74,25 +109,9 @@ fn deviation_from_zero_multiple_regression() {
     let extra = json!({"nPredictors": "2", "es": f_squared, "analysis": "power"});
     test_interface(&join(&extra), 0.994);
     let extra = json!({"nPredictors": "2", "es": f_squared, "analysis": "es"});
-    test_interface(&join(&extra), 0.574);
+    test_interface(&join(&extra), 0.574); // take the sqrt of G*Power.
     let extra = json!({"nPredictors": "2", "es": f_squared, "analysis": "n"});
-    test_interface(&join(&extra), 34.0);
-}
-
-#[test]
-fn goodness_of_fit_chisq() {
-    let df = "5";
-    let join = with_rest("goodnessOfFitChisqTest");
-    let extra = json!({"analysis": "alpha", "df": df});
-    test_interface(&join(&extra), 0.254);
-    let extra = json!({"analysis": "alpha", "df": df, "es": 0.628});
-    test_interface(&join(&extra), 0.051);
-    let extra = json!({"analysis": "power", "df": df});
-    test_interface(&join(&extra), 0.788);
-    let extra = json!({"analysis": "es", "df": df});
-    test_interface(&join(&extra), 0.629);
-    let extra = json!({"analysis": "n", "df": df});
-    test_interface(&join(&extra), 79.0);
+    test_interface(&join(&extra), 35.0);
 }
 
 #[test]
@@ -101,18 +120,12 @@ fn increase_multiple_regression() {
     let q = "2";
     let f_squared = ES.sqrt();
     let join = with_rest("increaseMultipleRegression");
-    let extra = json!({"analysis": "alpha", "rho": rho, "q": q, "es": f_squared});
+    let extra = json!({"rho": rho, "q": q, "es": f_squared, "analysis": "alpha"});
     test_interface(&join(&extra), 0.006);
-}
-
-#[test]
-fn independent_samples_t_test() {
-    // G*Power only gives 0.392 if you put sample size group 1 and 2 both on n=50.
-    // pwr.t.test(n=50, d=0.5, sig.level=NULL, power=0.95, type="two.sample", alternative="two.sided")
-    let join = with_rest("independentSamplesTTest");
-    let extra = json!({"analysis": "alpha", "tail": "2"});
-    test_interface(&join(&extra), 0.398);
-
-    let extra = json!({"tail": "1", "analysis": "n"});
-    test_interface(&join(&extra), 88.0);
+    let extra = json!({"rho": rho, "q": q, "es": f_squared, "analysis": "power"});
+    test_interface(&join(&extra), 0.994);
+    let extra = json!({"rho": rho, "q": q, "es": f_squared, "analysis": "es"});
+    test_interface(&join(&extra), 0.575); // take the sqrt of G*Power.
+    let extra = json!({"rho": rho, "q": q, "es": f_squared, "analysis": "n"});
+    test_interface(&join(&extra), 35.0);
 }
