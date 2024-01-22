@@ -38,12 +38,12 @@ function familyChanged() {
         addSelectOption(testSelector, "Proportions: Inequality (offset), two independent groups (unconditional)", false, 7);
         addSelectOption(testSelector, "Proportions: Sign test (binomial test)", false, 8);
     } else if (family == "f") {
-        addSelectOption(testSelector, "ANCOVA: Fixed effects, main effects, and interactions", false, 1);
-        addSelectOption(testSelector, "ANOVA: Fixed effects, omnibus, one-way", false, 2);
-        addSelectOption(testSelector, "ANOVA: Fixed effects, special, main effects, and interactions", false, 3);
-        addSelectOption(testSelector, "ANOVA: Repeated measures, between factors", false, 4);
-        addSelectOption(testSelector, "ANOVA: Repeated measures, within factors", false, 5);
-        addSelectOption(testSelector, "ANOVA: Repeated measures, within-between interaction", false, 6);
+        addSelectOption(testSelector, "ANCOVA: Fixed effects, main effects, and interactions", true, 'ANCOVA');
+        addSelectOption(testSelector, "ANOVA: Fixed effects, omnibus, one-way", true, 'oneWayANOVA');
+        addSelectOption(testSelector, "ANOVA: Fixed effects, special, main effects, and interactions", true , 'twoWayANOVA');
+        addSelectOption(testSelector, "ANOVA: Repeated measures, between factors",true, 'betweenRepeatedANOVA');
+        addSelectOption(testSelector, "ANOVA: Repeated measures, within factors", true, 'withinRepeatedANOVA');
+        addSelectOption(testSelector, "ANOVA: Repeated measures, within-between interaction", true, 'withinBetweenRepeatedANOVA');
         addSelectOption(testSelector, "Hotellings T²: One group mean vector", false, 7);
         addSelectOption(testSelector, "Hotellings T²: Two group mean vector", false, 8);
         addSelectOption(testSelector, "MANOVA: Global effects", false, 9);
@@ -141,6 +141,25 @@ function updateNumberOutputAreas() {
         } else if (test == "increaseMultipleRegression") {
             addTableOption(inputTable, "Number of tested predictors", "<input onchange='updateOutput()' id='q' value='2' min='0' max='1000' step='1'>");
             addTableOption(inputTable, "Total number of predictors", "<input onchange='updateOutput()' id='p' value='5' min='0' max='1000' step='1'>");
+        } else if (test == "oneWayANOVA") {
+            addTableOption(inputTable, "Number of groups", "<input onchange='updateOutput()' id='k' value='5' min='1' max='1000' step='1'>");
+        } else if (test == "twoWayANOVA") {
+            addTableOption(inputTable, "Numerator df", "<input onchange='updateOutput()' id='q' value='10' min='1' max='1000' step='1'>");
+            addTableOption(inputTable, "Number of groups", "<input onchange='updateOutput()' id='k' value='5' min='1' max='1000' step='1'>");
+        } else if (test == "ANCOVA") {
+            addTableOption(inputTable, "Numerator df", "<input onchange='updateOutput()' id='q' value='10' min='1' max='1000' step='1'>");
+            addTableOption(inputTable, "Number of groups", "<input onchange='updateOutput()' id='k' value='5' min='1' max='1000' step='1'>");
+            addTableOption(inputTable, "Number of covariates", "<input onchange='updateOutput()' id='p' value='2' min='2' max='1000' step='1'>");
+        } else if (test == "betweenRepeatedANOVA") {
+            addTableOption(inputTable, "Number of groups", "<input onchange='updateOutput()' id='k' value='2' min='0' max='1000' step='1'>");
+            addTableOption(inputTable, "Number of measurement", "<input onchange='updateOutput()' id='m' value='2' min='2' max='1000' step='1'>");
+            addTableOption(inputTable, "Corr among rep measures", "<input onchange='updateOutput()' id='rho' value='0.5' min='0' max='1' step='0.1'>");
+        } else if (test == "withinRepeatedANOVA" || test == "withinBetweenRepeatedANOVA") {
+            addTableOption(inputTable, "Number of groups", "<input onchange='updateOutput()' id='k' value='2' min='0' max='1000' step='1'>");
+            addTableOption(inputTable, "Number of measurement", "<input onchange='updateOutput()' id='m' value='2' min='2' max='1000' step='1'>");
+            addTableOption(inputTable, "Corr among rep measures", "<input onchange='updateOutput()' id='rho' value='0.5' min='0' max='1' step='0.1'>");
+            // FIXME: the lower bound of epsilon corresponds to 1 / (number of measurements - 1)
+            addTableOption(inputTable, "Nonsphericity correction ε", "<input onchange='updateOutput()' id='epsilon' value='1' min='0' max='1' step='0.1'>");
         }
     } else if (family == "t") {
         addTableOption(inputTable, "Tail(s)", "<select onchange='updateOutput()' id='tail'><option value=1>One tail</option><option value=2>Two tails</option></select>");

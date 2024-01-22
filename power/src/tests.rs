@@ -129,3 +129,189 @@ fn increase_multiple_regression() {
     let extra = json!({"rho": rho, "q": q, "es": f_squared, "analysis": "n"});
     test_interface(&join(&extra), 35.0);
 }
+
+#[test]
+fn one_way_anova_test() {
+    let k = "5";
+    let join = with_rest("oneWayANOVA");
+    let extra = json!({"k": k, "analysis": "alpha"});
+    test_interface(&join(&extra), 0.247);
+    let extra = json!({"k": k, "analysis": "power"});
+    test_interface(&join(&extra), 0.773);
+    let extra = json!({"k": k, "analysis": "es"});
+    test_interface(&join(&extra), 0.643);
+    let extra = json!({"k": k, "analysis": "n"});
+    test_interface(&join(&extra), 80.0);
+}
+
+#[test]
+fn two_way_anova_test() {
+    let k = "5";
+    let q = "10";
+    let join = with_rest("twoWayANOVA");
+    let extra = json!({"k": k, "q": q, "analysis": "alpha"});
+    test_interface(&join(&extra), 0.465);
+    let extra = json!({"k": k, "q": q, "analysis": "power"});
+    test_interface(&join(&extra), 0.560);
+    let extra = json!({"k": k, "q": q, "analysis": "es"});
+    test_interface(&join(&extra), 0.770);
+    let extra = json!({"k": k, "q": q, "analysis": "n"});
+    test_interface(&join(&extra), 107.0);
+}
+
+#[test]
+fn ancova_test() {
+    let k = "5";
+    let q = "10";
+    let p = "2";
+    let join = with_rest("ANCOVA");
+    let extra = json!({"k": k, "q": q, "p": p, "analysis": "alpha"});
+    test_interface(&join(&extra), 0.469); // G*Power gives 0.467
+    let extra = json!({"k": k, "q": q, "p": p, "analysis": "power"});
+    test_interface(&join(&extra), 0.553); // G*Power gives 0.555
+    let extra = json!({"k": k, "q": q, "p": p, "analysis": "es"});
+    test_interface(&join(&extra), 0.775); // G*Power gives 0.773
+    let extra = json!({"k": k, "q": q, "p": p, "analysis": "n"});
+    test_interface(&join(&extra), 107.0);
+
+    let k = "10";
+    let q = "50";
+    let p = "10";
+    let join = with_rest("ANCOVA");
+    let extra = json!({"k": k, "q": q, "p": p, "analysis": "alpha"});
+    test_interface(&join(&extra), 0.826); // G*Power gives 0.825
+    let extra = json!({"k": k, "q": q, "p": p, "analysis": "power"});
+    test_interface(&join(&extra), 0.156); // G*Power gives 0.158
+    let extra = json!({"k": k, "q": q, "p": p, "analysis": "es"});
+    test_interface(&join(&extra), 1.357); // G*Power gives 1.344
+    let extra = json!({"k": k, "q": q, "p": p, "analysis": "n"});
+    test_interface(&join(&extra), 204.0);
+}
+
+#[test]
+fn between_repeated_anova_test() {
+    let k = "2";
+    let m = "4";
+    let rho = "0.5";
+    let join = with_rest("betweenRepeatedANOVA");
+    let extra = json!({"k": k, "m": m, "rho": rho, "analysis": "alpha"});
+    test_interface(&join(&extra), 0.008);
+    let extra = json!({"k": k, "m": m, "rho": rho, "analysis": "power"});
+    test_interface(&join(&extra), 0.992);
+    let extra = json!({"k": k, "m": m, "rho": rho, "analysis": "es"});
+    test_interface(&join(&extra), 0.411);
+    let extra = json!({"k": k, "m": m, "rho": rho, "analysis": "n"});
+    test_interface(&join(&extra), 35.0); // G*Power gives 36
+
+    let k = "5";
+    let m = "10";
+    let rho = "0.75";
+    let join = with_rest("betweenRepeatedANOVA");
+    let extra = json!({"k": k, "m": m, "rho": rho, "analysis": "alpha"});
+    test_interface(&join(&extra), 0.125);
+    let extra = json!({"k": k, "m": m, "rho": rho, "analysis": "power"});
+    test_interface(&join(&extra), 0.880);
+    let extra = json!({"k": k, "m": m, "rho": rho, "analysis": "es"});
+    test_interface(&join(&extra), 0.566);
+    let extra = json!({"k": k, "m": m, "rho": rho, "analysis": "n"});
+    test_interface(&join(&extra), 63.0); // G*Power gives 65
+}
+
+#[test]
+fn within_repeated_anova_test() {
+    let k = "4";
+    let m = "2";
+    let rho = "0.5";
+    let epsilon = "1.0";
+    let n = 12.0;
+    let join =
+        json!({"n": n, "alpha": ALPHA, "power": POWER, "es": ES, "test": "withinRepeatedANOVA"});
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "alpha"});
+    test_interface(&join_json(&join, &extra), 0.123);
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "power"});
+    test_interface(&join_json(&join, &extra), 0.857);
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "es"});
+    test_interface(&join_json(&join, &extra), 0.597);
+    let join = with_rest("withinRepeatedANOVA");
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "n"});
+    test_interface(&join(&extra), 16.0);
+
+    let k = "4";
+    let m = "3";
+    let rho = "0.75";
+    let epsilon = "0.7";
+    let n = 10.0;
+    let join =
+        json!({"n": n, "alpha": ALPHA, "power": POWER, "es": ES, "test": "withinRepeatedANOVA"});
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "alpha"});
+    test_interface(&join_json(&join, &extra), 0.040);
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "power"});
+    test_interface(&join_json(&join, &extra), 0.963);
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "es"});
+    test_interface(&join_json(&join, &extra), 0.481);
+    let join = with_rest("withinRepeatedANOVA");
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "n"});
+    test_interface(&join(&extra), 10.0);
+}
+
+#[test]
+#[should_panic(expected = "lower bound of ε corresponds to 1 / (number of measurements - 1)")]
+fn within_repeated_anova_epsilon_error() {
+    let k = "4";
+    let m = "2";
+    let rho = "0.5";
+    let epsilon = "0.2"; // lower bound is 1/3.
+    let n = 12.0;
+    let join =
+        json!({"n": n, "alpha": ALPHA, "power": POWER, "es": ES, "test": "withinRepeatedANOVA"});
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "alpha"});
+    test_interface(&join_json(&join, &extra), 0.123);
+}
+
+#[test]
+fn within_between_repeated_anova_test() {
+    let k = "4";
+    let m = "2";
+    let rho = "0.5";
+    let epsilon = "1.0";
+    let n = 15.0;
+    let join = json!({"n": n, "alpha": ALPHA, "power": POWER, "es": ES, "test": "withinBetweenRepeatedANOVA"});
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "alpha"});
+    test_interface(&join_json(&join, &extra), 0.187);
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "power"});
+    test_interface(&join_json(&join, &extra), 0.782);
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "es"});
+    test_interface(&join_json(&join, &extra), 0.644);
+    let join = with_rest("withinBetweenRepeatedANOVA");
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "n"});
+    test_interface(&join(&extra), 22.0); // G*Power gives 24
+
+    let k = "4";
+    let m = "3";
+    let rho = "0.75";
+    let epsilon = "0.7";
+    let n = 12.0;
+    let join = json!({"n": n, "alpha": ALPHA, "power": POWER, "es": ES, "test": "withinBetweenRepeatedANOVA"});
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "alpha"});
+    test_interface(&join_json(&join, &extra), 0.078);
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "power"});
+    test_interface(&join_json(&join, &extra), 0.913);
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "es"});
+    test_interface(&join_json(&join, &extra), 0.539);
+    let join = with_rest("withinBetweenRepeatedANOVA");
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "n"});
+    test_interface(&join(&extra), 14.0); // G*Power gives 16
+}
+
+#[test]
+#[should_panic(expected = "lower bound of ε corresponds to 1 / (number of measurements - 1)")]
+fn within_between_repeated_anova_epsilon_error() {
+    let k = "4";
+    let m = "2";
+    let rho = "0.5";
+    let epsilon = "0.2"; // lower bound is 1/3.
+    let n = 12.0;
+    let join = json!({"n": n, "alpha": ALPHA, "power": POWER, "es": ES, "test": "withinBetweenRepeatedANOVA"});
+    let extra = json!({"k": k, "m": m, "rho": rho, "epsilon": epsilon, "analysis": "alpha"});
+    test_interface(&join_json(&join, &extra), 0.123);
+}

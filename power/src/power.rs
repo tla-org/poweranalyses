@@ -1,3 +1,4 @@
+#![allow(clippy::upper_case_acronyms)]
 use dist::Dist;
 use dist::NoncentralChisq;
 use dist::NoncentralF;
@@ -32,6 +33,63 @@ pub enum TestKind {
         /// Number of tested predictors (#B).
         q: i64,
     },
+    /// ANCOVA: Fixed effects, main effects and interattions.
+    ANCOVA {
+        /// Number of groups.
+        /// In factorial ANCOVA is A*B*C.
+        k: i64,
+        /// Degrees of freedom of the tested effect.
+        /// (number of factor levels - 1).
+        /// In ANCOVA it depends on what factor you are interested,
+        /// e.g. A, B, or C.
+        q: i64,
+        /// Number of covariates.
+        p: i64,
+    },
+    /// ANOVA: Fixed effects, omnibus, one-way.
+    OneWayANOVA {
+        /// Number of groups.
+        k: i64,
+    },
+    /// ANOVA: Fixed effects, special, main effects and interactions.
+    TwoWayANOVA {
+        /// Total number of cells in the design.
+        k: i64,
+        /// Degrees of freedom of the tested effect.
+        /// (number of factor levels - 1).
+        q: i64,
+    },
+    /// ANOVA: Repeated measures, between factors.
+    BetweenRepeatedANOVA {
+        /// Levels of between factor.
+        k: i64,
+        /// Levels of repeated measures.
+        m: i64,
+        /// Correlation among repeated measures.
+        rho: f64,
+    },
+    /// ANOVA: Repeated measures, within factors.
+    WithinRepeatedANOVA {
+        /// Levels of between factor.
+        k: i64,
+        /// Levels of repeated measures.
+        m: i64,
+        /// Correlation among repeated measures.
+        rho: f64,
+        /// Nonsphericity correction.
+        epsilon: f64,
+    },
+    /// ANOVA: Repeated measures, within-between interactions.
+    WithinBetweenRepeatedANOVA {
+        /// Levels of between factor.
+        k: i64,
+        /// Levels of repeated measures.
+        m: i64,
+        /// Correlation among repeated measures.
+        rho: f64,
+        /// Nonsphericity correction.
+        epsilon: f64,
+    },
 }
 
 #[derive(Clone, Debug)]
@@ -51,6 +109,20 @@ fn parse_i64(data: &Value, field: &str) -> Result<i64, String> {
     let value: i64 = value
         .parse()
         .expect("{field} could not be converted to an integer");
+    Ok(value)
+}
+
+fn parse_f64(data: &Value, field: &str) -> Result<f64, String> {
+    let value = match data.get(field) {
+        Some(value) => value,
+        None => return Err(format!("Missing field: {}", field)),
+    };
+    let value: &str = value
+        .as_str()
+        .expect("{field} could not be converted to a str");
+    let value: f64 = value
+        .parse()
+        .expect("{field} could not be converted to a floating number");
     Ok(value)
 }
 
@@ -83,6 +155,55 @@ impl TestKind {
                 let q = parse_i64(data, "q").unwrap();
                 Ok(TestKind::IncreaseMultipleRegression { rho, q })
             }
+            "ANCOVA" => {
+                let k = parse_i64(data, "k").unwrap();
+                let q = parse_i64(data, "q").unwrap();
+                let p = parse_i64(data, "p").unwrap();
+                Ok(TestKind::ANCOVA { k, q, p })
+            }
+            "oneWayANOVA" => {
+                let k = parse_i64(data, "k").unwrap();
+                Ok(TestKind::OneWayANOVA { k })
+            }
+            "twoWayANOVA" => {
+                let k = parse_i64(data, "k").unwrap();
+                let q = parse_i64(data, "q").unwrap();
+                Ok(TestKind::TwoWayANOVA { k, q })
+            }
+            "betweenRepeatedANOVA" => {
+                let k = parse_i64(data, "k").unwrap();
+                let m = parse_i64(data, "m").unwrap();
+                let rho = parse_f64(data, "rho").unwrap();
+                Ok(TestKind::BetweenRepeatedANOVA { k, m, rho })
+            }
+            "withinRepeatedANOVA" => {
+                let k = parse_i64(data, "k").unwrap();
+                let m = parse_i64(data, "m").unwrap();
+                let rho = parse_f64(data, "rho").unwrap();
+                let epsilon = parse_f64(data, "epsilon").unwrap();
+                if epsilon < (1.0 / (m as f64 - 1.0)) {
+                    Err(
+                        "lower bound of ε corresponds to 1 / (number of measurements - 1)"
+                            .to_string(),
+                    )
+                } else {
+                    Ok(TestKind::WithinRepeatedANOVA { k, m, rho, epsilon })
+                }
+            }
+            "withinBetweenRepeatedANOVA" => {
+                let k = parse_i64(data, "k").unwrap();
+                let m = parse_i64(data, "m").unwrap();
+                let rho = parse_f64(data, "rho").unwrap();
+                let epsilon = parse_f64(data, "epsilon").unwrap();
+                if epsilon < (1.0 / (m as f64 - 1.0)) {
+                    Err(
+                        "lower bound of ε corresponds to 1 / (number of measurements - 1)"
+                            .to_string(),
+                    )
+                } else {
+                    Ok(TestKind::WithinBetweenRepeatedANOVA { k, m, rho, epsilon })
+                }
+            }
             _ => Err(format!("Unknown test: {}", text)),
         }
     }
@@ -109,6 +230,44 @@ impl TestKind {
                 n - (*rho as f64) - 1.0,
                 es.powi(2) * n,
             )),
+            TestKind::ANCOVA { k, q, p } => Box::new(NoncentralF::new(
+                *q as f64,
+                n - *k as f64 - *p as f64 - 1.0,
+                es.powi(2) * n,
+            )),
+            TestKind::OneWayANOVA { k } => Box::new(NoncentralF::new(
+                *k as f64 - 1.0,
+                n - *k as f64,
+                es.powi(2) * n,
+            )),
+            TestKind::TwoWayANOVA { k, q } => {
+                Box::new(NoncentralF::new(*q as f64, n - *k as f64, es.powi(2) * n))
+            }
+
+            TestKind::BetweenRepeatedANOVA { k, m, rho } => {
+                let u = *m as f64 / (1.0 + ((*m as f64 - 1.0) * *rho));
+                Box::new(NoncentralF::new(
+                    *k as f64 - 1.0,
+                    n - *k as f64,
+                    es.powi(2) * u * n,
+                ))
+            }
+            TestKind::WithinRepeatedANOVA { k, m, rho, epsilon } => {
+                let u = *m as f64 / (1.0 - *rho);
+                Box::new(NoncentralF::new(
+                    (*m as f64 - 1.0) * *epsilon,
+                    (n - *k as f64) * (*m as f64 - 1.0) * *epsilon,
+                    es.powi(2) * u * n * *epsilon, // G*Power paper is missing the epsilon.
+                ))
+            }
+            TestKind::WithinBetweenRepeatedANOVA { k, m, rho, epsilon } => {
+                let u = *m as f64 / (1.0 - *rho);
+                Box::new(NoncentralF::new(
+                    (*k as f64 - 1.0) * (*m as f64 - 1.0) * *epsilon,
+                    (n - *k as f64) * (*m as f64 - 1.0) * *epsilon,
+                    es.powi(2) * u * n * *epsilon,
+                ))
+            }
         }
     }
 
