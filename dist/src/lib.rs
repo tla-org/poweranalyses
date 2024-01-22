@@ -1,5 +1,9 @@
+mod dpq;
+mod nmath;
+mod pnt;
+mod rmath;
+
 extern "C" {
-    fn pnt(t: f64, df: f64, ncp: f64, lower_tail: i32, log_p: i32) -> f64;
     fn qnt(p: f64, df: f64, ncp: f64, lower_tail: i32, log_p: i32) -> f64;
 
     fn pnf(x: f64, df1: f64, df2: f64, ncp: f64, lower_tail: i32, log_p: i32) -> f64;
@@ -34,7 +38,7 @@ impl NoncentralT {
 
 impl Distribution for NoncentralT {
     fn cdf(&self, x: f64, lower_tail: bool) -> f64 {
-        unsafe { pnt(x, self.v, self.lambda, lower_tail as i32, 0) }
+        pnt::pnt(x, self.v, self.lambda, lower_tail, false)
     }
     fn quantile(&self, x: f64, lower_tail: bool) -> f64 {
         unsafe { qnt(x, self.v, self.lambda, lower_tail as i32, 0) }
