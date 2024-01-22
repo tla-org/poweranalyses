@@ -1,3 +1,8 @@
+mod dpq;
+mod nmath;
+mod pnt;
+mod rmath;
+
 extern "C" {
     fn pnt(t: f64, df: f64, ncp: f64, lower_tail: i32, log_p: i32) -> f64;
     fn qnt(p: f64, df: f64, ncp: f64, lower_tail: i32, log_p: i32) -> f64;
