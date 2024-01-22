@@ -36,7 +36,7 @@ extern "C" {
 }
 
 fn finis(mut tnc: f64, del: f64, negdel: bool, mut lower_tail: bool) -> f64 {
-    tnc = rmath::pnorm(-del, 0.0, 1.0, /*lower*/true, /*log_p*/false);
+    tnc += rmath::pnorm(-del, 0.0, 1.0, /*lower*/true, /*log_p*/false);
     lower_tail = lower_tail != negdel;
     if tnc > 1.0 - 1e-10 && lower_tail {
         println!("precision problem in pnt");
@@ -68,7 +68,7 @@ pub fn pnt(t: f64, df: f64, ncp: f64, lower_tail: bool, log_p: bool) -> f64 {
     let mut negdel: bool;
 
     let itrmax: i32 = 1000;
-    let errmax: f32 = 1e-12;
+    let errmax: f64 = 1e-12;
 
     if df <= 0.0 {
         nmath::ml_warn_return_nan();
@@ -98,13 +98,10 @@ pub fn pnt(t: f64, df: f64, ncp: f64, lower_tail: bool, log_p: bool) -> f64 {
         del = -ncp;
     }
 
-    if df > 4e5 || del*del > 2.0*rmath::M_LN2*(-(f64::MIN_EXP)) as f64 {
-        /*-- 2nd part: if del > 37.62, then p=0 below
-         FIXME: test should depend on `df', `tt' AND `del' ! */
-        /* Approx. from	 Abramowitz & Stegun 26.7.10 (p.949) */
-        s = 1./(4.*df);
-        return rmath::pnorm(tt*(1.0 - s), del,
-                            (1.0 + tt*tt*2.0*s).sqrt(),
+    if df > 4e5 || del*del > 2.0*rmath::M_LN2*(-(f64::MIN_EXP as f64)) {
+        s = 1.0/(4.0*df);
+        return rmath::pnorm(tt*(1.0 - s) as f64, del,
+                            (1.0 + tt*tt*2.0*s as f64).sqrt(),
                             lower_tail != negdel, log_p);
     }
 
@@ -139,7 +136,7 @@ pub fn pnt(t: f64, df: f64, ncp: f64, lower_tail: bool, log_p: bool) -> f64 {
         tnc = p * xodd + q * xeven;
 
         for it in 1..=itrmax {
-            a += 1.;
+            a += 1.0;
             xodd  -= godd;
             xeven -= geven;
             godd  *= x * (a + b - 1.0) / a;

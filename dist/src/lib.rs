@@ -39,7 +39,7 @@ impl NoncentralT {
 
 impl Distribution for NoncentralT {
     fn cdf(&self, x: f64, lower_tail: bool) -> f64 {
-        unsafe { pnt(x, self.v, self.lambda, lower_tail as i32, 0) }
+        pnt::pnt(x, self.v, self.lambda, lower_tail, false)
     }
     fn quantile(&self, x: f64, lower_tail: bool) -> f64 {
         unsafe { qnt(x, self.v, self.lambda, lower_tail as i32, 0) }
