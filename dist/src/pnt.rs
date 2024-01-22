@@ -36,12 +36,12 @@ extern "C" {
 }
 
 fn finis(mut tnc: f64, del: f64, negdel: bool, mut lower_tail: bool) -> f64 {
-    tnc += rmath::pnorm(-del, 0.0, 1.0, /*lower*/true, /*log_p*/false);
+    tnc += rmath::pnorm(-del, 0.0, 1.0, /*lower*/ true, /*log_p*/ false);
     lower_tail = lower_tail != negdel;
     if tnc > 1.0 - 1e-10 && lower_tail {
         println!("precision problem in pnt");
     }
-    dpq::r_dt_val(f64::min(tnc, 1.0), lower_tail, /*log_p*/false)
+    dpq::r_dt_val(f64::min(tnc, 1.0), lower_tail, /*log_p*/ false)
 }
 
 pub fn pnt(t: f64, df: f64, ncp: f64, lower_tail: bool, log_p: bool) -> f64 {
@@ -98,18 +98,22 @@ pub fn pnt(t: f64, df: f64, ncp: f64, lower_tail: bool, log_p: bool) -> f64 {
         del = -ncp;
     }
 
-    if df > 4e5 || del*del > 2.0*rmath::M_LN2*(-(f64::MIN_EXP as f64)) {
-        s = 1.0/(4.0*df);
-        return rmath::pnorm(tt*(1.0 - s) as f64, del,
-                            (1.0 + tt*tt*2.0*s as f64).sqrt(),
-                            lower_tail != negdel, log_p);
+    if df > 4e5 || del * del > 2.0 * rmath::M_LN2 * (-(f64::MIN_EXP as f64)) {
+        s = 1.0 / (4.0 * df);
+        return rmath::pnorm(
+            tt * (1.0 - s) as f64,
+            del,
+            (1.0 + tt * tt * 2.0 * s as f64).sqrt(),
+            lower_tail != negdel,
+            log_p,
+        );
     }
 
     /* initialize twin series */
     /* Guenther, J. (1978). Statist. Computn. Simuln. vol.6, 199. */
 
     x = t * t;
-    rxb = df/(x + df);
+    rxb = df / (x + df);
     x = x / (x + df);
 
     if x > 0.0 {
@@ -128,7 +132,15 @@ pub fn pnt(t: f64, df: f64, ncp: f64, lower_tail: bool, log_p: bool) -> f64 {
         b = 0.5 * df;
         rxb = rxb.powf(b);
         albeta = rmath::M_LN_SQRT_PI + unsafe { lgammafn(b) - lgammafn(0.5 + b) };
-        xodd = unsafe { pbeta(x, a, b, /*lower*/true as i32, /*log_p*/false as i32) };
+        xodd = unsafe {
+            pbeta(
+                x,
+                a,
+                b,
+                /*lower*/ true as i32,
+                /*log_p*/ false as i32,
+            )
+        };
         godd = 2. * rxb * (a * x.ln() - albeta).exp();
         tnc = b * x;
         xeven = if tnc < f64::EPSILON { tnc } else { 1. - rxb };
@@ -137,9 +149,9 @@ pub fn pnt(t: f64, df: f64, ncp: f64, lower_tail: bool, log_p: bool) -> f64 {
 
         for it in 1..=itrmax {
             a += 1.0;
-            xodd  -= godd;
+            xodd -= godd;
             xeven -= geven;
-            godd  *= x * (a + b - 1.0) / a;
+            godd *= x * (a + b - 1.0) / a;
             geven *= x * (a + b - 0.5) / (a + 0.5);
             p *= lambda / (2 * it) as f64;
             q *= lambda / (2 * it + 1) as f64;
