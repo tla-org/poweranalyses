@@ -101,9 +101,9 @@ pub fn pnt(t: f64, df: f64, ncp: f64, lower_tail: bool, log_p: bool) -> f64 {
     if df > 4e5 || del * del > 2.0 * rmath::M_LN2 * (-(f64::MIN_EXP as f64)) {
         s = 1.0 / (4.0 * df);
         return rmath::pnorm(
-            tt * (1.0 - s) as f64,
+            tt * (1.0 - s),
             del,
-            (1.0 + tt * tt * 2.0 * s as f64).sqrt(),
+            (1.0 + tt * tt * 2.0 * s).sqrt(),
             lower_tail != negdel,
             log_p,
         );
@@ -162,7 +162,7 @@ pub fn pnt(t: f64, df: f64, ncp: f64, lower_tail: bool, log_p: bool) -> f64 {
                 return finis(tnc, del, negdel, lower_tail);
             }
             errbd = 2. * s * (xodd - godd);
-            if errbd.abs() < errmax as f64 {
+            if errbd.abs() < errmax {
                 return finis(tnc, del, negdel, lower_tail);
             }
             println!("pnt didn't converge");
@@ -171,5 +171,5 @@ pub fn pnt(t: f64, df: f64, ncp: f64, lower_tail: bool, log_p: bool) -> f64 {
         tnc = 0.0;
     }
 
-    return finis(tnc, del, negdel, lower_tail);
+    finis(tnc, del, negdel, lower_tail)
 }
