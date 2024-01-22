@@ -12,8 +12,9 @@ function addSelectOption(selector, text, enabled, value) {
 
 function getElementById(id) {
     const elem = document.getElementById(id);
-    var assert = require('assert');
-    assert(elem != null);
+    if (elem == null) {
+        throw new Error("Expected to find element with id: " + id);
+    }
     return elem;
 }
 
