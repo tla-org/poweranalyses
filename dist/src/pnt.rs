@@ -45,14 +45,14 @@ fn finis(mut tnc: f64, del: f64, negdel: bool, mut lower_tail: bool) -> f64 {
 }
 
 pub fn pnt(t: f64, df: f64, ncp: f64, lower_tail: bool, log_p: bool) -> f64 {
-    let mut albeta: f64;
+    let albeta: f64;
     let mut a: f64;
-    let mut b: f64;
-    let mut del: f64;
+    let b: f64;
+    let del: f64;
     let mut errbd: f64;
-    let mut lambda: f64;
+    let lambda: f64;
     let mut rxb: f64;
-    let mut tt: f64;
+    let tt: f64;
     let mut x: f64;
     // Long doubles can most likely be represented by f64 without problems:
     // https://en.wikipedia.org/wiki/Long_double
@@ -65,7 +65,7 @@ pub fn pnt(t: f64, df: f64, ncp: f64, lower_tail: bool, log_p: bool) -> f64 {
     let mut xeven: f64;
     let mut xodd: f64;
 
-    let mut negdel: bool;
+    let negdel: bool;
 
     let itrmax: i32 = 1000;
     let errmax: f64 = 1e-12;
