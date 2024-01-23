@@ -131,14 +131,7 @@ pub fn pnt(t: f64, df: f64, ncp: f64, lower_tail: bool, log_p: bool) -> f64 {
         b = 0.5 * df;
         rxb = rxb.powf(b);
         albeta = rmath::M_LN_SQRT_PI + unsafe { lgammafn(b) - lgammafn(0.5 + b) };
-        xodd =
-            rmath::pbeta(
-                x,
-                a,
-                b,
-                /*lower*/ true,
-                /*log_p*/ false,
-            );
+        xodd = rmath::pbeta(x, a, b, /*lower*/ true, /*log_p*/ false);
         godd = 2. * rxb * (a * x.ln() - albeta).exp();
         tnc = b * x;
         xeven = if tnc < f64::EPSILON { tnc } else { 1. - rxb };

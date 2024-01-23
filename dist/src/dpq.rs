@@ -44,7 +44,7 @@ pub fn r_d_val(x: f64, log_p: bool) -> f64 {
 
 fn r_d_clog(p: f64, log_p: bool) -> f64 {
     if log_p {
-        return rmath::log1p(-p)
+        rmath::log1p(-p)
     } else {
         0.5 - p + 0.5
     }
