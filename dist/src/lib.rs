@@ -1,6 +1,7 @@
 mod dpq;
 mod nmath;
 mod pnt;
+mod pt;
 mod rmath;
 
 extern "C" {

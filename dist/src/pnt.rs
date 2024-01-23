@@ -20,12 +20,12 @@
 
 use crate::dpq;
 use crate::nmath;
+use crate::pt;
 use crate::rmath;
 
 extern "C" {
     fn pt(x: f64, n: f64, lower_tail: i32, log_p: i32) -> f64;
     fn lgammafn(x: f64) -> f64;
-    fn pbeta(x: f64, a: f64, b: f64, lower_tail: i32, log_p: i32) -> f64;
 }
 
 fn finis(mut tnc: f64, del: f64, negdel: bool, mut lower_tail: bool) -> f64 {
@@ -72,7 +72,8 @@ pub fn pnt(t: f64, df: f64, ncp: f64, lower_tail: bool, log_p: bool) -> f64 {
         nmath::ml_warn_return_nan();
     }
     if ncp == 0.0 {
-        return unsafe { pt(t, df, lower_tail as i32, log_p as i32) };
+        return pt::pt(t, df, lower_tail, log_p);
+        // return unsafe { pt(t, df, lower_tail as i32, log_p as i32) };
     }
 
     if !nmath::r_finite(t) {
@@ -96,7 +97,7 @@ pub fn pnt(t: f64, df: f64, ncp: f64, lower_tail: bool, log_p: bool) -> f64 {
         del = -ncp;
     }
 
-    if df > 4e5 || del * del > 2.0 * rmath::M_LN2 * (-(f64::MIN_EXP as f64)) {
+    if df > 4e5 || del * del > 2.0 * rmath::M_LN2 * -(f64::MIN_EXP as f64) {
         s = 1.0 / (4.0 * df);
         return rmath::pnorm(
             tt * (1.0 - s),
@@ -130,15 +131,14 @@ pub fn pnt(t: f64, df: f64, ncp: f64, lower_tail: bool, log_p: bool) -> f64 {
         b = 0.5 * df;
         rxb = rxb.powf(b);
         albeta = rmath::M_LN_SQRT_PI + unsafe { lgammafn(b) - lgammafn(0.5 + b) };
-        xodd = unsafe {
-            pbeta(
+        xodd =
+            rmath::pbeta(
                 x,
                 a,
                 b,
-                /*lower*/ true as i32,
-                /*log_p*/ false as i32,
-            )
-        };
+                /*lower*/ true,
+                /*log_p*/ false,
+            );
         godd = 2. * rxb * (a * x.ln() - albeta).exp();
         tnc = b * x;
         xeven = if tnc < f64::EPSILON { tnc } else { 1. - rxb };

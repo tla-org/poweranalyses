@@ -1,5 +1,7 @@
 #![allow(non_snake_case)]
 
+use crate::rmath;
+
 fn r_d__0(log_p: bool) -> f64 {
     if log_p {
         f64::NEG_INFINITY
@@ -32,7 +34,7 @@ pub fn r_dt_1(lower_tail: bool, log_p: bool) -> f64 {
     }
 }
 
-fn r_d_val(x: f64, log_p: bool) -> f64 {
+pub fn r_d_val(x: f64, log_p: bool) -> f64 {
     if log_p {
         x.ln()
     } else {
@@ -40,13 +42,9 @@ fn r_d_val(x: f64, log_p: bool) -> f64 {
     }
 }
 
-extern "C" {
-    fn log1p(x: f64) -> f64;
-}
-
 fn r_d_clog(p: f64, log_p: bool) -> f64 {
     if log_p {
-        unsafe { log1p(-p) }
+        return rmath::log1p(-p)
     } else {
         0.5 - p + 0.5
     }
