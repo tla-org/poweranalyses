@@ -33,11 +33,11 @@ jobs:
       - name: Rust cache
         uses: Swatinem/rust-cache@v2
 
-      - name: Cargo fmt
-        run: cargo fmt --all --check
-
       - name: Cargo clippy
         run: cargo clippy --all-targets --all-features -- -D warnings
+
+      - name: Cargo fmt
+        run: cargo fmt --all --check
 
       - name: Cargo test
         run: cargo test
