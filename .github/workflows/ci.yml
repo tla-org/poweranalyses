@@ -22,7 +22,7 @@ jobs:
         shell: bash
 
       - name: Setup emscripten SDK
-        uses: mymindstorm/setup-emsdk@v13
+        uses: mymindstorm/setup-emsdk@v14
 
       - name: Setup Stable Rust with emscripten target
         uses: dtolnay/rust-toolchain@v1
