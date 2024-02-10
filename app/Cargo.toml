@@ -9,6 +9,7 @@ edition = "2021"
 [dependencies]
 dioxus = "0.4"
 dioxus-web = "0.4"
+dist = { path = "../dist" }
 
 # Dioxus debug
 dioxus-logger = { version = "0.4", optional = true }
