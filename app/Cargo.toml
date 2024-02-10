@@ -1,0 +1,28 @@
+[package]
+name = "app"
+version = "0.1.0"
+authors = ["Jose Storopoli <jose@storopoli.io>"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+dioxus = "0.4"
+dioxus-web = "0.4"
+
+# Dioxus debug
+dioxus-logger = { version = "0.4", optional = true }
+log = { version = "0.4", optional = true }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+getrandom = { version = "0.2", features = ["js"] }
+
+[features]
+debug = ["dioxus-logger", "log"]
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false
+
+[lints.clippy]
+enum_glob_use = "deny" # Deny `use Enum::*`
+unwrap_used = "deny"   # Deny `.unwrap()`

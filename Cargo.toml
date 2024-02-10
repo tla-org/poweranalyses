@@ -1,10 +1,14 @@
 [workspace]
 members = [
+    "app",
     "dist",
     "power"
 ]
 resolver = "2"
 
 [profile.release]
-# Tell `rustc` to optimize for small code size.
-opt-level = "s"
+opt-level = "s"   # Small binary size
+lto = true        # Enable Link Time Optimization
+codegen-units = 1 # Reduced to increase optimizations
+panic = "abort"   # Abort on panic
+strip = "symbols" # Strip symbols from binary

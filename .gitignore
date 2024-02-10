@@ -1,17 +1,14 @@
-/target
-**/*.rs.bk
-Cargo.lock
-bin/
-pkg/
-*.wasm
-public/
-
 # Rust
 **/target/
 **/debug/
 **/Cargo.lock
 **/*.rs.bk
 **/*.pdb
+*.wasm
 
 # Tim Apple
 .DS_Store
+
+# Dioxus
+public/
+**/dist/
