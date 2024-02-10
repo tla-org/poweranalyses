@@ -12,3 +12,6 @@ public/
 **/Cargo.lock
 **/*.rs.bk
 **/*.pdb
+
+# Tim Apple
+.DS_Store
