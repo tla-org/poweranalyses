@@ -1,0 +1,33 @@
+{
+  "name": "Debian",
+  "image": "mcr.microsoft.com/devcontainers/base:bullseye",
+
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/rust:1": {},
+    "ghcr.io/lee-orr/rusty-dev-containers/wasm32-unknown-unknown:0": {},
+    "ghcr.io/lee-orr/rusty-dev-containers/dioxus:0": {}
+  },
+
+  "forwardPorts": [8080],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "github.vscode-github-actions",
+
+        "rust-lang.rust-analyzer",
+        "tamasfe.even-better-toml",
+        "serayuzgur.crates",
+        "vadimcn.vscode-lldb",
+
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "DioxusLabs.dioxus"
+      ]
+    }
+  },
+  "remoteUser": "vscode",
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y emscripten && rustup target add wasm32-unknown-emscripten"
+}

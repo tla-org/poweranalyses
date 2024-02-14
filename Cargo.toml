@@ -1,10 +1,12 @@
 [workspace]
-members = [
-    "app",
-    "dist",
-    "power"
-]
+members = ["app", "dist", "power"]
 resolver = "2"
+
+[workspace.package]
+authors = [
+    "Rik Huijzer <rust@huijzer.xyz>",
+    "Jose Storopoli <jose@storopoli.io>",
+]
 
 [profile.release]
 opt-level = "s"   # Small binary size

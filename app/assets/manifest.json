@@ -1,0 +1,26 @@
+{
+  "name": "PowerAnalyses",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "type": "image/png",
+      "sizes": "16x16",
+      "purpose": "any"
+    }
+  ],
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "display_override": [
+    "window-control-overlay",
+    "standalone"
+  ],
+  "scope": "/",
+  "theme_color": "#000000",
+  "background_color": "#ffffff",
+  "short_name": "PowerAnalyses",
+  "description": "PowerAnalyses PWA",
+  "dir": "ltr",
+  "lang": "en",
+  "orientation": "portrait"
+}

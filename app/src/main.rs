@@ -1,7 +1,6 @@
 #![allow(non_snake_case)]
 
 use dioxus::prelude::*;
-use dist::{Distribution, NoncentralT};
 
 #[cfg(feature = "debug")]
 use log::{info, LevelFilter};
@@ -21,8 +20,7 @@ fn App(cx: Scope) -> Element {
     // launch the web app
     #[cfg(feature = "debug")]
     info!("Launching PowerAnalyses app");
-    cx.render(rsx! {
-        div { "Hello, world!" }
-        div { "{NoncentralT::new(0.5, 0.4).cdf(0.3, true)}" }
-    })
+    let eval = use_eval(cx.scope);
+    let _n = eval("testme()");
+    cx.render(rsx! { div { "Hello, world!" } })
 }

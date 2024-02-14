@@ -1,40 +1,37 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "cargo",
-			"command": "build",
-			"problemMatcher": [
-				"$rustc"
-			],
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
-			"label": "rust: cargo build"
-		},
-		{
-			"type": "cargo",
-			"command": "test",
-			"problemMatcher": [
-				"$rustc"
-			],
-			"group": {
-				"kind": "test",
-				"isDefault": true
-			},
-			"label": "rust: cargo test"
-		},
-		{
-			"type": "shell",
-			"command": "dx --bin app serve --features debug --hot-reload",
-			"problemMatcher": [
-				"$rustc"
-			],
-			"group": {
-				"kind": "build",
-			},
-			"label": "dioxus: serve"
-		}
-	]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "cargo",
+      "command": "build",
+      "problemMatcher": ["$rustc"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "label": "rust: cargo build"
+    },
+    {
+      "type": "cargo",
+      "command": "test",
+      "problemMatcher": ["$rustc"],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "label": "rust: cargo test"
+    },
+    {
+      "type": "shell",
+      "command": "rm -rf public && dx serve --features debug --hot-reload",
+      "options": {
+        "cwd": "${workspaceFolder}/app"
+      },
+      "problemMatcher": ["$rustc"],
+      "group": {
+        "kind": "build"
+      },
+      "label": "dioxus: serve"
+    }
+  ]
 }

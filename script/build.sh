@@ -19,6 +19,6 @@ if [[ "$EMSCRIPTEN_GREP" == "" ]]; then
     echo "For Nix, set the EM_CACHE environment variable to something like ~/.cache/emscripten."
 fi
 
-cargo build --target wasm32-unknown-emscripten --release
+cargo build -p pa --target wasm32-unknown-emscripten --release
 
 ./script/public.sh
