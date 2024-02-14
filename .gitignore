@@ -7,6 +7,3 @@
 **/Cargo.lock
 **/*.rs.bk
 **/*.pdb
-
-# Static
-**/public/

@@ -1,8 +1,5 @@
 [workspace]
-members = [
-    "dist",
-    "power"
-]
+members = ["app", "dist", "power"]
 resolver = "2"
 
 [profile.release]
