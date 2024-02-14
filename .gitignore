@@ -1,10 +1,5 @@
-/target
-**/*.rs.bk
-Cargo.lock
-bin/
-pkg/
-*.wasm
-public/
+# Apple
+.DS_Store
 
 # Rust
 **/target/
@@ -12,3 +7,6 @@ public/
 **/Cargo.lock
 **/*.rs.bk
 **/*.pdb
+
+# Static
+**/public/
