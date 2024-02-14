@@ -18,11 +18,18 @@ fn not_htmx_predicate<T>(req: &Request<T>) -> bool {
     !req.headers().contains_key("hx-request")
 }
 
+mod routes;
+use crate::routes::backend::routes;
+
 async fn serve_app() -> Result<()> {
     info!("Initializing router...");
 
     let assets_path = Path::new("app/assets");
-    let app = Router::new().nest_service("/", ServeDir::new(assets_path));
+    let routes = routes();
+
+    let app = Router::new()
+        .nest_service("/", ServeDir::new(assets_path))
+        .nest("/backend", routes);
 
     #[cfg(feature = "livereload")]
     let (app, port) = {
