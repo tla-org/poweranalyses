@@ -19,13 +19,19 @@ fi
 if [ -f public/frontend.js ]; then
     chmod 666 public/frontend.js
 fi
+if [ -f public/pa.js ]; then
+    chmod 666 public/pa.js
+fi
+if [ -f public/pa.wasm ]; then
+    chmod 666 public/pa.wasm
+fi
 
-cp index.html public
-cp style.css public
-cp favicon.png public
-cp frontend.js public
-cp target/wasm32-unknown-emscripten/release/pa.js public
-cp target/wasm32-unknown-emscripten/release/pa.wasm public
+cp --verbose index.html public
+cp --verbose style.css public
+cp --verbose favicon.png public
+cp --verbose frontend.js public
+cp --verbose target/wasm32-unknown-emscripten/release/pa.js public
+cp --verbose target/wasm32-unknown-emscripten/release/pa.wasm public
 
 # To avoid accidentally editing the files in public manually.
 chmod 444 public/index.html
