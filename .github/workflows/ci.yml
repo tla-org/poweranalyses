@@ -23,12 +23,14 @@ jobs:
 
       - name: Setup emscripten SDK
         uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: '3.1.45'
+
+      - name: Verify emscripten
+        run: emcc -v
 
       - name: Setup Stable Rust with emscripten target
-        uses: dtolnay/rust-toolchain@v1
-        with:
-          target: 'wasm32-unknown-emscripten'
-          toolchain: 'stable'
+        run: rustup target add wasm32-unknown-emscripten
 
       - name: Rust cache
         uses: Swatinem/rust-cache@v2
