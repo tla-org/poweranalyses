@@ -26,10 +26,11 @@ if [ -f public/pa.wasm ]; then
     chmod 666 public/pa.wasm
 fi
 
-cp --verbose index.html public
-cp --verbose style.css public
-cp --verbose favicon.png public
-cp --verbose frontend.js public
+cp --verbose assets/index.html public
+cp --verbose assets/style.css public
+cp --verbose assets/favicon.png public
+cp --verbose assets/htmx-1.9.10.min.js public
+cp --verbose assets/frontend.js public
 cp --verbose target/wasm32-unknown-emscripten/release/pa.js public
 cp --verbose target/wasm32-unknown-emscripten/release/pa.wasm public
 
