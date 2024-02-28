@@ -1,7 +1,10 @@
 [package]
 name = "dist"
 version = "0.1.0"
-authors = ["Rik Huijzer <rust@huijzer.xyz>"]
+authors = [
+    "Rik Huijzer <rust@huijzer.xyz>",
+    "Jose Storopoli <jose@storopoli.io>",
+]
 edition = "2021"
 
 [build-dependencies]
