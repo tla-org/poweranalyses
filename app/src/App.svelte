@@ -38,6 +38,7 @@
 
 <script>
     import Footer from './lib/Footer.svelte';
+    import TestType from './lib/TestType.svelte';
 </script>
 
 <div class="content">
@@ -45,6 +46,9 @@
         <img class="favicon" src="/src/assets/favicon.png" alt="favicon" />
           PowerAnalyses.org Beta
     </div>
+
+    <TestType />
+
     Got the following response from the back end: {getOutput().n}
     Count: {count}
 <Footer />
