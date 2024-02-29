@@ -33,6 +33,11 @@
 
         return result;
     }
+    let count = $state(0);
+</script>
+
+<script>
+    import Footer from './lib/Footer.svelte';
 </script>
 
 <div class="content">
@@ -41,6 +46,7 @@
           PowerAnalyses.org Beta
     </div>
     Got the following response from the back end: {getOutput().n}
+    Count: {count}
+<Footer />
 </div>
-
 
