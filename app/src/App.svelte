@@ -38,7 +38,7 @@
 
 <script>
     import Footer from './lib/Footer.svelte';
-    import TestType from './lib/TestType.svelte';
+    import Options from './lib/Options.svelte';
 </script>
 
 <div class="content">
@@ -47,8 +47,9 @@
           PowerAnalyses.org Beta
     </div>
 
-    <TestType />
+    <Options />
 
+    <!-- TODO: remove me  -->
     Got the following response from the back end: {getOutput().n}
     Count: {count}
 <Footer />

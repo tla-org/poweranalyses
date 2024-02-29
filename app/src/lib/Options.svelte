@@ -1,5 +1,6 @@
 <script>
     import Output from './Output.svelte';
+    import Input from './Input.svelte';
     let family = $state("t");
     let test = $state("oneSampleTTest");
     let analysis = $state("n");
@@ -64,5 +65,6 @@
 </div>
 
 <div class="numbers">
+<Input family={family} test={test} analysis={analysis} />
 <Output family={family} test={test} analysis={analysis} />
 </div>
