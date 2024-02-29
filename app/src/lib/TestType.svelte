@@ -3,10 +3,6 @@
     let family = $state("t");
     let test = $state("oneSampleTTest");
     let analysis = $state("n");
-    // let n = $state(107);
-    // let alpha = $state(0.05);
-    // let power = $state(0.95);
-    // let es = $state(0.5);
 
     const options = {
         t: [
@@ -31,18 +27,8 @@
         ],
     };
 
-    // TODO: Comment me out
-    $effect(() => {
-		console.log("Family changed to ", family);
-	});
-
-    $effect(() => {
-		console.log("Test changed to ", test);
-	});
-
-    $effect(() => {
-		console.log("Analysis changed to ", analysis);
-	});
+    // NOTE: Debug purposes only. Comment out when not needed.
+    // $inspect(family, test, analysis);
 </script>
 
 <div class="dropdowns border">
@@ -78,5 +64,5 @@
 </div>
 
 <div class="numbers">
-<Output {family} {test} {analysis} />
+<Output family={family} test={test} analysis={analysis} />
 </div>
