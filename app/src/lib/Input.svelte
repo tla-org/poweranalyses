@@ -5,7 +5,7 @@
     import TTemplate from './inputs/TTemplate.svelte';
 </script>
 
-{#if family == "t"}
+{#if family === "t"}
     <InputTemplate>
         <TTemplate {test} {analysis} />
     </InputTemplate>
