@@ -29,7 +29,7 @@
     <tr>
         <td>Allocation ratio N2/N1</td>
         <td>
-            <input id="allocRatio" type="number" min="0.01" max="100" step="0.1" bind:value={allocRatio}>
+            <input id="allocRatio" type="number" min=0.01 max=100 step=0.1 bind:value={allocRatio}>
         </td>
     </tr>
 

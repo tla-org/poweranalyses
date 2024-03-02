@@ -33,7 +33,6 @@
 
         return result;
     }
-    let count = $state(0);
 </script>
 
 <script>
@@ -52,6 +51,15 @@
     let tail = $state("1");
     let allocRatio = $state(1);
 
+    // F-test stuff
+    let k = $state(5);
+    let p = $state(2);
+    let q = $state(10);
+    let m = $state(2);
+    let rho = $state(0.5);
+    let epsilon = $state(1);
+    let nPredictors = $state(2);
+
     import Footer from './lib/Footer.svelte';
     import Options from './lib/Options.svelte';
 </script>
@@ -62,11 +70,10 @@
           PowerAnalyses.org Beta
     </div>
 
-    <Options family={family} test={test} analysis={analysis} n={n} alpha={alpha} power={power} es={es} tail={tail} allocRatio={allocRatio} />
+    <Options family={family} test={test} analysis={analysis} n={n} alpha={alpha} power={power} es={es} tail={tail} allocRatio={allocRatio} k={k} p={p} q={q} m={m} rho={rho} epsilon={epsilon} nPredictors={nPredictors} />
 
     <!-- TODO: remove me  -->
     Got the following response from the back end: {getOutput().n}
-    Count: {count}
 <Footer />
 </div>
 
