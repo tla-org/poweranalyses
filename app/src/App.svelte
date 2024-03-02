@@ -37,6 +37,21 @@
 </script>
 
 <script>
+    // General components
+    let family = $state("t");
+    let test = $state("oneSampleTTest");
+    let analysis = $state("n");
+
+    // Analysis
+    let n = $state(50);
+    let alpha = $state(0.05);
+    let power = $state(0.95);
+    let es = $state(0.5);
+
+    // T-test stuff
+    let tail = $state("1");
+    let allocRatio = $state(1);
+
     import Footer from './lib/Footer.svelte';
     import Options from './lib/Options.svelte';
 </script>
@@ -47,7 +62,7 @@
           PowerAnalyses.org Beta
     </div>
 
-    <Options />
+    <Options family={family} test={test} analysis={analysis} n={n} alpha={alpha} power={power} es={es} tail={tail} allocRatio={allocRatio} />
 
     <!-- TODO: remove me  -->
     Got the following response from the back end: {getOutput().n}

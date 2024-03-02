@@ -1,13 +1,15 @@
 <script>
-    let { test, analysis } = $props();
-    let allocRatio = $state(1);
+    let { test, analysis, tail, allocRatio } = $props();
+
+    // NOTE: Debug purposes only. Comment out when not needed.
+    $inspect(tail, allocRatio)
 </script>
 
 {#if test === "oneSampleTTest"}
     <tr>
         <td>Tail(s):</td>
         <td>
-            <select id="tail">
+            <select id="tail" bind:value={tail}>
                 <option value="1">One tail</option>
                 <option value="2">Two tails</option>
             </select>
@@ -18,7 +20,7 @@
     <tr>
         <td>Tail(s):</td>
         <td>
-            <select id="tail">
+            <select id="tail" bind:value={tail}>
                 <option value="1">One tail</option>
                 <option value="2">Two tails</option>
             </select>

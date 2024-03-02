@@ -1,16 +1,14 @@
 <script>
-    let { family, test, analysis } = $props();
-
-    let n = $state(50);
-    let alpha = $state(0.05);
-    let power = $state(0.95);
-    let es = $state(0.5);
+    let { family, test, analysis, n, alpha, power, es } = $props();
 
     // Derived states for disabling inputs
     let nEnabled = $derived.by(() => analysis === 'n');
     let alphaEnabled = $derived.by(() => analysis === "alpha");
     let powerEnabled = $derived.by(() => analysis === "power");
     let esEnabled = $derived.by(() => analysis === "es");
+
+    // NOTE: Debug purposes only. Comment out when not needed.
+    $inspect(n, alpha, power, es)
 </script>
 
 <div class="output border">

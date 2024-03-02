@@ -1,9 +1,8 @@
 <script>
     import Output from './Output.svelte';
     import Input from './Input.svelte';
-    let family = $state("t");
-    let test = $state("oneSampleTTest");
-    let analysis = $state("n");
+
+    let { family, test, analysis, n, alpha, power, es, tail, allocRatio } = $props();
 
     const options = {
         t: [
@@ -29,7 +28,7 @@
     };
 
     // NOTE: Debug purposes only. Comment out when not needed.
-    // $inspect(family, test, analysis);
+    $inspect(family, test, analysis)
 </script>
 
 <div class="dropdowns border">
@@ -65,6 +64,6 @@
 </div>
 
 <div class="numbers">
-<Input family={family} test={test} analysis={analysis} />
-<Output family={family} test={test} analysis={analysis} />
+<Input family={family} test={test} analysis={analysis} tail={tail} allocRatio={allocRatio} />
+<Output family={family} test={test} analysis={analysis} bind:n={n} bind:alpha={alpha} bind:power={power} bind:es={es} />
 </div>
