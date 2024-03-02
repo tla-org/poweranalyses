@@ -2,22 +2,22 @@
     import Output from './Output.svelte';
     import Input from './Input.svelte';
 
-    let { family, test, analysis, n, alpha, power, es, tail, allocRatio, k, p, q, m, rho, epsilon, nPredictors } = $props();
+    let { family, test, analysis, n, alpha, power, es, tail, allocRatio, k, p, q, m, rho, epsilon, nPredictors, df } = $props();
 
     const options = {
         t: [
-        { id: null, text: "Correlation: Point biseral model", enabled: false, value: 1 },
-        { id: null, text: "Linear bivariate regression: One group, size of slope", enabled: false, value: 2 },
-        { id: null, text: "Linear bivariate regression: Two groups, difference between intercepts", enabled: false, value: 3 },
-        { id: null, text: "Linear bivariate regression: Two groups, difference between slopes", enabled: false, value: 4 },
-        { id: null, text: "Linear multiple regression: Fixed model, single regression coefficient", enabled: false, value: 5 },
-        { id: "dependentSamplesTTest", text: "Means: Difference between two dependent means (matched pairs)", enabled: false, value: 6 },
-        { id: "independentSamplesTTest", text: "Means: Difference between two independent means (two groups)", enabled: true, value: 7 },
-        { id: "oneSampleTTest", text: "Means: Difference from constant (one sample case)", enabled: true, value: 8 },
-        { id: null, text: "Means: Wilcoxon signed-rank test (matched pairs)", enabled: false, value: 9 },
-        { id: null, text: "Means: Wilcoxon signed-rank test (one sample case)", enabled: false, value: 10 },
-        { id: null, text: "Means: Wilcoxon-Mann-Whitney test (two groups)", enabled: false, value: 11 },
-        { id: null, text: "Generic t test", enabled: false, value: 12 },
+            { id: null, text: "Correlation: Point biseral model", enabled: false, value: 1 },
+            { id: null, text: "Linear bivariate regression: One group, size of slope", enabled: false, value: 2 },
+            { id: null, text: "Linear bivariate regression: Two groups, difference between intercepts", enabled: false, value: 3 },
+            { id: null, text: "Linear bivariate regression: Two groups, difference between slopes", enabled: false, value: 4 },
+            { id: null, text: "Linear multiple regression: Fixed model, single regression coefficient", enabled: false, value: 5 },
+            { id: "dependentSamplesTTest", text: "Means: Difference between two dependent means (matched pairs)", enabled: false, value: 6 },
+            { id: "independentSamplesTTest", text: "Means: Difference between two independent means (two groups)", enabled: true, value: 7 },
+            { id: "oneSampleTTest", text: "Means: Difference from constant (one sample case)", enabled: true, value: 8 },
+            { id: null, text: "Means: Wilcoxon signed-rank test (matched pairs)", enabled: false, value: 9 },
+            { id: null, text: "Means: Wilcoxon signed-rank test (one sample case)", enabled: false, value: 10 },
+            { id: null, text: "Means: Wilcoxon-Mann-Whitney test (two groups)", enabled: false, value: 11 },
+            { id: null, text: "Generic t test", enabled: false, value: 12 },
         ],
         f: [
             { id: "ANCOVA", text: "ANCOVA: Fixed effects, main effects, and interactions", enabled: true, value: 1 },
@@ -38,6 +38,8 @@
         ],
         chi: [
             { id: "goodnessOfFitChisqTest", text: "Goodness-of-fit tests: Contingency tables", enabled: true, value: 1 },
+            { id: null, text: "Variance: Difference from constant (one sample case)", enabled: false, value: 2 },
+            { id: null, text: "Generic χ² test", enabled: false, value: 3 },
         ],
     };
 
@@ -84,6 +86,6 @@
 </div>
 
 <div class="numbers">
-    <Input family={family} test={test} analysis={analysis} tail={tail} allocRatio={allocRatio} k={k} p={p} q={q} m={m} rho={rho} epsilon={epsilon} nPredictors={nPredictors} />
+    <Input family={family} test={test} analysis={analysis} tail={tail} allocRatio={allocRatio} k={k} p={p} q={q} m={m} rho={rho} epsilon={epsilon} nPredictors={nPredictors} df={df} />
     <Output family={family} test={test} analysis={analysis} bind:n={n} bind:alpha={alpha} bind:power={power} bind:es={es} />
 </div>

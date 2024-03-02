@@ -60,6 +60,9 @@
     let epsilon = $state(1);
     let nPredictors = $state(2);
 
+    // Chi-squared test stuff
+    let df = $state(5)
+
     import Footer from './lib/Footer.svelte';
     import Options from './lib/Options.svelte';
 </script>
@@ -70,7 +73,7 @@
           PowerAnalyses.org Beta
     </div>
 
-    <Options family={family} test={test} analysis={analysis} n={n} alpha={alpha} power={power} es={es} tail={tail} allocRatio={allocRatio} k={k} p={p} q={q} m={m} rho={rho} epsilon={epsilon} nPredictors={nPredictors} />
+    <Options family={family} test={test} analysis={analysis} n={n} alpha={alpha} power={power} es={es} tail={tail} allocRatio={allocRatio} k={k} p={p} q={q} m={m} rho={rho} epsilon={epsilon} nPredictors={nPredictors} df={df} />
 
     <!-- TODO: remove me  -->
     Got the following response from the back end: {getOutput().n}
