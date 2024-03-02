@@ -17,8 +17,26 @@
     }
 
     /** Update the output area by calculating the numbers via WebAssembly. */
-    function getOutput() {
-        const state = {"analysis":"n","test":"ANCOVA","n":107,"alpha":0.05,"power":0.95,"es":0.5,"q":"10","k":"5","p":"2"};
+    // TODO: fix jsdoc
+    function getOutput(test, analysis, n, alpha, power, es, tail, allocRatio, k, p, q, m, rho, epsilon, nPredictors, df) {
+        const state = {
+            "test": test,
+            "analysis": analysis,
+            "n": n,
+            "alpha": alpha,
+            "power": power,
+            "es": es,
+            "tail": tail,
+            "allocRatio": allocRatio,
+            "k": k,
+            "p": p,
+            "q": q,
+            "m": m,
+            "rho": rho,
+            "epsilon": epsilon,
+            "nPredictors": nPredictors,
+            "df": df
+        };
         const json = JSON.stringify(state);
         console.log(`Sending the following json to the back end: ${json}`);
 
@@ -73,10 +91,7 @@
           PowerAnalyses.org Beta
     </div>
 
-    <Options family={family} test={test} analysis={analysis} n={n} alpha={alpha} power={power} es={es} tail={tail} allocRatio={allocRatio} k={k} p={p} q={q} m={m} rho={rho} epsilon={epsilon} nPredictors={nPredictors} df={df} />
-
-    <!-- TODO: remove me  -->
-    Got the following response from the back end: {getOutput().n}
+    <Options getOutput={getOutput} family={family} test={test} analysis={analysis} n={n} alpha={alpha} power={power} es={es} tail={tail} allocRatio={allocRatio} k={k} p={p} q={q} m={m} rho={rho} epsilon={epsilon} nPredictors={nPredictors} df={df} />
 <Footer />
 </div>
 

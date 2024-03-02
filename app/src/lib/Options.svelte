@@ -2,7 +2,7 @@
     import Output from './Output.svelte';
     import Input from './Input.svelte';
 
-    let { family, test, analysis, n, alpha, power, es, tail, allocRatio, k, p, q, m, rho, epsilon, nPredictors, df } = $props();
+    let { getOutput, family, test, analysis, n, alpha, power, es, tail, allocRatio, k, p, q, m, rho, epsilon, nPredictors, df } = $props();
 
     const options = {
         t: [
@@ -87,5 +87,5 @@
 
 <div class="numbers">
     <Input family={family} test={test} analysis={analysis} tail={tail} allocRatio={allocRatio} k={k} p={p} q={q} m={m} rho={rho} epsilon={epsilon} nPredictors={nPredictors} df={df} />
-    <Output family={family} test={test} analysis={analysis} bind:n={n} bind:alpha={alpha} bind:power={power} bind:es={es} />
+    <Output getOutput={getOutput} family={family} test={test} analysis={analysis} bind:n={n} bind:alpha={alpha} bind:power={power} bind:es={es} tail={tail} allocRatio={allocRatio} k={k} p={p} q={q} m={m} rho={rho} epsilon={epsilon} nPredictors={nPredictors} df={df} />
 </div>

@@ -1,5 +1,5 @@
 <script>
-    let { family, test, analysis, n, alpha, power, es } = $props();
+    let { getOutput, family, test, analysis, n, alpha, power, es, tail, allocRatio, k, p, q, m, rho, epsilon, nPredictors, df } = $props();
 
     // Derived states for disabling inputs
     let nEnabled = $derived.by(() => analysis === 'n');
@@ -44,7 +44,7 @@
   </div>
   <div class="center">
     <button class="resetBtn">Reset</button>
-    <button class="calculateBtn">Calculate</button>
+    <button class="calculateBtn" on:click="{() => getOutput(test, analysis, n, alpha, power, es, tail, allocRatio, k, p, q, m, rho, epsilon, nPredictors, df)}">Calculate</button>
   </div>
 </div>
 
