@@ -108,7 +108,7 @@
 
 <div class="content">
     <div class="title center">
-        <img class="favicon" src="/src/assets/favicon.png" alt="favicon" />
+        <img class="favicon" src="./favicon.png" alt="favicon" />
           PowerAnalyses.org Beta
     </div>
 
