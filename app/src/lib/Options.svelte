@@ -86,6 +86,6 @@
 </div>
 
 <div class="numbers">
-    <Input family={family} test={test} analysis={analysis} tail={tail} allocRatio={allocRatio} k={k} p={p} q={q} m={m} rho={rho} epsilon={epsilon} nPredictors={nPredictors} df={df} />
+    <Input family={family} test={test} analysis={analysis} bind:tail={tail} bind:allocRatio={allocRatio} bind:k={k} bind:p={p} bind:q={q} bind:m={m} bind:rho={rho} bind:epsilon={epsilon} bind:nPredictors={nPredictors} bind:df={df} />
     <Output getOutput={getOutput} family={family} test={test} analysis={analysis} bind:n={n} bind:alpha={alpha} bind:power={power} bind:es={es} tail={tail} allocRatio={allocRatio} k={k} p={p} q={q} m={m} rho={rho} epsilon={epsilon} nPredictors={nPredictors} df={df} />
 </div>
