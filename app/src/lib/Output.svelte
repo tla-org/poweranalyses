@@ -7,6 +7,9 @@
     let powerEnabled = $derived.by(() => analysis === "power");
     let esEnabled = $derived.by(() => analysis === "es");
 
+    // Handling error messages
+    let errorMessagel = $state("");
+
     /**
      * Handles the click event on the calculate button. This function calls `getOutput`
      * with the current form values, waits for the calculation result, and updates the
@@ -26,6 +29,15 @@
         const result = await getOutput(test, analysis, n, alpha, power, es, tail, allocRatio, k, p, q, m, rho, epsilon, nPredictors, df);
         const id = Object.keys(result)[0]; // 'n', 'es', 'power', 'alpha'
         const value = result[id];
+
+        // Check if the backend returned -111 for error handling
+        if (value === -111) {
+            errorMessage = "Unable to find a solution for given input.";
+            analysis = '';
+            // Optionally, animate the error message div if required
+            animateElements(['error']);
+            return; // Stop further execution
+        }
 
         // Update the corresponding state based on the id
         if (id === 'n') n = value;

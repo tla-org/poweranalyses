@@ -48,15 +48,15 @@
             "power": power,
             "es": es,
             "tail": tail,
-            "allocRatio": allocRatio,
-            "k": k,
-            "p": p,
-            "q": q,
-            "m": m,
-            "rho": rho,
-            "epsilon": epsilon,
-            "nPredictors": nPredictors,
-            "df": df
+            "allocRatio": allocRatio.toString(),
+            "k": k.toString(),
+            "p": p.toString(),
+            "q": q.toString(),
+            "m": m.toString(),
+            "rho": rho.toString(),
+            "epsilon": epsilon.toString(),
+            "nPredictors": nPredictors.toString(),
+            "df": df.toString()
         };
         const json = JSON.stringify(state);
         console.log(`Sending the following json to the back end: ${json}`);
@@ -69,7 +69,6 @@
         console.log(`Received the following json from the back end: ${returned}`);
         const result = JSON.parse(returned);
         const id = Object.keys(result)[0];
-        console.log(`The id of the result is: ${id}`);
 
         return result;
     }

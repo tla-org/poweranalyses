@@ -10,8 +10,8 @@ serve:
 build:
   @echo "Building..."
   @cargo build --target wasm32-unknown-emscripten --release
-  @cp --verbose target/wasm32-unknown-emscripten/release/pa.wasm app/static
-  @cp --verbose target/wasm32-unknown-emscripten/release/pa.js app/static
+  @cp --verbose target/wasm32-unknown-emscripten/release/pa.wasm app/src/assets/pa.wasm
+  @cp --verbose target/wasm32-unknown-emscripten/release/pa.js app/src/assets/pa.js
 
 test:
   @echo "Testing..."
