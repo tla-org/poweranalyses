@@ -8,7 +8,7 @@
     let esEnabled = $derived.by(() => analysis === "es");
 
     // Handling error messages
-    let errorMessagel = $state("");
+    let errorMessage = $state("");
 
     /**
      * Handles the click event on the calculate button. This function calls `getOutput`
@@ -31,12 +31,13 @@
         const value = result[id];
 
         // Check if the backend returned -111 for error handling
-        if (value === -111) {
+        if (value == -111) {
             errorMessage = "Unable to find a solution for given input.";
-            analysis = '';
             // Optionally, animate the error message div if required
             animateElements(['error']);
-            return; // Stop further execution
+        }
+        else {
+            errorMessage = "";
         }
 
         // Update the corresponding state based on the id
@@ -124,6 +125,7 @@
     </tbody>
   </table>
   <div id="error" class="center error">
+        {errorMessage}
   </div>
   <div class="center">
     <button class="resetBtn" onclick={handleReset}>Reset</button>
