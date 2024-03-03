@@ -7,6 +7,13 @@
     let powerEnabled = $derived.by(() => analysis === "power");
     let esEnabled = $derived.by(() => analysis === "es");
 
+    function reset() {
+        n = 50;
+        alpha = 0.05;
+        power = 0.95;
+        es = 0.5;
+    }
+
     // NOTE: Debug purposes only. Comment out when not needed.
     $inspect(n, alpha, power, es)
 </script>
@@ -43,8 +50,8 @@
   <div id="error" class="center error">
   </div>
   <div class="center">
-    <button class="resetBtn">Reset</button>
-    <button class="calculateBtn" on:click="{() => getOutput(test, analysis, n, alpha, power, es, tail, allocRatio, k, p, q, m, rho, epsilon, nPredictors, df)}">Calculate</button>
+    <button class="resetBtn" onclick={reset}>Reset</button>
+    <button class="calculateBtn" on:click={() => getOutput(test, analysis, n, alpha, power, es, tail, allocRatio, k, p, q, m, rho, epsilon, nPredictors, df)}>Calculate</button>
   </div>
 </div>
 
