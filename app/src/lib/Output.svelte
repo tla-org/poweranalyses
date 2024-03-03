@@ -45,7 +45,7 @@
      *
      * @returns {void}
      */
-    function reset() {
+    function handleReset() {
         n = 50;
         alpha = 0.05;
         power = 0.95;
@@ -114,7 +114,7 @@
   <div id="error" class="center error">
   </div>
   <div class="center">
-    <button class="resetBtn" onclick={reset}>Reset</button>
+    <button class="resetBtn" onclick={handleReset}>Reset</button>
     <button class="calculateBtn" on:click={handleCalculate}>Calculate</button>
   </div>
 </div>
