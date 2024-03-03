@@ -16,8 +16,29 @@
         return decoder.decode(new Uint8Array(buffer, ptr, length));
     }
 
-    /** Update the output area by calculating the numbers via WebAssembly. */
-    // TODO: fix jsdoc
+    /**
+     * Calculates statistical analysis results by interfacing with a WebAssembly module.
+     * This function serializes input parameters into JSON, sends them to the WebAssembly backend,
+     * and then parses the JSON response to return the result.
+     *
+     * @param {string} test - The type of statistical test being performed.
+     * @param {string} analysis - The analysis type (e.g., 'n', 'es', 'power', 'alpha').
+     * @param {number} n - The sample size.
+     * @param {number} alpha - The significance level (α).
+     * @param {number} power - The statistical power (1 - β).
+     * @param {number} es - The effect size.
+     * @param {number} tail - The number of tails in the test (1 or 2).
+     * @param {number} allocRatio - The allocation ratio for different groups.
+     * @param {number} k - The number of groups for some tests.
+     * @param {number} p - The number of predictors for multiple regression.
+     * @param {number} q - The number of dependent variables for MANOVA.
+     * @param {number} m - The total number of measurements for repeated measures ANOVA.
+     * @param {number} rho - The assumed population correlation coefficient.
+     * @param {number} epsilon - The non-sphericity correction coefficient.
+     * @param {number} nPredictors - The number of predictors in the model.
+     * @param {number} df - The degrees of freedom for the test.
+     * @returns {Object} An object containing the calculation result, keyed by the type of analysis.
+     */
     function getOutput(test, analysis, n, alpha, power, es, tail, allocRatio, k, p, q, m, rho, epsilon, nPredictors, df) {
         const state = {
             "test": test,
@@ -48,6 +69,7 @@
         console.log(`Received the following json from the back end: ${returned}`);
         const result = JSON.parse(returned);
         const id = Object.keys(result)[0];
+        console.log(`The id of the result is: ${id}`);
 
         return result;
     }
