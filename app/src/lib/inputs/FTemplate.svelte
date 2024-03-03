@@ -1,6 +1,52 @@
 <script>
     let { test, analysis, k, p, q, m, rho, epsilon, nPredictors } = $props();
 
+    /**
+     * Sanitizes numerical input values to ensure they meet specific criteria, such as being positive numbers.
+     * This function can be used to preprocess user inputs in form fields that are expected to be positive.
+     *
+     * @param {number} value - The input value to be sanitized.
+     * @param {number} [defaultValue=0] - A default value to return if the input does not meet the criteria. Optional.
+     * @returns {number} - The sanitized input value, ensuring it conforms to the defined criteria (e.g., positive number).
+     */
+    function sanitizeInt(value, defaultValue = 0) {
+        if (value < 0) {
+            console.warn(`Input value ${value} is negative, resetting to ${defaultValue}.`);
+            return defaultValue;
+        }
+        return value;
+    }
+
+    /**
+     * Sanitizes numerical input values to ensure they meet specific criteria, such as being positive numbers.
+     * This function can be used to preprocess user inputs in form fields that are expected to be positive.
+     *
+     * @param {number} value - The input value to be sanitized.
+     * @param {number} [defaultValue=0.5] - A default value to return if the input does not meet the criteria. Optional.
+     * @returns {number} - The sanitized input value, ensuring it conforms to the defined criteria (e.g., positive number).
+     */
+    function sanitizeFloat(value, defaultValue = 0.5) {
+        if (value < 0) {
+            console.warn(`Input value ${value} is negative, resetting to ${defaultValue}.`);
+            return defaultValue;
+        } else if (value > 1) {
+            console.warn(`Input value ${value} is greater than 1, resetting to ${defaultValue}.`);
+            return defaultValue;
+        }
+        return value;
+    }
+
+    $effect(() => {
+        // Sanitize input values
+        k = sanitizeInt(k, 1);
+        p = sanitizeInt(p, 2);
+        q = sanitizeInt(q, 1);
+        m = sanitizeInt(m, 2);
+        rho = sanitizeFloat(rho, 0.5);
+        epsilon = sanitizeFloat(epsilon, 1);
+        nPredictors = sanitizeInt(nPredictors, 1);
+    });
+
     // NOTE: Debug purposes only. Comment out when not needed.
     $inspect(k, p, q, m, rho, epsilon, nPredictors)
 </script>

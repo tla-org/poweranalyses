@@ -1,6 +1,15 @@
 <script>
     let { test, analysis, tail, allocRatio } = $props();
 
+    // sanitize allocRatio
+    $effect(() => {
+        if (allocRatio < 0.01) {
+            allocRatio = 0.01;
+        } else if (allocRatio > 100) {
+            allocRatio = 100;
+        }
+    })
+
     // NOTE: Debug purposes only. Comment out when not needed.
     $inspect(tail, allocRatio)
 </script>
