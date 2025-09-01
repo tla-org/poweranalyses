@@ -50,7 +50,7 @@ jobs:
       - name: Build site into the public/ dir
         run: just build
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         if: ${{ github.event_name != 'pull_request' }}
         with:
           path: './public'
